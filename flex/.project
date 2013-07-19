@@ -25,7 +25,7 @@
 		<link>
 			<name>bin-debug</name>
 			<type>2</type>
-			<location>D:/j2ee-server/jboss-4.2.2.GA/server/default/deploy/Myzerui.war</location>
+			<location>D:/GitHub/flex-dog/java/WebContent</location>
 		</link>
 		<link>
 			<name>bin-release</name>

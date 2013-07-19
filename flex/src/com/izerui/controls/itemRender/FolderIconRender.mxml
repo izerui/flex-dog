@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MXDataGridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						  xmlns:s="library://ns.adobe.com/flex/spark" 
+						  xmlns:mx="library://ns.adobe.com/flex/mx" 
+						  focusEnabled="true">
+	<fx:Script>
+		<![CDATA[
+			
+			override public function set data(value:Object):void
+			{
+				if(value.isfolder){
+					myImg.source = "assets/img/folder.gif";
+				}else if(value.extension){
+					myImg.source = "assets/fileicon/"+value.extension+".gif";
+				}else{
+					myImg.source = "assets/fileicon/unknown.gif";
+				}
+				lsp.text = value.filename;
+				super.data = value;
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<s:HGroup paddingLeft="5">
+		<mx:Image id="myImg" ioError="myImg.source = 'assets/fileicon/unknown.gif'"/>
+		<mx:Label id="lsp" />
+	</s:HGroup>
+</s:MXDataGridItemRenderer>

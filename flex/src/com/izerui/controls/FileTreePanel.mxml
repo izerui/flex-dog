@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" creationComplete="panel1_creationCompleteHandler(event)" 
+		 title="{resourceManager.getString('jhaij','FileTreePanelTitle')}"
+		 xmlns:components="com.izerui.components.*" xmlns:tree="com.izerui.components.tree.*" 
+		 xmlns:searchInput="com.izerui.components.searchInput.*"
+		 titleIcon="@Embed('assets/img/document-library.png')">
+	
+	<fx:Metadata>
+		[Event(name="FileTreeItemClick",type="com.izerui.event.FileTreeItemClickEvent")]
+	</fx:Metadata>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import com.izerui.cairngorm.event.GetFolderListClassEvent;
+			import com.izerui.cairngorm.event.OptFolderClassEvent;
+			import com.izerui.cairngorm.event.RenameFolderClassEvent;
+			import com.izerui.components.loading.LoaderManager;
+			import com.izerui.controls.titlewin.FolderTitleWindow;
+			import com.izerui.event.FileTreeItemClickEvent;
+			import com.izerui.event.FolderOperationEvent;
+			import com.izerui.event.I18nEvent;
+			import com.izerui.utils.AlertShow;
+			import com.izerui.utils.ArrayCollectionUtils;
+			import com.izerui.vo.FileTree;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.Menu;
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			import mx.events.MenuEvent;
+			import mx.managers.PopUpManager;
+			
+			[Bindable]
+			private var fileFolderTreeData:Object;
+			
+			
+			
+			protected function panel1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				loadFolderTree();
+				
+				this.contextMenu = new ContextMenu;
+				this.contextMenu.addEventListener(ContextMenuEvent.MENU_SELECT,loadContextMenuItem);
+				
+			}
+			
+			private function loadContextMenuItem(event:ContextMenuEvent):void{
+				
+				var createItem:ContextMenuItem = new ContextMenuItem(resourceManager.getString("jhaij","createFolder"));
+				createItem.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,function mis(ev:ContextMenuEvent):void{operationLabelSelected(0)});
+				var renameItem:ContextMenuItem = new ContextMenuItem(resourceManager.getString("jhaij","renameFolder"));
+				renameItem.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,function mis(ev:ContextMenuEvent):void{operationLabelSelected(1)});
+				var deleteItem:ContextMenuItem = new ContextMenuItem(resourceManager.getString("jhaij","deleteFolder"));
+				deleteItem.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,function mis(ev:ContextMenuEvent):void{operationLabelSelected(2)});
+				
+				this.contextMenu.customItems = new Array;
+				this.contextMenu.customItems.push(createItem);
+				this.contextMenu.customItems.push(renameItem);
+				this.contextMenu.customItems.push(deleteItem);
+				
+				this.contextMenu.hideBuiltInItems();
+				
+			}
+			
+			
+			
+			//加载文件目录树
+			protected function loadFolderTree():void
+			{
+				CairngormEventDispatcher.getInstance().dispatchEvent(new GetFolderListClassEvent(getFolderListResponse)); 
+				LoaderManager.showLoading();
+				
+				
+				function getFolderListResponse(data:Object):void{
+					opt.enabled = true;
+					fileFolderTreeData = data;
+					fileTree.validateNow();
+					fileTree.expandItem(fileTree.dataProvider[0],true,true);
+					treeSearchText.reset();
+					LoaderManager.hideLoading();
+				}
+				
+			}
+			
+			
+			protected function fileTree_Item_ClickHandler(event:Event):void
+			{
+				var fileTreeClickEvent:FileTreeItemClickEvent = new FileTreeItemClickEvent("FileTreeItemClick");
+				fileTreeClickEvent.itemObject = fileTree.selectedItem as FileTree;
+				dispatchEvent(fileTreeClickEvent);
+				
+			}
+			
+			
+			protected function textinput1_changeHandler(event:Event):void
+			{
+				
+				if(!treeSearchText.text){
+//					opt.enabled = true;
+//					fileTree.dataProvider = fileFolderTreeData;
+//					fileTree.validateNow();
+//					fileTree.expandItem(fileTree.dataProvider[0],true,true);
+					loadFolderTree();
+					return;
+				}
+//				opt.enabled = false;
+				var tempSearchList:ArrayCollection = new ArrayCollection;
+				searchFolderList(fileFolderTreeData);
+				
+				fileTree.dataProvider = tempSearchList;
+				
+				function searchFolderList(folderList:ArrayCollection):void{
+					
+					for each (var folder:FileTree in folderList) 
+					{
+						if(folder.foldername.indexOf(treeSearchText.text)!=-1){
+							var newFileTreeVo:FileTree = new FileTree;
+							newFileTreeVo.foldername = folder.foldername;
+							newFileTreeVo.folderpath = folder.folderpath;
+							tempSearchList.addItem(newFileTreeVo);
+						}
+						if(folder.children){
+							searchFolderList(folder.children);
+						}
+					}
+					
+				}
+				
+			}
+			
+			private var popMenu:Menu;
+			
+			[Embed(source="assets/img/newFolder.png")]
+			private var menuIcon1:Class;
+			[Embed(source="assets/img/renameFolder.png")]
+			private var menuIcon2:Class;
+			[Embed(source="assets/img/deleteFolder.png")]
+			private var menuIcon3:Class;
+			
+			protected function opt_mouseOverHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(popMenu){
+					popMenu.hide();
+				}
+				
+				if(!opt.enabled){
+					return;
+				}
+				var mdp:ArrayCollection = new ArrayCollection;
+				mdp.addItem({"label":resourceManager.getString("jhaij","createFolder"),"data":0,"icon":menuIcon1});
+				mdp.addItem({"label":resourceManager.getString("jhaij","renameFolder"),"data":1,"icon":menuIcon2});
+				mdp.addItem({"label":resourceManager.getString("jhaij","deleteFolder"),"data":2,"icon":menuIcon3});
+				
+				
+				popMenu = Menu.createMenu(this,mdp,false);
+				popMenu.addEventListener(MenuEvent.ITEM_CLICK,popMenuClick);
+				popMenu.show();
+				var menuPoint:Point = new Point;
+				menuPoint = opt.localToGlobal(new Point(opt.x,opt.y));
+				popMenu.move(opt.x,menuPoint.y-popMenu.height-10);
+			}
+			
+			
+			protected function popMenuClick(event:MenuEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+				operationLabelSelected(event.item["data"]);
+			}
+			
+			
+			
+			protected function folderOperationEventCallBack(event:FolderOperationEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(event.folderOperationType==0){//新建目录
+					
+					if((fileTree.selectedItem as FileTree).children){
+						var replicationNum:Number = ArrayCollectionUtils.validateArrayCollectionHasValue((fileTree.selectedItem as FileTree).children,"foldername",event.folderNameText);
+						if(replicationNum>0){
+							Alert.show(resourceManager.getString("jhaij","existTheSameFolderAlert"),resourceManager.getString("jhaij","warn"));
+							return;
+						}
+					}
+					
+					CairngormEventDispatcher.getInstance().dispatchEvent(new OptFolderClassEvent(fileTree.selectedItem["folderpath"]+event.folderNameText,true,createFun)); 
+					LoaderManager.showLoading();
+				}else{//修改名字
+					CairngormEventDispatcher.getInstance().dispatchEvent(new RenameFolderClassEvent((fileTree.selectedItem as FileTree).folderpath,event.folderNameText,renameResponse));
+				}
+				
+				function createFun(data:Object):void{
+					//创建成功回调函数
+					LoaderManager.hideLoading();
+					if(data){
+						var fileTreeVo:FileTree = new FileTree;
+						fileTreeVo.foldername = event.folderNameText;
+						fileTreeVo.folderpath = String(data);
+						if(!fileTree.selectedItem.children){
+							fileTree.selectedItem.children = new ArrayCollection();
+						}
+						(fileTree.selectedItem.children as ArrayCollection).addItem(fileTreeVo);
+						fileTree.expandItem(fileTree.selectedItem,true);
+						fileTree.dispatchEvent(new Event("Item_Click"));
+					}
+					
+				}
+				
+				
+				function renameResponse(newPath:String):void{
+					if(newPath){
+						var oldfolderPath:String = (fileTree.selectedItem as FileTree).folderpath;
+						(fileTree.selectedItem as FileTree).folderpath = newPath;
+						(fileTree.selectedItem as FileTree).foldername = event.folderNameText;
+						(fileTree.dataProvider as ArrayCollection).itemUpdated(fileTree.selectedItem,"foldername");
+						if(fileTree.selectedItem["children"]){
+							renameFatherFolderName((fileTree.selectedItem as FileTree).children);
+						}
+						
+						
+					}else{
+						Alert.show(resourceManager.getString("jhaij","fileInUse"),resourceManager.getString("jhaij","error"));
+					}
+					
+					
+					function renameFatherFolderName(childrenList:ArrayCollection):void{
+							
+						for each (var folder:FileTree in childrenList) 
+						{
+							folder.folderpath = folder.folderpath.replace(oldfolderPath,newPath);
+							if(folder.children){
+								renameFatherFolderName(folder.children);
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+			
+			
+			
+			private function operationLabelSelected(label:Number):void
+			{
+				if(fileTree.selectedIndex == -1){
+					Alert.show(resourceManager.getString("jhaij","openFolderTitleWindowErrorMessage"),resourceManager.getString("jhaij","error"));
+					return;
+				}
+				
+				switch(label)
+				{
+					case 0:
+					{
+						var newFolderWin:FolderTitleWindow = new FolderTitleWindow;
+						newFolderWin.folderItem = fileTree.selectedItem;
+						newFolderWin.currentState = "create";
+						PopUpManager.addPopUp(newFolderWin,FlexGlobals.topLevelApplication as DisplayObjectContainer,true);
+						PopUpManager.centerPopUp(newFolderWin);
+						newFolderWin.folderName.setFocus();
+						newFolderWin.addEventListener("folderOperationEvent",folderOperationEventCallBack);
+						break;
+					}
+					case 1:
+					{
+						var renameFolderWin:FolderTitleWindow = new FolderTitleWindow;
+						renameFolderWin.folderItem = fileTree.selectedItem;
+						renameFolderWin.currentState = "rename";
+						PopUpManager.addPopUp(renameFolderWin,FlexGlobals.topLevelApplication as DisplayObjectContainer,true);
+						PopUpManager.centerPopUp(renameFolderWin);
+						renameFolderWin.folderName.setFocus();
+						renameFolderWin.addEventListener("folderOperationEvent",folderOperationEventCallBack);
+						break;
+					}
+					case 2:
+					{
+						if(fileTree.selectedItem==fileTree.dataProvider[0]){
+							return;
+						}
+						AlertShow.operateConfirm(resourceManager.getString("jhaij","deleteFolderConfirmTooltipLabel"),resourceManager.getString("jhaij","warn"),FlexGlobals.topLevelApplication,deleteFolderFun);
+						break;
+					}
+				}
+				
+				function deleteFolderFun():void{
+					//开始删除
+					CairngormEventDispatcher.getInstance().dispatchEvent(new OptFolderClassEvent(fileTree.selectedItem["folderpath"],false,deleteResponse));
+					LoaderManager.showLoading();
+					
+					function deleteResponse():void{// 根不可以删除
+						LoaderManager.hideLoading();
+						var parenItem:Object = fileTree.getParentItem(fileTree.selectedItem);
+						for(var i:int=0;i<(parenItem.children as ArrayCollection).length;i++){
+							if((parenItem.children as ArrayCollection).getItemAt(i)==fileTree.selectedItem){
+								(parenItem.children as ArrayCollection).removeItemAt(i);
+								(fileTree.dataProvider as ArrayCollection).itemUpdated(fileTree.getParentItem(fileTree.selectedItem),"children");
+								return;
+							}
+						}
+					}
+				}
+				
+			}
+			
+			
+		]]>
+	</fx:Script>
+		<tree:DoubleClickTree id="fileTree" borderStyle="none" dataProvider="{fileFolderTreeData}" width="100%" height="100%" labelField="foldername" dataTipField="folderpath" Item_Click="fileTree_Item_ClickHandler(event)" showDataTips="true">
+			
+		</tree:DoubleClickTree>
+		<mx:ControlBar>
+			<searchInput:SearchTextInput id="treeSearchText" change="textinput1_changeHandler(event)" toolTip="{resourceManager.getString('jhaij','treeSearchText_tooltip')}"/>
+			<mx:Button label="{resourceManager.getString('jhaij','refreshDataButtonLabel')}" click="loadFolderTree()" styleName="primaryButton"/>
+			<mx:Button id="opt" label="{resourceManager.getString('jhaij','operationFolderButtonLabel')}" mouseOver="opt_mouseOverHandler(event)" click="opt_mouseOverHandler(event)"/>
+		</mx:ControlBar>
+</mx:Panel>

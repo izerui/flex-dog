@@ -1,0 +1,56 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace ah "com.izerui.components.tooltips.components.*";
+
+mx|ToolTip 
+{
+    backgroundAlpha: 1.0;
+    backgroundColor: #33CC99;
+    color: blue;
+    cornerRadius: 0;
+    fontSize: 12;
+}
+
+mx|Alert
+{
+	title-background-skin:         Embed("/assets/img/alert/alert_titulo1.png", scaleGridTop="9", scaleGridBottom="16", scaleGridLeft="13", scaleGridRight="85");
+	/*background-image:         Embed("/assets/general/alert.png",  scaleGridTop="10", scaleGridBottom="58", scaleGridLeft="10", scaleGridRight="147");*/
+	background-size:             "100%";
+	
+	padding-left:                 0;
+	padding-bottom:             14;
+	padding-right:                 0;
+	padding-top:                 0;
+	
+	header-height:                 25;
+	borderStyle:                 none;
+	background-color:             none;
+	
+	border-thickness-top:        0;
+	border-thickness-bottom:    0;
+	border-thickness-left:        0;
+	border-thickness-right:        0;
+	
+	
+	color:                         #333333;
+	
+	messageStyleName:             "alertText";
+	title-style-name:            "alertTitle";
+}
+.alertText
+{
+	background-image:             Embed("/assets/img/alert/alert_fondo1.png", scaleGridTop="1", scaleGridBottom="26", scaleGridLeft="5", scaleGridRight="85");
+	background-size:             "100%";
+	font-size:                    12;
+	font-weight:                 normal;
+}
+
+.alertTitle
+{
+	font-family:                franklin1;
+	font-size:                    12;
+	font-weight:                 bold;
+	color:                        #ffffff;
+	padding-left:                3;    
+}

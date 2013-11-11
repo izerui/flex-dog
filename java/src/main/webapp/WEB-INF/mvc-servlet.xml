@@ -15,8 +15,6 @@
 
 	<mvc:default-servlet-handler />
 
-	<mvc:resources location="/view/" mapping="/view/**" />
-
 	<mvc:view-controller path="/error/404" view-name="/error/404.jsp" />
 	
 	<!-- 自动扫描bean，把作了注解的类转换为bean -->

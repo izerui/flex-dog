@@ -2,7 +2,6 @@ package com.izerui.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,8 +44,7 @@ public class FileController {
 	@RequestMapping(value="/download",method=RequestMethod.GET)
 	public void download(@RequestParam("path") String filepath,@RequestParam("name") String filename,HttpServletResponse response){
 		try {
-			filepath = new String(filepath.getBytes("ISO-8859-1"),"UTF-8");
-			filepath += new String(filename.getBytes("ISO-8859-1"),"UTF-8");
+			filepath += filename;
 			File file = new File(filepath);
 			if(file.isFile()){//存在文件
 				response.reset();  
@@ -64,7 +62,6 @@ public class FileController {
 	@RequestMapping(value = "/getVideoFile", method = RequestMethod.GET)
 	public void getVideoFile(@RequestParam("flvfile") String flvfile, HttpServletResponse response) {
 		try {
-			flvfile = new String(flvfile.getBytes("ISO-8859-1"),"GBK");
 			String filename = null;
 			Long filelength = 0l;
 			File file = null;
@@ -88,11 +85,7 @@ public class FileController {
 		Enumeration eu = request.getParameterNames();
 		while (eu.hasMoreElements()) {
 			String elem = (String) eu.nextElement();
-			try {
-				modelMap.addAttribute(elem, new String(request.getParameter(elem).getBytes("ISO-8859-1"),"UTF-8"));
-			} catch (UnsupportedEncodingException e) {
-				log.error(e.getMessage());
-			}
+			modelMap.addAttribute(elem, request.getParameter(elem));
 		}
 		return new ModelAndView("/viewer/view.jsp",modelMap);
 	}

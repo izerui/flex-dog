@@ -43,7 +43,7 @@
 			// Place File Filters into the Array that is passed to the MultiFileUpload instance
 			public var filesToFilter:Array = new Array(allTypes,imageTypes,documentTypes,zipTypes);
 			
-			public static const uploadDestination:String = "servlet/upload"; 
+			public static const uploadDestination:String = "upload"; 
 			
 			
 			protected function titlewindow1_closeHandler(event:CloseEvent):void

@@ -137,7 +137,7 @@
 					{
 						if(myFileGrid.selectedIndex!=-1&&!myFileGrid.selectedItem["isfolder"]){
 							
-							var xlsUrl:String = "download?path="+encodeURIComponent(myFileGrid.selectedItem["folderpath"])+"&name="+encodeURIComponent(myFileGrid.selectedItem["filename"]);
+							var xlsUrl:String = "download?path="+encodeURI(myFileGrid.selectedItem["folderpath"])+"&name="+encodeURI(myFileGrid.selectedItem["filename"]);
 							xlsUrl = URLUtil.getFullURL(this.parentApplication.url,xlsUrl);
 							System.setClipboard(xlsUrl);
 							Alert.show(resourceManager.getString("jhaij","copySuccessTootip"),resourceManager.getString("jhaij","info"));
@@ -216,7 +216,7 @@
 						fileReference.addEventListener(IOErrorEvent.IO_ERROR,ioerrorDownload);
 						fileReference.addEventListener(Event.SELECT,filedownloadselect);
 					}
-					var xlsUrl:String = "download?path="+encodeURIComponent(myFileGrid.selectedItem["folderpath"])+"&name="+encodeURIComponent(myFileGrid.selectedItem["filename"]);
+					var xlsUrl:String = "download?path="+encodeURI(myFileGrid.selectedItem["folderpath"])+"&name="+encodeURI(myFileGrid.selectedItem["filename"]);
 					xlsUrl = URLUtil.getFullURL(this.parentApplication.url,xlsUrl);
 					trace(xlsUrl);
 					var fileUrlRequest:URLRequest = new URLRequest(xlsUrl);

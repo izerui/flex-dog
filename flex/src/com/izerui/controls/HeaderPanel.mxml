@@ -17,7 +17,7 @@
 					resourceManager.localeChain = ["zh_CN"]; 
 					i18nButton.label = "ENGLISH";
 				}
-				BrowserManager.getInstance().setTitle(resourceManager.getString("jhaij","browerTitle"));
+				ExternalInterface.call("settitle",encodeURIComponent(resourceManager.getString("jhaij","browerTitle")));
 				resourceManager.dispatchEvent(new I18nEvent(I18nEvent.I18NRESOURCECHANGE));
 			}
 		]]>

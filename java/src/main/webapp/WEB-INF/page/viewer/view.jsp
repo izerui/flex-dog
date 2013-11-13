@@ -1,3 +1,4 @@
+<%@page import="java.net.URLEncoder"%>
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -6,13 +7,9 @@
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-//String efilePathName = request.getParameter("PathName");
-//if(StringUtils.isNotEmpty(efilePathName)){//这里用这个是为了解决efile表中path出现中文的问题
-//	efilePathName = new String(efilePathName.getBytes("ISO-8859-1") ,"UTF-8");
-//}
 
-String filepath1 = basePath+"getVideoFile?flvfile="+request.getAttribute("filepath").toString()+request.getAttribute("filename").toString();
-//System.out.println(filepath1);
+
+String filepath1 = basePath+"getVideoFile?flvfile="+URLEncoder.encode(request.getAttribute("filepath").toString()+request.getAttribute("filename").toString());
 %>
 <html>
   <head>
@@ -21,71 +18,32 @@ String filepath1 = basePath+"getVideoFile?flvfile="+request.getAttribute("filepa
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
 	<meta http-equiv="expires" content="0">    
-	<script language="javascript">
-	
-		function document.oncontextmenu() { 
-		    return false; 
-		} 
-		
-		function nocontextmenu(){ 
-		    if(document.all) {
-		        event.cancelBubble=true;
-		        event.returnvalue=false; 
-		        return false; 
-		    }
-		}
-		
-		function onKeyDown(){
-		    if ((event.altKey)||((event.keyCode==8)&&(event.srcElement.type!="text"&&event.srcElement.type!="textarea"&&event.srcElement.type!="password"))||((event.ctrlKey)&&((event.keyCode==78)||(event.keyCode==82)))||(event.keyCode==116)){
-		        event.keyCode=0;
-		        event.returnValue=false;
-		    }
-		}
-</script>
+	<script type='text/javascript' src='${pageContext.request.contextPath}/assets/player/jwplayer.js'></script>
   </head>
   
-<body onkeydown="onKeyDown()" bgColor=#f2f6f9 bottomMargin=0 leftMargin=0 rightMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<body bgColor=#f2f6f9 bottomMargin=0 leftMargin=0 rightMargin=0 topMargin=0 marginheight="0" marginwidth="0">
 <c:choose>
 
 <c:when test="${ext=='flv'||ext=='f4v'||ext=='m4v'||ext=='mov'||ext=='mp3'||ext=='mp4'||ext=='ogv'||ext=='aac'||ext=='m4a'||ext=='f4a'||ext=='ogg'||ext=='oga'}"><!-- flv -->
 
-<!-- 
-	<script type='text/javascript' src='${pageContext.request.contextPath}/resource/efile/player/jwplayer.js'></script>
 	<div id='mediaspace'>This text will be replaced</div>
 	<script type='text/javascript'>
 	  jwplayer('mediaspace').setup({
-	    'flashplayer': '${pageContext.request.contextPath}/resource/efile/player/player.swf',
-	    'file': '${path}${PathName}',
+	    'flashplayer': '${pageContext.request.contextPath}/assets/player/ffff.swf',
+	    'file': '<%=filepath1%>',
 	    'controlbar': 'bottom',
+	    'provider' : 'http',
+	    'stretching' : 'fill',
+	    'title' : '${filename}',
+	    'backcolor' : '000000',
+	    'frontcolor' : 'ffffff',
+	    'lightcolor' : 'cc9900',
+	    'screencolor' : 'ffffff',
+	    'skin' : '${pageContext.request.contextPath}/assets/player/skins/beelden.zip',
 	    'width': '100%',
 	    'height': '100%'
 	  });
 	</script>
-	
--->
-	<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='100%' height='100%' id='single1' name='single1'>
-		<param name='movie' value='${pageContext.request.contextPath}/assets/player/ffff.swf'>
-		<param name='allowfullscreen' value='true'>
-		<param name='allowscriptaccess' value='always'>
-		<param name='wmode' value='transparent'>
-		<param name='flashvars' value='file=<%= filepath1 %>&provider=http&stretching=fill&title=${filename}&backcolor=000000&frontcolor=ffffff&lightcolor=cc9900&screencolor=ffffff&skin=${pageContext.request.contextPath}/assets/player/skins/beelden.zip'>
-		<embed
-		type='application/x-shockwave-flash'
-		id='single2'
-		name='single2'
-		src='${pageContext.request.contextPath}/assets/player/ffff.swf'
-		width='100%'
-		height='100%'
-		bgcolor='undefined'
-		allowscriptaccess='always'
-		allowfullscreen='true'
-		wmode='transparent'
-		flashvars='file=<%= filepath1 %>&provider=http&stretching=fill&title=${filename}&backcolor=000000&frontcolor=ffffff&lightcolor=cc9900&screencolor=ffffff&skin=${pageContext.request.contextPath}/assets/player/skins/beelden.zip'
-		/>
-	</object>
-
-
-
 </c:when>
 
 <c:when test="${ext=='wma'||ext=='avi'||ext=='asf'||ext=='mpg'||ext=='mpeg'||ext=='wmv'}"><!-- media播放 -->

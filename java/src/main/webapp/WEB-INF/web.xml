@@ -8,14 +8,6 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/application/*-config.xml</param-value>
 	</context-param>
-	<context-param>
-		<param-name>tempPath</param-name>
-		<param-value>/WEB-INF/temp/</param-value>
-	</context-param>
-	<listener>
-		<listener-class>
-			org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
-	</listener>
 	<listener>
 		<listener-class>flex.messaging.HttpFlexSession</listener-class>
 	</listener>
@@ -55,20 +47,12 @@
 		<servlet-name>flex</servlet-name>
 		<url-pattern>/messagebroker/*</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>UploadServlet</servlet-name>
-		<servlet-class>com.izerui.servlet.UploadServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UploadServlet</servlet-name>
-		<url-pattern>/servlet/upload</url-pattern>
-	</servlet-mapping>
 	<error-page>
 		<error-code>404</error-code>
 		<location>/error/404</location>
 	</error-page>
 
 	<welcome-file-list>
-		<welcome-file>Index.html</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 </web-app>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" title="文件查看器" layout="absolute" width="610" height="428" 
+				showCloseButton="true" close="closeWin();"  xmlns:flexiframe="com.github.izerui.file.controls.flexiframe.*">
+	<fx:Script>
+		<![CDATA[
+			import com.github.izerui.file.vo.FileItem;
+			
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.utils.URLUtil;
+			
+			
+			public var file:FileItem;
+			
+			
+			private function closeWin():void{
+				viewer.source = null;
+				viewer.removeIFrame();
+				PopUpManager.removePopUp(this);
+			}
+			
+			
+			protected function viewer_creationCompleteHandler(event:FlexEvent):void
+			{
+				
+				var url:String = "viewFile?filepath="+encodeURIComponent(file.folderpath)+"&filename="+encodeURIComponent(file.filename)+"&ext="+file.extension+"&random="+Math.random();
+				
+				viewer.source = url;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<flexiframe:IFrame id="viewer" name="viewer" creationComplete="viewer_creationCompleteHandler(event)"
+					   label="Map"
+					   width="100%"
+					   height="100%"/>
+</mx:TitleWindow>

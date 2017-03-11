@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" >
+	
+	<fx:Script>
+		<![CDATA[
+			import com.github.izerui.file.event.I18nEvent;
+			
+			import mx.managers.BrowserManager;
+			protected function language_clickHandler(event:MouseEvent):void
+			{
+				if(resourceManager.localeChain[0]=="zh_CN"){
+					resourceManager.localeChain = ["en_US"]; 
+					i18nButton.label = "中文";
+				}else if(resourceManager.localeChain[0]=="en_US"){
+					resourceManager.localeChain = ["zh_CN"]; 
+					i18nButton.label = "ENGLISH";
+				}
+				ExternalInterface.call("settitle",encodeURIComponent(resourceManager.getString("jhaij","browerTitle")));
+				resourceManager.dispatchEvent(new I18nEvent(I18nEvent.I18NRESOURCECHANGE));
+			}
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<mx:Image source="/assets/img/bt.jpg"/>
+	<mx:Spacer width="100%"/>
+	<mx:Button id="i18nButton" label="ENGLISH" click="language_clickHandler(event)"/>
+</s:HGroup>

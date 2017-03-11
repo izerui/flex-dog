@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	title="{resourceManager.getString('jhaij','uploader_title')}"
+	width="652" height="330"
+	creationComplete="initApp();"
+	showCloseButton="true"
+	close="titlewindow1_closeHandler(event)"
+	layout="absolute" paddingTop="10">
+	<fx:Script>
+        <![CDATA[
+			import com.github.izerui.file.event.FileUploadEvent;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Button;
+			import mx.core.SoundAsset;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+
+			
+			
+			
+			public var multiFileUpload:MultiFileUpload;
+			
+			public var currentPath:String;
+			
+			public var responseFun:Function;
+			
+			// Sound to play when all files complete uploading
+			[Embed(source="/com/github/izerui/file/controls/uploader/audio/Ding.mp3")]
+			public var soundClass:Class;
+			public var snd:SoundAsset = new soundClass() as SoundAsset;
+			public var sndChannel:SoundChannel;
+			
+			// Set the File Filters you wish to impose on the applicaton
+			public var allTypes:FileFilter = new FileFilter("All Files (*.*)","*.*")
+			public var imageTypes:FileFilter = new FileFilter("Images (*.jpg; *.jpeg; *.gif; *.png)" ,"*.jpg; *.jpeg; *.gif; *.png");
+			public var documentTypes:FileFilter = new FileFilter("Documents (*.pdf), (*.doc), (*.rtf), (*.txt)",("*.pdf; *.doc; *.rtf, *.txt"));
+			public var zipTypes:FileFilter = new FileFilter("zip/rar/7z Files (*.zip), (*.rar), (*.7z), (*.tar)",("*.zip; *.rar; *.7z, *.tar"));
+			
+			// Place File Filters into the Array that is passed to the MultiFileUpload instance
+			public var filesToFilter:Array = new Array(allTypes,imageTypes,documentTypes,zipTypes);
+			
+			public static const uploadDestination:String = "upload"; 
+			
+			
+			protected function titlewindow1_closeHandler(event:CloseEvent):void
+			{
+				// TODO Auto-generated method stub
+				PopUpManager.removePopUp(this);
+				multiFileUpload.cancelUploadHandler();
+			}
+			
+			
+			public function initApp():void{
+				
+				var postVariables:URLVariables = new URLVariables;
+				postVariables.serverpath = currentPath;
+				
+				multiFileUpload = new MultiFileUpload(
+					filesDG,
+					browseBTN,
+					clearButton,
+					delButton,
+					upload_btn,
+					progressbar,
+					uploadDestination,
+					postVariables,
+					Number(0),//大小无限制
+					filesToFilter
+				);
+				multiFileUpload.addEventListener(Event.COMPLETE,uploadsfinished);
+				
+			}
+			
+			public function uploadsfinished(event:Event):void{
+				sndChannel=snd.play();
+				this.dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_COMPLETE));
+				PopUpManager.removePopUp(this);
+			}
+			
+			
+			
+		]]>
+    </fx:Script>
+	<mx:DataGrid id="filesDG" left="0" right="0" bottom="30" top="5"/>
+	<mx:ProgressBar id="progressbar" labelPlacement="center" trackHeight="15" left="0" right="0" bottom="5" height="20"/>
+	
+	<mx:ControlBar>
+		
+		<mx:Spacer width="100%"/>
+		<mx:HBox>
+			<mx:Button label="{resourceManager.getString('jhaij','browseBTN_label')}" id="browseBTN"/>
+			<mx:Button label="{resourceManager.getString('jhaij','upload_btn_label')}" id="upload_btn"/>
+			<mx:Button label="{resourceManager.getString('jhaij','delButton_label')}" id="delButton"/>
+			<mx:Button label="{resourceManager.getString('jhaij','clearButton_label')}" id="clearButton"/>
+		</mx:HBox>
+		
+	</mx:ControlBar>
+</mx:TitleWindow> 

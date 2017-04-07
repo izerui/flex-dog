@@ -27,6 +27,10 @@ public class FileItem implements Serializable{
 	public Boolean isIsfolder() {
 		return isfolder;
 	}
+
+	public Boolean getIsfolder(){
+		return isfolder;
+	}
 	public void setIsfolder(Boolean isfolder) {
 		this.isfolder = isfolder;
 	}

@@ -16,5 +16,5 @@ http://izerui.github.io/flex-dog/
 
 java -jar file-dog-exec.jar
 
-访问: http://localhost:8080
+访问: http://localhost:8888
 

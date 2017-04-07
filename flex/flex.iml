@@ -17,7 +17,7 @@
         <compiler-options>
           <map>
             <entry key="compiler.defaults-css-files" value="$MODULE_DIR$/src/assets/css/styles.css&#10;$MODULE_DIR$/src/assets/css/yflexskin.css" />
-            <entry key="compiler.locale" value="zh_CN" />
+            <entry key="compiler.locale" value="en_US&#10;zh_CN" />
             <entry key="compiler.theme" value="${FLEX_SDK}/frameworks/themes/Halo/halo.swc" />
           </map>
         </compiler-options>

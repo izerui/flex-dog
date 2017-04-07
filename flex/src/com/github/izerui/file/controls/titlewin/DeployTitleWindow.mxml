@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				width="600" height="400"
+				title="{resourceManager.getString('jhaij','exeComplete')}"
+				layout="vertical" showCloseButton="true" close="PopUpManager.removePopUp(this);">
+	<fx:Script>
+        <![CDATA[
+			import mx.managers.PopUpManager;
+
+			[Bindable]
+			public var output:String;
+		]]>
+    </fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<mx:TextArea width="100%" height="100%" text="{output}" editable="false"/>
+	<mx:ControlBar horizontalAlign="right">
+		<mx:Button label="{resourceManager.getString('jhaij','confirm')}" click="PopUpManager.removePopUp(this);"/>
+	</mx:ControlBar>
+</mx:TitleWindow>

@@ -6,25 +6,34 @@ import com.github.izerui.file.vo.FileItem;
 import com.github.izerui.file.vo.FileTree;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RemotingDestination
 @Service("fileService")
+@ConfigurationProperties
 public class FileServiceImpl implements FileService {
 
 	private static Logger log = Logger.getLogger(FileServiceImpl.class);
 
 
 	private static String rootPath;
+
+	private Map<String,String> servers;
+
+	public Map<String, String> getServers() {
+		return servers;
+	}
+
+	public void setServers(Map<String, String> servers) {
+		this.servers = servers;
+	}
 
 	static {
 		rootPath = System.getProperty("user.dir")+File.separator;
@@ -161,17 +170,52 @@ public class FileServiceImpl implements FileService {
 
 
 	@Override
-	public void exec(String filePath) {
-		try {
-			String chmodCommand = "chmod 777 " + filePath;
-			Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
-			chmodProcess.waitFor();
+	public String exec(String fileName) {
 
-			String execCommand = "/bin/sh " + filePath;
-			Process execProcess = Runtime.getRuntime().exec(execCommand);
-			execProcess.waitFor();
+	    String output = "";
+		boolean deployed = false;
+		try {
+			String fileBaseName = FilenameUtils.getBaseName(fileName);
+			String ext = FilenameUtils.getExtension(fileName);
+			fileBaseName = fileBaseName.replace("-exec","");
+			Iterator<String> iterator = servers.keySet().iterator();
+			while (iterator.hasNext()){
+				String server = iterator.next();
+				String services = servers.get(server);
+				if(services!=null&&!services.equals("")){
+					String[] split = services.split(",");
+					for (String service : split) {
+						if(service!=null&&service.equals(fileBaseName)){
+
+                            String chmodCommand = "chmod 777 /etc/ansible/application-operation.sh";
+                            Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
+                            chmodProcess.waitFor();
+
+
+							String command = "/bin/sh /etc/ansible/application-operation.sh "+ext+" "+server+" "+service;
+							Process execProcess = Runtime.getRuntime().exec(command);
+							execProcess.waitFor();
+
+                            output += IOUtils.toString(execProcess.getInputStream(),"UTF-8") +"\n";
+                            log.info(output);
+
+							deployed = true;
+						}
+
+					}
+
+				}
+
+			}
+
+			if(!deployed){
+				throw new RuntimeException("不支持该文件");
+			}
+
+			return output;
+
 		} catch (Exception e) {
-			log.error("exec sh error",e);
+			throw new RuntimeException(e.getMessage());
 		}
 
 	}

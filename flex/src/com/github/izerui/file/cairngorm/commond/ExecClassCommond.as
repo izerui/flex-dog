@@ -3,6 +3,7 @@ import com.adobe.cairngorm.commands.ICommand;
 import com.adobe.cairngorm.control.CairngormEvent;
 import com.github.izerui.file.cairngorm.business.ExecClassDelegate;
 import com.github.izerui.file.cairngorm.event.ExecClassEvent;
+import com.github.izerui.file.components.loading.LoaderManager;
 
 import mx.controls.Alert;
 import mx.resources.ResourceManager;
@@ -19,12 +20,14 @@ public class ExecClassCommond implements IResponder, ICommand {
     }
 
     public function result(data:Object):void {
+        LoaderManager.hideLoading();
         if (responseFun) {
-            responseFun.call(null);
+            responseFun.call(null,data.result);
         }
     }
 
     public function fault(info:Object):void {
+        LoaderManager.hideLoading();
         Alert.show(info.fault.faultString, ResourceManager.getInstance().getString("jhaij", "error"));
     }
 

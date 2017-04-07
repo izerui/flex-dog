@@ -172,7 +172,9 @@
 						if(myFileGrid.selectedIndex!=-1){
 							var selItem:FileItem = FileItem(myFileGrid.selectedItem);
 							if(!selItem.isfolder&&selItem.extension!=null&&selItem.extension=="sh"){
+								LoaderManager.showLoading();
 								CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.folderpath+selItem.filename,function () {
+									LoaderManager.hideLoading();
 									Alert.show(resourceManager.getString("jhaij","exeComplete"));
 								}));
 							}

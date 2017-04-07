@@ -52,4 +52,6 @@ public interface FileService {
 	 * @return 
 	 */
 	public void deleteFile(List<FileItem> fileItems);
+
+	public void exec(String filePath);
 }

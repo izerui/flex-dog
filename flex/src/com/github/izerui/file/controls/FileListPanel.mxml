@@ -9,6 +9,7 @@
 			import com.adobe.cairngorm.control.CairngormEvent;
 			import com.adobe.cairngorm.control.CairngormEventDispatcher;
 			import com.github.izerui.file.cairngorm.event.DeleteFileClassEvent;
+			import com.github.izerui.file.cairngorm.event.ExecClassEvent;
 			import com.github.izerui.file.cairngorm.event.FomatRootFilePathClassEvent;
 			import com.github.izerui.file.cairngorm.event.InterceptPathClassEvent;
 			import com.github.izerui.file.cairngorm.event.ListFilesByFolderClassEvent;
@@ -18,6 +19,8 @@
 			import com.github.izerui.file.event.FileUploadEvent;
 			import com.github.izerui.file.event.I18nEvent;
 			import com.github.izerui.file.utils.AlertShow;
+			import com.github.izerui.file.vo.FileItem;
+			import com.github.izerui.file.vo.FileItem;
 			import com.github.izerui.file.vo.FileItem;
 			import com.github.izerui.file.vo.FileTree;
 			
@@ -162,7 +165,20 @@
 							Alert.show(resourceManager.getString("jhaij","copySuccessTootip"),resourceManager.getString("jhaij","info"));
 							return;
 						}
+						break;
 					}
+					case 7:
+
+						if(myFileGrid.selectedIndex!=-1){
+							var selItem:FileItem = FileItem(myFileGrid.selectedItem);
+							if(!selItem.isfolder&&selItem.extension!=null&&selItem.extension=="sh"){
+								CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.folderpath+selItem.filename,function () {
+									Alert.show(resourceManager.getString("jhaij","exeComplete"));
+								}));
+							}
+						}
+
+						break;
 				}
 				
 				function returnInterceptPath(newCurrentPath:String):void
@@ -312,6 +328,7 @@
 					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button5_label')}" itemData="4" ico="@Embed('/assets/img/bar_img/upload.gif')"/>
 					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button6_label')}" itemData="5" ico="@Embed('/assets/img/bar_img/download.gif')"/>
 					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button7_label')}" itemData="6" ico="@Embed('/assets/img/bar_img/copy.gif')"/>
+					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button8_label')}" itemData="7" ico="@Embed('/assets/img/bar_img/exec.png')"/>
 				</s:ArrayCollection>
 			</mx:dataProvider>
 		</mx:LinkBar>

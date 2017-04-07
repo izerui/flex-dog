@@ -11,6 +11,7 @@ import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -157,7 +158,21 @@ public class FileServiceImpl implements FileService {
 				}
 			}
 	}
-	
 
 
+	@Override
+	public void exec(String filePath) {
+		try {
+			String chmodCommand = "chmod 777 " + filePath;
+			Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
+			chmodProcess.waitFor();
+
+			String execCommand = "/bin/sh " + filePath;
+			Process execProcess = Runtime.getRuntime().exec(execCommand);
+			execProcess.waitFor();
+		} catch (Exception e) {
+			log.error("exec sh error",e);
+		}
+
+	}
 }

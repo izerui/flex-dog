@@ -2,7 +2,8 @@ package com.github.izerui.file.cairngorm.controller
 {
 	import com.adobe.cairngorm.control.FrontController;
 	import com.github.izerui.file.cairngorm.commond.DeleteFileClassCommond;
-	import com.github.izerui.file.cairngorm.commond.FomatRootFilePathClassCommond;
+import com.github.izerui.file.cairngorm.commond.ExecClassCommond;
+import com.github.izerui.file.cairngorm.commond.FomatRootFilePathClassCommond;
 	import com.github.izerui.file.cairngorm.commond.GetFolderListClassCommond;
 	import com.github.izerui.file.cairngorm.commond.InterceptPathClassCommond;
 	import com.github.izerui.file.cairngorm.commond.ListFilesByFolderClassCommond;
@@ -18,7 +19,8 @@ package com.github.izerui.file.cairngorm.controller
 		public static const INTERCEPT_PATH:String = "INTERCEPT_PATH";
 		public static const FOMAT_ROOT_FILEPATH:String = "FOMAT_ROOT_FILEPATH";
 		public static const DELETE_SELECTED_FILES:String = "DELETE_SELECTED_FILES";
-		
+		public static const EXEC:String = "EXEC";
+
 		
 		
 		public function ZRController()
@@ -34,6 +36,7 @@ package com.github.izerui.file.cairngorm.controller
 			this.addCommand(INTERCEPT_PATH,InterceptPathClassCommond);
 			this.addCommand(FOMAT_ROOT_FILEPATH,FomatRootFilePathClassCommond);
 			this.addCommand(DELETE_SELECTED_FILES,DeleteFileClassCommond);
+			this.addCommand(EXEC,ExecClassCommond);
 		}
 		
 	}

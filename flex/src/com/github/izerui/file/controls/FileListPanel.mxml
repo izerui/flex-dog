@@ -142,13 +142,13 @@
 						if (!selItem.isfolder) {
 							LoaderManager.showLoading();
 							CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.filename, function (output) {
+
+								loadFiles(currentPath,selItem);
+
 								var popUp:DeployTitleWindow = new DeployTitleWindow();
 								popUp.output = output ? output : "未知";
 								PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
 								PopUpManager.centerPopUp(popUp)
-
-								loadFiles(currentPath,selItem);
-
 							}));
 						}
 					}

@@ -12,6 +12,7 @@ public class FileItem implements Serializable{
 	private Boolean ishidden;//是否是隐藏文件
 	private Boolean isfolder;
 	private Date lashmodifydate;
+	private Date deployTime;
 	public Date getLashmodifydate() {
 		return lashmodifydate;
 	}
@@ -19,6 +20,9 @@ public class FileItem implements Serializable{
 		this.lashmodifydate = lashmodifydate;
 	}
 	public Boolean isIshidden() {
+		return ishidden;
+	}
+	public Boolean getIshidden() {
 		return ishidden;
 	}
 	public void setIshidden(Boolean ishidden) {
@@ -63,5 +67,13 @@ public class FileItem implements Serializable{
 	}
 	public void setSize(Long size) {
 		this.size = size;
+	}
+
+	public Date getDeployTime() {
+		return deployTime;
+	}
+
+	public void setDeployTime(Date deployTime) {
+		this.deployTime = deployTime;
 	}
 }

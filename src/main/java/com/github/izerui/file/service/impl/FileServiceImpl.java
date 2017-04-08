@@ -1,5 +1,7 @@
 package com.github.izerui.file.service.impl;
 
+import com.github.izerui.file.entity.DeployEntity;
+import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.service.FileService;
 import com.github.izerui.file.utils.ExtendFilenameUtils;
 import com.github.izerui.file.vo.FileItem;
@@ -8,9 +10,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.*;
@@ -18,6 +22,7 @@ import java.util.*;
 @RemotingDestination
 @Service("fileService")
 @ConfigurationProperties
+@Transactional
 public class FileServiceImpl implements FileService {
 
 	private static Logger log = Logger.getLogger(FileServiceImpl.class);
@@ -39,6 +44,9 @@ public class FileServiceImpl implements FileService {
 		rootPath = System.getProperty("user.dir")+File.separator;
 	}
 
+
+	@Autowired
+	private DeployRepository deployRepository;
 
 //	public String fomatRootFilePath(){
 //		if(!filePath.endsWith(File.separator)){
@@ -103,6 +111,13 @@ public class FileServiceImpl implements FileService {
 				fi.setIshidden(file.isHidden());
 				fi.setFilename(file.getName());
 				fi.setSize(file.length());
+
+				DeployEntity one = deployRepository.findOne(fi.getFilename());
+				if(one!=null){
+					fi.setDeployTime(one.getDeployTime());
+				}
+
+
 			}
 			files.add(fi);
 		}
@@ -211,6 +226,15 @@ public class FileServiceImpl implements FileService {
 			if(!deployed){
 				throw new RuntimeException("不支持该文件");
 			}
+
+			//保存发布记录
+			DeployEntity one = deployRepository.findOne(fileName);
+			if(one==null){
+				one = new DeployEntity();
+				one.setFileName(fileName);
+			}
+			one.setDeployTime(new Date());
+			deployRepository.save(one);
 
 			return output;
 

@@ -46,9 +46,11 @@
 				currentPath = folderPathEndSeparator;//保存当前path路径
 
 				if(selItem != null){
-					for each (var item in data){
+					for(var i=0;i<data.length;i++){
+						var item:FileItem = data[i];
 						if(item.filename == selItem.filename){
-							myFileGrid.selectedItem = item;
+							myFileGrid.selectedIndex = i;
+							myFileGrid.scrollToIndex(i);
 							break;
 						}
 					}

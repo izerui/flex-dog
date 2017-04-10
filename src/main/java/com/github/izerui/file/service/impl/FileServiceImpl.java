@@ -4,6 +4,7 @@ import com.github.izerui.file.entity.DeployEntity;
 import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.service.FileService;
 import com.github.izerui.file.utils.ExtendFilenameUtils;
+import com.github.izerui.file.utils.RelativeDateFormat;
 import com.github.izerui.file.vo.FileItem;
 import com.github.izerui.file.vo.FileTree;
 import org.apache.commons.io.FileUtils;
@@ -115,6 +116,7 @@ public class FileServiceImpl implements FileService {
 				DeployEntity one = deployRepository.findOne(fi.getFilename());
 				if(one!=null){
 					fi.setDeployTime(one.getDeployTime());
+					fi.setRelativeDeployTime(RelativeDateFormat.format(one.getDeployTime()));
 				}
 
 

@@ -1,5 +1,7 @@
 package com.github.izerui.file.vo;
 
+import com.github.izerui.file.utils.RelativeDateFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,6 +15,7 @@ public class FileItem implements Serializable{
 	private Boolean isfolder;
 	private Date lashmodifydate;
 	private Date deployTime;
+	private String relativeDeployTime;
 	public Date getLashmodifydate() {
 		return lashmodifydate;
 	}
@@ -75,5 +78,13 @@ public class FileItem implements Serializable{
 
 	public void setDeployTime(Date deployTime) {
 		this.deployTime = deployTime;
+	}
+
+	public void setRelativeDeployTime(String relativeDeployTime) {
+		this.relativeDeployTime = relativeDeployTime;
+	}
+
+	public String getRelativeDeployTime() {
+		return this.relativeDeployTime;
 	}
 }

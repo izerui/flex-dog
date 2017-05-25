@@ -39,9 +39,9 @@
 			LoaderManager.showLoading(false);
 			function listFileResponse(data:ArrayCollection):void {
 				LoaderManager.hideLoading();
-				data.sort = new Sort;
-				data.sort.fields = [new SortField("isfolder", true, true)];
-				data.refresh();
+//				data.sort = new Sort;
+//				data.sort.fields = [new SortField("isfolder", true, true)];
+//				data.refresh();
 				myFileGrid.dataProvider = data;
 				currentPath = folderPathEndSeparator;//保存当前path路径
 

@@ -126,7 +126,15 @@ public class FileServiceImpl implements FileService {
 
 
 		files.sort((o1, o2) -> {
-			return o1.getLashmodifydate().after(o2.getLashmodifydate())?1:-1;
+			if(o1.isIsfolder()&&o2.getIsfolder()){
+				return o1.getLashmodifydate().after(o2.getLashmodifydate())?-1:1;
+			}else if(o1.isIsfolder()){
+				return -1;
+			}else if(o2.isIsfolder()){
+				return 1;
+			}else{
+				return o1.getLashmodifydate().after(o2.getLashmodifydate())?-1:1;
+			}
 		});
 
 		return files;

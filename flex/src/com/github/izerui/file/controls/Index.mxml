@@ -5,7 +5,7 @@
 			   xmlns:controls="com.github.izerui.file.controls.*"
 			   minWidth="800" minHeight="600"
 			   preloader="mx.preloaders.DownloadProgressBar"
-			   backgroundColor="0xb2e3f8" creationComplete="application1_creationCompleteHandler(event)">
+			   backgroundColor="#3b707e" creationComplete="application1_creationCompleteHandler(event)">
 	<fx:Metadata>
 		[ResourceBundle("jhaij")]
 	</fx:Metadata>
@@ -43,7 +43,7 @@
 	</fx:Declarations>
 	
 	<s:VGroup width="100%" height="100%">
-		<controls:HeaderPanel width="100%" height="100"/>
+		<controls:HeaderPanel width="100%" height="64"/>
 		<mx:HDividedBox width="100%" height="100%" horizontalGap="5">
 			<controls:FileTreePanel width="25%" height="100%" FileTreeItemClick="filetreepanel1_FileTreeItemClickHandler(event)">
 				

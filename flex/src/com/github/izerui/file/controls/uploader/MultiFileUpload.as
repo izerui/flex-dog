@@ -387,7 +387,7 @@ package com.github.izerui.file.controls.uploader {
 			if(event.bytesLoaded == event.bytesTotal){
 				_progressbar.label = ResourceManager.getInstance().getString("jhaij","progressbar_label");
 			}else{
-	            _progressbar.label = ResourceManager.getInstance().getString("jhaij","haveUploadTootip")+" " + Math.round(event.bytesLoaded / 1024) + " kb "+ResourceManager.getInstance().getString("jhaij","of")+" " + Math.round(event.bytesTotal / 1024) + " kb " + (_files.length - 1) + " "+ResourceManager.getInstance().getString("jhaij","remaining_files");
+	            _progressbar.label = ResourceManager.getInstance().getString("jhaij","haveUploadTootip")+" " + Math.round(event.bytesTotal / 1024) + " kb "+ResourceManager.getInstance().getString("jhaij","of")+" " + Math.round(event.bytesLoaded / 1024) + " kb " + (_files.length - 1) + " "+ResourceManager.getInstance().getString("jhaij","remaining_files");
 			}
         }
 

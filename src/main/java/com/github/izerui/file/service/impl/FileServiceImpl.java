@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RemotingDestination
 @Service("fileService")
@@ -95,7 +96,6 @@ public class FileServiceImpl implements FileService {
 		List<FileItem> files = new ArrayList<FileItem>();
 		File folderFile = new File(folderPath);
 		File[] filesArray = folderFile.listFiles();
-		Arrays.sort(filesArray);
 		for (File file : filesArray) {
 			FileItem fi = new FileItem();
 			fi.setLashmodifydate(new Date(file.lastModified()));
@@ -123,6 +123,12 @@ public class FileServiceImpl implements FileService {
 			}
 			files.add(fi);
 		}
+
+
+		files.sort((o1, o2) -> {
+			return o1.getLashmodifydate().after(o2.getLashmodifydate())?1:-1;
+		});
+
 		return files;
 	}
 

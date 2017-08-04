@@ -273,7 +273,7 @@
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<mx:DataGrid id="myFileGrid" width="100%" height="100%" allowMultipleSelection="true" itemDoubleClick="myFileGrid_itemDoubleClickHandler(event)" doubleClickEnabled="true">
+	<mx:DataGrid id="myFileGrid" width="100%" height="100%" itemDoubleClick="myFileGrid_itemDoubleClickHandler(event)" doubleClickEnabled="true">
 		<mx:columns>
 				<mx:DataGridColumn itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender" dataField="filename" headerText="{resourceManager.getString('jhaij','filegrid_name_header')}"/>
 				<mx:DataGridColumn width="150"  dataField="size" headerText="{resourceManager.getString('jhaij','filegrid_size_header')}" labelFunction="filesize_labelFun"/>

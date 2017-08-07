@@ -4,8 +4,9 @@ import com.github.izerui.file.utils.VideoMimeTypes;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,22 +19,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
 @ConfigurationProperties
 @Controller
 public class FileController {
-
-    private Map<String, String> servers;
-
-    public Map<String, String> getServers() {
-        return servers;
-    }
-
-    public void setServers(Map<String, String> servers) {
-        this.servers = servers;
-    }
 
     private Logger log = Logger.getLogger(FileController.class);
 
@@ -44,16 +36,22 @@ public class FileController {
             HttpServletRequest request,
             HttpServletResponse response) {
         try {
-
             List<String> regexList = new ArrayList<>();
-            servers.forEach((s, s2) -> {
-                String[] split = s2.split(",");
-                for (String s1 : split) {
-                    if (file.getOriginalFilename().startsWith(s1)) {
-                        regexList.add(s + ":" + s1);
+            Properties properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource("/etc/deploy.properties"));
+            Enumeration<Object> keys = properties.keys();
+            while (keys.hasMoreElements()) {
+                String server = (String) keys.nextElement();
+                String services = properties.getProperty(server);
+                if (services != null && !services.equals("")) {
+                    String[] split = services.split(",");
+                    for (String service : split) {
+                        String[] apps = service.split(":");
+                        if (service != null && apps[1].equals(file.getOriginalFilename())) {
+                            regexList.add(server + ":" + apps[1]);
+                        }
                     }
                 }
-            });
+            }
 
             if (regexList.size() == 0) {
                 throw new RuntimeException("不支持上传该文件");

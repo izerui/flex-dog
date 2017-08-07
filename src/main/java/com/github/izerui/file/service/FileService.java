@@ -53,5 +53,5 @@ public interface FileService {
 	 */
 	public void deleteFile(List<FileItem> fileItems);
 
-	public String exec(String fileName);
+	public String exec(String fileName) throws Exception;
 }

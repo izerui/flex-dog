@@ -13,11 +13,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -201,32 +204,32 @@ public class FileServiceImpl implements FileService {
 
 
 	@Override
-	public String exec(String fileName) {
-
-	    String output = "";
+	public String exec(String fileName) throws Exception {
+		String output = "";
 		boolean deployed = false;
 		try {
-			Iterator<String> iterator = servers.keySet().iterator();
-			while (iterator.hasNext()){
-				String server = iterator.next();
-				String services = servers.get(server);
+			Properties properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource("/etc/deploy.properties"));
+			Enumeration<Object> keys = properties.keys();
+			while (keys.hasMoreElements()) {
+				String server = (String) keys.nextElement();
+				String services = properties.getProperty(server);
 				if(services!=null&&!services.equals("")){
 					String[] split = services.split(",");
 					for (String service : split) {
 						String[] apps = service.split(":");
 						if(service!=null&&apps[1].equals(fileName)){
 
-                            String chmodCommand = "chmod 777 /etc/ansible/application-operation.sh";
-                            Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
-                            chmodProcess.waitFor();
+							String chmodCommand = "chmod 777 /etc/ansible/application-operation.sh";
+							Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
+							chmodProcess.waitFor();
 
 
 							String command = "/bin/sh /etc/ansible/application-operation.sh "+apps[0]+" "+server+" "+fileName;
 							Process execProcess = Runtime.getRuntime().exec(command);
 							execProcess.waitFor();
 
-                            output += IOUtils.toString(execProcess.getInputStream(),"UTF-8") +"\n";
-                            log.info(output);
+							output += IOUtils.toString(execProcess.getInputStream(),"UTF-8") +"\n";
+							log.info(output);
 
 							deployed = true;
 						}
@@ -236,6 +239,7 @@ public class FileServiceImpl implements FileService {
 				}
 
 			}
+
 
 			if(!deployed){
 				throw new RuntimeException("不支持该文件");

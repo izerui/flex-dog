@@ -1,0 +1,241 @@
+[
+  {
+    "server": "b04",
+    "services": [
+      {
+        "file": "sale-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "sale-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "manufacture-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "manufacture-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "purchase-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "purchase-pc-exec.jar",
+        "type": "jar"
+      }
+    ]
+  },
+  {
+    "server": "b03",
+    "services": [
+      {
+        "file": "development-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "development-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "documentary-note-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "documentary-note-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "warehouse-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "warehouse-api-exec.jar",
+        "type": "jar"
+      }
+    ]
+  },
+  {
+    "server": "p106",
+    "services": [
+      {
+        "file": "front.zip",
+        "type": "www"
+      },
+      {
+        "file": "public.zip",
+        "type": "www"
+      },
+      {
+        "file": "user-feedback-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "user-feedback-provider-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "template.zip",
+        "type": "file"
+      },
+      {
+        "file": "货品档案导入模板.xlsx",
+        "type": "file"
+      }
+    ]
+  },
+  {
+    "server": "b02",
+    "services": [
+      {
+        "file": "hr-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "hr-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "crm-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "crm-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "mrp-api-exec.jar",
+        "type": "jar"
+      }
+    ]
+  },
+  {
+    "server": "b01",
+    "services": [
+      {
+        "file": "financial-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "financial-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "system-setting-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "system-setting-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "dictionary-pc-exec.jar",
+        "type": "jar"
+      }
+    ]
+  },
+  {
+    "server": "p240",
+    "services": [
+      {
+        "file": "eureka-server-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "config-server-exec.jar",
+        "type": "jar"
+      }
+    ]
+  },
+  {
+    "server": "p187",
+    "services": [
+      {
+        "file": "file-storage-provider-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "file-dog-exec.jar",
+        "type": "jar"
+      }
+    ]
+  },
+  {
+    "server": "p55",
+    "services": [
+      {
+        "file": "code-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "rbac-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "rbac-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "task-pc-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "rabbitmq-api-exec.jar",
+        "type": "jar"
+      }
+    ]
+  },
+  {
+    "server": "p25",
+    "services": [
+      {
+        "file": "api-gateway-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "flow-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "pay-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "expense-pc-exec.jar",
+        "type": "jar"
+      }
+    ]
+  },
+  {
+    "server": "p230",
+    "services": [
+      {
+        "file": "zipkin-server-exec.jar",
+        "type": "jar"
+      }
+    ]
+  },
+  {
+    "server": "p121",
+    "services": [
+      {
+        "file": "dictionary-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "file-storage-upload-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "data-authority-api-exec.jar",
+        "type": "jar"
+      },
+      {
+        "file": "data-authority-pc-exec.jar",
+        "type": "jar"
+      }
+    ]
+  }
+]

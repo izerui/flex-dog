@@ -1,9 +1,13 @@
 package com.github.izerui.file.controller;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.utils.VideoMimeTypes;
+import com.github.izerui.file.vo.Server;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -27,6 +31,9 @@ import java.util.Properties;
 @Controller
 public class FileController {
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private Logger log = Logger.getLogger(FileController.class);
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
@@ -36,24 +43,20 @@ public class FileController {
             HttpServletRequest request,
             HttpServletResponse response) {
         try {
-            List<String> regexList = new ArrayList<>();
-            Properties properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource("/etc/deploy.properties"));
-            Enumeration<Object> keys = properties.keys();
-            while (keys.hasMoreElements()) {
-                String server = (String) keys.nextElement();
-                String services = properties.getProperty(server);
-                if (services != null && !services.equals("")) {
-                    String[] split = services.split(",");
-                    for (String service : split) {
-                        String[] apps = service.split(":");
-                        if (service != null && apps[1].equals(file.getOriginalFilename())) {
-                            regexList.add(server + ":" + apps[1]);
-                        }
+
+            boolean exist = false;
+
+            JavaType javaType = objectMapper.getTypeFactory().constructParametricType(List.class, Server.class);
+            List<Server> servers =  objectMapper.readValue(new File("/etc/deploy.json"), javaType);
+            for (Server server : servers) {
+                for (Server.Service service : server.getServices()) {
+                    if (service != null && service.getFile().equals(file.getOriginalFilename())) {
+                        exist = true;
                     }
                 }
             }
 
-            if (regexList.size() == 0) {
+            if (!exist) {
                 throw new RuntimeException("不支持上传该文件");
             }
 

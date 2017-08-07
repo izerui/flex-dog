@@ -1,5 +1,7 @@
 package com.github.izerui.file.service.impl;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.entity.DeployEntity;
 import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.service.FileService;
@@ -7,6 +9,7 @@ import com.github.izerui.file.utils.ExtendFilenameUtils;
 import com.github.izerui.file.utils.RelativeDateFormat;
 import com.github.izerui.file.vo.FileItem;
 import com.github.izerui.file.vo.FileTree;
+import com.github.izerui.file.vo.Server;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -35,16 +38,6 @@ public class FileServiceImpl implements FileService {
 
 	private static String rootPath;
 
-	private Map<String,String> servers;
-
-	public Map<String, String> getServers() {
-		return servers;
-	}
-
-	public void setServers(Map<String, String> servers) {
-		this.servers = servers;
-	}
-
 	static {
 		rootPath = System.getProperty("user.dir")+File.separator;
 	}
@@ -52,6 +45,9 @@ public class FileServiceImpl implements FileService {
 
 	@Autowired
 	private DeployRepository deployRepository;
+
+	@Autowired
+	private ObjectMapper objectMapper;
 
 //	public String fomatRootFilePath(){
 //		if(!filePath.endsWith(File.separator)){
@@ -208,38 +204,28 @@ public class FileServiceImpl implements FileService {
 		String output = "";
 		boolean deployed = false;
 		try {
-			Properties properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource("/etc/deploy.properties"));
-			Enumeration<Object> keys = properties.keys();
-			while (keys.hasMoreElements()) {
-				String server = (String) keys.nextElement();
-				String services = properties.getProperty(server);
-				if(services!=null&&!services.equals("")){
-					String[] split = services.split(",");
-					for (String service : split) {
-						String[] apps = service.split(":");
-						if(service!=null&&apps[1].equals(fileName)){
+			JavaType javaType = objectMapper.getTypeFactory().constructParametricType(List.class, Server.class);
+			List<Server> servers =  objectMapper.readValue(new File("/etc/deploy.json"), javaType);
+			for (Server server : servers) {
+				for (Server.Service service : server.getServices()) {
+					if(service!=null&&service.getFile().equals(fileName)){
 
-							String chmodCommand = "chmod 777 /etc/ansible/application-operation.sh";
-							Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
-							chmodProcess.waitFor();
+						String chmodCommand = "chmod 777 /etc/ansible/application-operation.sh";
+						Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
+						chmodProcess.waitFor();
 
 
-							String command = "/bin/sh /etc/ansible/application-operation.sh "+apps[0]+" "+server+" "+fileName;
-							Process execProcess = Runtime.getRuntime().exec(command);
-							execProcess.waitFor();
+						String command = "/bin/sh /etc/ansible/application-operation.sh "+service.getType()+" "+server.getServer()+" "+service.getFile();
+						Process execProcess = Runtime.getRuntime().exec(command);
+						execProcess.waitFor();
 
-							output += IOUtils.toString(execProcess.getInputStream(),"UTF-8") +"\n";
-							log.info(output);
+						output += IOUtils.toString(execProcess.getInputStream(),"UTF-8") +"\n";
+						log.info(output);
 
-							deployed = true;
-						}
-
+						deployed = true;
 					}
-
 				}
-
 			}
-
 
 			if(!deployed){
 				throw new RuntimeException("不支持该文件");

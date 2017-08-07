@@ -206,9 +206,6 @@ public class FileServiceImpl implements FileService {
 	    String output = "";
 		boolean deployed = false;
 		try {
-			String fileBaseName = FilenameUtils.getBaseName(fileName);
-			String ext = FilenameUtils.getExtension(fileName);
-			fileBaseName = fileBaseName.replace("-exec","");
 			Iterator<String> iterator = servers.keySet().iterator();
 			while (iterator.hasNext()){
 				String server = iterator.next();
@@ -216,14 +213,15 @@ public class FileServiceImpl implements FileService {
 				if(services!=null&&!services.equals("")){
 					String[] split = services.split(",");
 					for (String service : split) {
-						if(service!=null&&service.equals(fileBaseName)){
+						String[] apps = service.split(":");
+						if(service!=null&&apps[1].equals(fileName)){
 
                             String chmodCommand = "chmod 777 /etc/ansible/application-operation.sh";
                             Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
                             chmodProcess.waitFor();
 
 
-							String command = "/bin/sh /etc/ansible/application-operation.sh "+ext+" "+server+" "+service;
+							String command = "/bin/sh /etc/ansible/application-operation.sh "+apps[0]+" "+server+" "+fileName;
 							Process execProcess = Runtime.getRuntime().exec(command);
 							execProcess.waitFor();
 

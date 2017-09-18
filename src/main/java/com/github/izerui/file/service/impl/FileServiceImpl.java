@@ -36,7 +36,7 @@ public class FileServiceImpl implements FileService {
 	private static Logger log = Logger.getLogger(FileServiceImpl.class);
 
 
-	private static String rootPath;
+	public static String rootPath;
 
 	static {
 		rootPath = System.getProperty("user.dir")+File.separator;
@@ -205,7 +205,7 @@ public class FileServiceImpl implements FileService {
 		boolean deployed = false;
 		try {
 			JavaType javaType = objectMapper.getTypeFactory().constructParametricType(List.class, Server.class);
-			List<Server> servers =  objectMapper.readValue(new File("/etc/deploy.json"), javaType);
+			List<Server> servers =  objectMapper.readValue(new File(rootPath+"deploy.json"), javaType);
 			for (Server server : servers) {
 				for (Server.Service service : server.getServices()) {
 					if(service!=null&&service.getFile().equals(fileName)){

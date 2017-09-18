@@ -2,6 +2,7 @@ package com.github.izerui.file.controller;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.izerui.file.service.impl.FileServiceImpl;
 import com.github.izerui.file.utils.VideoMimeTypes;
 import com.github.izerui.file.vo.Server;
 import org.apache.commons.io.FilenameUtils;
@@ -43,21 +44,20 @@ public class FileController {
             HttpServletRequest request,
             HttpServletResponse response) {
         try {
-
-            boolean exist = false;
-
-            JavaType javaType = objectMapper.getTypeFactory().constructParametricType(List.class, Server.class);
-            List<Server> servers =  objectMapper.readValue(new File("/etc/deploy.json"), javaType);
-            for (Server server : servers) {
-                for (Server.Service service : server.getServices()) {
-                    if (service != null && service.getFile().equals(file.getOriginalFilename())) {
-                        exist = true;
+            if(!file.getOriginalFilename().equals("deploy.json")){
+                boolean exist = false;
+                JavaType javaType = objectMapper.getTypeFactory().constructParametricType(List.class, Server.class);
+                List<Server> servers =  objectMapper.readValue(new File(FileServiceImpl.rootPath+"deploy.json"), javaType);
+                for (Server server : servers) {
+                    for (Server.Service service : server.getServices()) {
+                        if (service != null && service.getFile().equals(file.getOriginalFilename())) {
+                            exist = true;
+                        }
                     }
                 }
-            }
-
-            if (!exist) {
-                throw new RuntimeException("不支持上传该文件");
+                if (!exist) {
+                    throw new RuntimeException("不支持上传该文件");
+                }
             }
 
             File newFile = new File(FilenameUtils.getFullPath(serverpath) + file.getOriginalFilename());

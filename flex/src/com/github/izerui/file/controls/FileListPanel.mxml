@@ -278,8 +278,8 @@
 				<mx:DataGridColumn itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender" dataField="filename" headerText="{resourceManager.getString('jhaij','filegrid_name_header')}"/>
 				<mx:DataGridColumn width="150"  dataField="size" headerText="{resourceManager.getString('jhaij','filegrid_size_header')}" labelFunction="filesize_labelFun"/>
 				<mx:DataGridColumn width="150"  dataField="servers" headerText="{resourceManager.getString('jhaij','filegrid_servers_header')}"/>
-				<mx:DataGridColumn width="150" 	dataTipField="lashmodifyDate"  dataField="relativeLashmodifyDate" labelFunction="formatDate" headerText="{resourceManager.getString('jhaij','filegrid_lashmodifydate_header')}"/>
-				<mx:DataGridColumn width="150"  dataTipField="deployTime" dataField="relativeDeployTime" headerText="{resourceManager.getString('jhaij','filegrid_deployTime_header')}"/>
+				<mx:DataGridColumn width="150" 	dataField="relativeLashmodifyDate" headerText="{resourceManager.getString('jhaij','filegrid_lashmodifydate_header')}"/>
+				<mx:DataGridColumn width="150"  dataField="relativeDeployTime" headerText="{resourceManager.getString('jhaij','filegrid_deployTime_header')}"/>
 		</mx:columns>
 	</mx:DataGrid>
 	<mx:ControlBar>

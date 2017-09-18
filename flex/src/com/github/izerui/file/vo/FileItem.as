@@ -14,10 +14,12 @@ package com.github.izerui.file.vo
 		public var size:Number;//文件大小
 		public var ishidden:Boolean ;//是否是隐藏文件
 		public var isfolder:Boolean;//是否是文件夹
-		public var lashmodifydate:Date;//是否是文件夹
+		public var lashmodifyDate:Date;//是否是文件夹
+		public var relativeLashmodifyDate:String;
 		public var deployTime:Date;
 		public var relativeDeployTime:String;
-		
-		
+		public var servers:String;
+
+
 	}
 }

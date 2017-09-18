@@ -13,15 +13,36 @@ public class FileItem implements Serializable{
 	private Long size;//文件大小
 	private Boolean ishidden;//是否是隐藏文件
 	private Boolean isfolder;
-	private Date lashmodifydate;
+	private Date lashmodifyDate;
+	private String relativeLashmodifyDate;
 	private Date deployTime;
+	private String servers;
 	private String relativeDeployTime;
-	public Date getLashmodifydate() {
-		return lashmodifydate;
+
+	public String getRelativeLashmodifyDate() {
+		return relativeLashmodifyDate;
 	}
-	public void setLashmodifydate(Date lashmodifydate) {
-		this.lashmodifydate = lashmodifydate;
+
+	public void setRelativeLashmodifyDate(String relativeLashmodifyDate) {
+		this.relativeLashmodifyDate = relativeLashmodifyDate;
 	}
+
+	public String getServers() {
+		return servers;
+	}
+
+	public void setServers(String servers) {
+		this.servers = servers;
+	}
+
+	public Date getLashmodifyDate() {
+		return lashmodifyDate;
+	}
+
+	public void setLashmodifyDate(Date lashmodifyDate) {
+		this.lashmodifyDate = lashmodifyDate;
+	}
+
 	public Boolean isIshidden() {
 		return ishidden;
 	}

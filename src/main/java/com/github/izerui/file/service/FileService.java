@@ -17,7 +17,7 @@ public interface FileService {
 	 * @param folderPath
 	 * @return
 	 */
-	public List<FileItem> listFilesByFolder(String folderPath);
+	public List<FileItem> listFilesByFolder(String folderPath) throws Exception;
 	/**
 	 * 不是新建就是删除
 	 * @param path

@@ -1,303 +1,270 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 title="{resourceManager.getString('jhaij','filegrid_title')}" titleIcon="@Embed('/assets/img/billing.png')" creationComplete="panel1_creationCompleteHandler(event)">
-	
-	<fx:Script>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
+          xmlns:s="library://ns.adobe.com/flex/spark"
+          xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:searchinput="com.github.izerui.file.components.searchInput.*"
+          title="{resourceManager.getString('jhaij','filegrid_title')}" titleIcon="@Embed('/assets/img/billing.png')"
+          creationComplete="panel1_creationCompleteHandler(event)">
+
+    <fx:Script>
 		<![CDATA[
-		import com.adobe.cairngorm.control.CairngormEventDispatcher;
-		import com.github.izerui.file.cairngorm.event.DeleteFileClassEvent;
-		import com.github.izerui.file.cairngorm.event.ExecClassEvent;
-		import com.github.izerui.file.cairngorm.event.FomatRootFilePathClassEvent;
-		import com.github.izerui.file.cairngorm.event.InterceptPathClassEvent;
-		import com.github.izerui.file.cairngorm.event.ListFilesByFolderClassEvent;
-		import com.github.izerui.file.components.loading.LoaderManager;
-		import com.github.izerui.file.controls.titlewin.DeployTitleWindow;
-		import com.github.izerui.file.controls.uploader.ServletUploader;
-		import com.github.izerui.file.event.FileUploadEvent;
-		import com.github.izerui.file.event.I18nEvent;
-		import com.github.izerui.file.utils.AlertShow;
-		import com.github.izerui.file.vo.FileItem;
+        import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        import com.github.izerui.file.cairngorm.event.DeleteFileClassEvent;
+        import com.github.izerui.file.cairngorm.event.ExecClassEvent;
+        import com.github.izerui.file.cairngorm.event.ListFilesByFolderClassEvent;
+        import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.controls.titlewin.DeployTitleWindow;
+        import com.github.izerui.file.controls.uploader.ServletUploader;
+        import com.github.izerui.file.event.FileUploadEvent;
+        import com.github.izerui.file.event.I18nEvent;
+        import com.github.izerui.file.utils.AlertShow;
+        import com.github.izerui.file.vo.FileItem;
 
-		import mx.collections.ArrayCollection;
-		import mx.collections.Sort;
-		import mx.collections.SortField;
-		import mx.controls.Alert;
-		import mx.core.FlexGlobals;
-		import mx.events.FlexEvent;
-		import mx.events.ItemClickEvent;
-		import mx.events.ListEvent;
-		import mx.formatters.DateFormatter;
-		import mx.managers.PopUpManager;
-		import mx.utils.URLUtil;
+        import mx.collections.ArrayCollection;
+        import mx.controls.Alert;
+        import mx.core.FlexGlobals;
+        import mx.events.FlexEvent;
+        import mx.events.ItemClickEvent;
+        import mx.events.ListEvent;
+        import mx.formatters.DateFormatter;
+        import mx.managers.PopUpManager;
+        import mx.utils.ObjectUtil;
+        import mx.utils.URLUtil;
 
-		private var currentPath:String;
+        private var dataList:ArrayCollection;
 
-		public function loadFiles(folderPathEndSeparator:String,selItem:FileItem = null):void {
-			CairngormEventDispatcher.getInstance().dispatchEvent(new ListFilesByFolderClassEvent(folderPathEndSeparator, listFileResponse));
-			LoaderManager.showLoading(false);
-			function listFileResponse(data:ArrayCollection):void {
-				LoaderManager.hideLoading();
+        public function loadFiles(selItem:FileItem = null):void {
+            CairngormEventDispatcher.getInstance().dispatchEvent(new ListFilesByFolderClassEvent(listFileResponse));
+            LoaderManager.showLoading(false);
+
+            function listFileResponse(data:ArrayCollection):void {
+                searchKey.reset();
+                LoaderManager.hideLoading();
 //				data.sort = new Sort;
 //				data.sort.fields = [new SortField("isfolder", true, true)];
 //				data.refresh();
-				myFileGrid.dataProvider = data;
-				currentPath = folderPathEndSeparator;//保存当前path路径
+                dataList = data;
+                myFileGrid.dataProvider = dataList;
 
-				if(selItem != null){
-					for(var i=0;i<data.length;i++){
-						var item:FileItem = data[i];
-						if(item.filename == selItem.filename){
-							myFileGrid.selectedIndex = i;
-							myFileGrid.scrollToIndex(i);
-							break;
-						}
-					}
-				}
-			}
-		}
+                if (selItem != null) {
+                    for (var i = 0; i < data.length; i++) {
+                        var item:FileItem = data[i];
+                        if (item.filename == selItem.filename) {
+                            myFileGrid.selectedIndex = i;
+                            myFileGrid.scrollToIndex(i);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
 
-		protected function myFileGrid_itemDoubleClickHandler(event:ListEvent):void {
-			// TODO Auto-generated method stub
-			if (myFileGrid.selectedItem.isfolder) {
-				this.loadFiles(myFileGrid.selectedItem.folderpath as String);
-			} else {
-				downloadFile();
-//					var selItem = myFileGrid.selectedItem as FileItem;
+        protected function searchTextInputEvent(event:Event):void {
+            if (!searchKey.text) {
+                myFileGrid.dataProvider = dataList;
+                return;
+            }
+            var tempSearchList:ArrayCollection = new ArrayCollection;
+            myFileGrid.dataProvider = tempSearchList;
 
-			}
-		}
+            for each (var fi:FileItem in dataList) {
+                if (fi.filename.indexOf(searchKey.text) != -1) {
+                    tempSearchList.addItem(ObjectUtil.clone(fi));
+                }
+            }
+        }
 
-		private function formatDate(item:Object, column:DataGridColumn):String {
-			var df:DateFormatter = new DateFormatter();
-			df.formatString = "YYYY-MM-DD HH:NN:SS";
-			return df.format(item[column.dataField]);// df是一个DateFormatter，这里格式化item数据中的startDate字段
-		}
+        private function formatDate(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD HH:NN:SS";
+            return df.format(item[column.dataField]);// df是一个DateFormatter，这里格式化item数据中的startDate字段
+        }
 
-		protected function panel1_creationCompleteHandler(event:FlexEvent):void {
-			resourceManager.addEventListener(I18nEvent.I18NRESOURCECHANGE, i18nResourceChange);
+        protected function panel1_creationCompleteHandler(event:FlexEvent):void {
+            resourceManager.addEventListener(I18nEvent.I18NRESOURCECHANGE, i18nResourceChange);
+            loadFiles();
+        }
 
-		}
+        private function i18nResourceChange(event:I18nEvent):void {
+            (linkButtonBar.dataProvider as ArrayCollection).refresh();
+        }
 
-		private function i18nResourceChange(event:I18nEvent):void {
-			(linkButtonBar.dataProvider as ArrayCollection).refresh();
-		}
+        [Bindable]
+        [Embed(source="/assets/img/bar_img/back.png")]
+        private var button1_class:Class;
 
-		[Bindable]
-		[Embed(source="/assets/img/bar_img/back.png")]
-		private var button1_class:Class;
-
-		protected function linkButtonBar_itemClickHandler(event:ItemClickEvent):void {
-			if (!currentPath) {
-				return;
-			}
-			switch (event.item["itemData"]) {
-				case 0: {
-					CairngormEventDispatcher.getInstance().dispatchEvent(new InterceptPathClassEvent(currentPath, returnInterceptPath));
-					break;
-				}
-				case 1: {
-					CairngormEventDispatcher.getInstance().dispatchEvent(new FomatRootFilePathClassEvent(loadFiles));
-					break;
-				}
-				case 2: {
-					loadFiles(currentPath);
-					break;
-				}
-				case 3: {
-					deleteFiles();
-					break;
-				}
-				case 4: {
-					var servletUploader:ServletUploader = new ServletUploader;
-					servletUploader.currentPath = currentPath;
-					PopUpManager.addPopUp(servletUploader, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
-					PopUpManager.centerPopUp(servletUploader);
-					servletUploader.addEventListener(FileUploadEvent.UPLOAD_COMPLETE, fileUploadComplete);
+        protected function linkButtonBar_itemClickHandler(event:ItemClickEvent):void {
+            switch (event.item["itemData"]) {
+                case 2: {
+                    loadFiles();
+                    break;
+                }
+                case 4: {
+                    var servletUploader:ServletUploader = new ServletUploader;
+                    PopUpManager.addPopUp(servletUploader, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
+                    PopUpManager.centerPopUp(servletUploader);
+                    servletUploader.addEventListener(FileUploadEvent.UPLOAD_COMPLETE, fileUploadComplete);
 //						servletUploader.multiFileUpload.addEventListener(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE,singleFileUploadFinished);
-					servletUploader.setFocus();
-					break;
-				}
-				case 5: {
-					downloadFile();
-					break;
-				}
-				case 6: {
-					if (myFileGrid.selectedIndex != -1 && !myFileGrid.selectedItem["isfolder"]) {
+                    servletUploader.setFocus();
+                    break;
+                }
+                case 7:
 
-						var xlsUrl:String = "download?path=" + encodeURI(myFileGrid.selectedItem["folderpath"]) + "&name=" + encodeURI(myFileGrid.selectedItem["filename"]);
-						xlsUrl = URLUtil.getFullURL(this.parentApplication.url, xlsUrl);
-						System.setClipboard(xlsUrl);
-						Alert.show(resourceManager.getString("jhaij", "copySuccessTootip"), resourceManager.getString("jhaij", "info"));
-						return;
-					}
-					break;
-				}
-				case 7:
+                    if (myFileGrid.selectedIndex != -1) {
+                        var selItem:FileItem = FileItem(myFileGrid.selectedItem);
+                        if (!selItem.isfolder) {
+                            LoaderManager.showLoading();
+                            CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.filename, function (output) {
 
-					if (myFileGrid.selectedIndex != -1) {
-						var selItem:FileItem = FileItem(myFileGrid.selectedItem);
-						if (!selItem.isfolder) {
-							LoaderManager.showLoading();
-							CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.filename, function (output) {
+                                loadFiles(selItem);
 
-								loadFiles(currentPath,selItem);
+                                var popUp:DeployTitleWindow = new DeployTitleWindow();
+                                popUp.output = output ? output : "未知";
+                                PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+                                PopUpManager.centerPopUp(popUp)
+                            }));
+                        }
+                    }
+                    break;
+            }
 
-								var popUp:DeployTitleWindow = new DeployTitleWindow();
-								popUp.output = output ? output : "未知";
-								PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
-								PopUpManager.centerPopUp(popUp)
-							}));
-						}
-					}
+        }
 
 
-					break;
-			}
+        protected function fileUploadComplete(event:FileUploadEvent):void {
+            // TODO Auto-generated method stub
+            trace("上传完毕");
+            loadFiles();
+        }
 
-			function returnInterceptPath(newCurrentPath:String):void {
-				loadFiles(newCurrentPath);
-				currentPath = newCurrentPath;
-
-			}
-
-		}
-
-
-		protected function fileUploadComplete(event:FileUploadEvent):void {
-			// TODO Auto-generated method stub
-			trace("上传完毕");
-			loadFiles(currentPath);
-		}
-
-		//			protected function singleFileUploadFinished(event:FileUploadEvent):void
-		//			{
-		//				loadFiles(currentPath);
-		//
-		//			}
-
-		protected function filesize_labelFun(item:Object, column:DataGridColumn):String {
-			return Number(((item as FileItem).size / 1024).toFixed(1)).toString();
-		}
+        protected function filesize_labelFun(item:Object, column:DataGridColumn):String {
+            return Number(((item as FileItem).size / 1024).toFixed(1)).toString();
+        }
 
 
-		private function deleteFiles():void {
-			// TODO Auto Generated method stub
-			AlertShow.operateConfirm(resourceManager.getString("jhaij", "deleteFilesConfirmTooltipLabel"), resourceManager.getString("jhaij", "warn"), FlexGlobals.topLevelApplication, deleteSelectedFilesFunction);
+        private function deleteFiles():void {
+            // TODO Auto Generated method stub
+            AlertShow.operateConfirm(resourceManager.getString("jhaij", "deleteFilesConfirmTooltipLabel"), resourceManager.getString("jhaij", "warn"), FlexGlobals.topLevelApplication, deleteSelectedFilesFunction);
 
-			function deleteSelectedFilesFunction():void {
+            function deleteSelectedFilesFunction():void {
 
-				CairngormEventDispatcher.getInstance().dispatchEvent(new DeleteFileClassEvent(myFileGrid.selectedItems, deleteFileResponse));
+                CairngormEventDispatcher.getInstance().dispatchEvent(new DeleteFileClassEvent(myFileGrid.selectedItems, deleteFileResponse));
 
-			}
+            }
 
-			function deleteFileResponse():void {
-				loadFiles(currentPath);
-			}
-		}
-
-
-		private var fileReference:FileReference;
-
-		private var isDownloading:Boolean = false;
-
-		private function downloadFile():void {
-			if (isDownloading) {
-				Alert.show(resourceManager.getString("jhaij", "isDownloadingTootip"), resourceManager.getString("jhaij", "info"));
-				return;
-			}
-			// TODO Auto Generated method stub
-			if (myFileGrid.selectedIndex != -1) {
-
-				if (myFileGrid.selectedItem["isfolder"]) {
-					return;
-				}
-				if (!fileReference) {
-					fileReference = new FileReference();
-					fileReference.addEventListener(ProgressEvent.PROGRESS, onFileProgress);
-					fileReference.addEventListener(Event.COMPLETE, fileDownloadCompelete);
-					fileReference.addEventListener(IOErrorEvent.IO_ERROR, ioerrorDownload);
-					fileReference.addEventListener(Event.SELECT, filedownloadselect);
-				}
-				var xlsUrl:String = "download?path=" + encodeURI(myFileGrid.selectedItem["folderpath"]) + "&name=" + encodeURI(myFileGrid.selectedItem["filename"]);
-				xlsUrl = URLUtil.getFullURL(this.parentApplication.url, xlsUrl);
-				trace(xlsUrl);
-				var fileUrlRequest:URLRequest = new URLRequest(xlsUrl);
-				fileReference.download(fileUrlRequest, myFileGrid.selectedItem["filename"]);
-			}
-
-			//开始下载
-			function filedownloadselect(event:Event):void {
-				isDownloading = true;
-				stopDownload.visible = true;
-				downloadTootipLabel.visible = true;
-			}
-
-			//下载过程
-			function onFileProgress(event:ProgressEvent):void {
-				downloadTootipLabel.text = resourceManager.getString("jhaij", "downloadFileTootip") + Number(event.bytesLoaded / 1024).toFixed(3) + " of " + Number(event.bytesTotal / 1024).toFixed(3) + " bytes";
-			}
-
-			//下载成功
-			function fileDownloadCompelete(event:Event):void {
-				// TODO Auto-generated method stub
-				trace("下载成功");
-				isDownloading = false;
-				downloadTootipLabel.visible = false;
-				stopDownload.visible = false;
-			}
-
-			//下载失败
-			function ioerrorDownload(event:IOErrorEvent):void {
-				// TODO Auto-generated method stub
-				Alert.show(String(event), resourceManager.getString("jhaij", "error"));
-				isDownloading = false;
-				downloadTootipLabel.visible = false;
-				stopDownload.visible = false;
-			}
-		}
+            function deleteFileResponse():void {
+                loadFiles();
+            }
+        }
 
 
-		protected function stopDownload_clickHandler(event:MouseEvent):void {
-			// TODO Auto-generated method
-			fileReference.cancel();
-			isDownloading = false;
-			downloadTootipLabel.visible = false;
-			stopDownload.visible = false;
-		}
-		]]>
+        private var fileReference:FileReference;
+
+        private var isDownloading:Boolean = false;
+
+        private function downloadFile(event:ListEvent):void {
+            if (isDownloading) {
+                Alert.show(resourceManager.getString("jhaij", "isDownloadingTootip"), resourceManager.getString("jhaij", "info"));
+                return;
+            }
+            // TODO Auto Generated method stub
+            if (myFileGrid.selectedIndex != -1) {
+
+                if (myFileGrid.selectedItem["isfolder"]) {
+                    return;
+                }
+                if (!fileReference) {
+                    fileReference = new FileReference();
+                    fileReference.addEventListener(ProgressEvent.PROGRESS, onFileProgress);
+                    fileReference.addEventListener(Event.COMPLETE, fileDownloadCompelete);
+                    fileReference.addEventListener(IOErrorEvent.IO_ERROR, ioerrorDownload);
+                    fileReference.addEventListener(Event.SELECT, filedownloadselect);
+                }
+                var xlsUrl:String = "download?path=" + encodeURI(myFileGrid.selectedItem["folderpath"]) + "&name=" + encodeURI(myFileGrid.selectedItem["filename"]);
+                xlsUrl = URLUtil.getFullURL(this.parentApplication.url, xlsUrl);
+                trace(xlsUrl);
+                var fileUrlRequest:URLRequest = new URLRequest(xlsUrl);
+                fileReference.download(fileUrlRequest, myFileGrid.selectedItem["filename"]);
+            }
+
+            //开始下载
+            function filedownloadselect(event:Event):void {
+                isDownloading = true;
+                stopDownload.visible = true;
+                downloadTootipLabel.visible = true;
+            }
+
+            //下载过程
+            function onFileProgress(event:ProgressEvent):void {
+                downloadTootipLabel.text = resourceManager.getString("jhaij", "downloadFileTootip") + Number(event.bytesLoaded / 1024).toFixed(3) + " of " + Number(event.bytesTotal / 1024).toFixed(3) + " bytes";
+            }
+
+            //下载成功
+            function fileDownloadCompelete(event:Event):void {
+                // TODO Auto-generated method stub
+                trace("下载成功");
+                isDownloading = false;
+                downloadTootipLabel.visible = false;
+                stopDownload.visible = false;
+            }
+
+            //下载失败
+            function ioerrorDownload(event:IOErrorEvent):void {
+                // TODO Auto-generated method stub
+                Alert.show(String(event), resourceManager.getString("jhaij", "error"));
+                isDownloading = false;
+                downloadTootipLabel.visible = false;
+                stopDownload.visible = false;
+            }
+        }
+
+
+        protected function stopDownload_clickHandler(event:MouseEvent):void {
+            // TODO Auto-generated method
+            fileReference.cancel();
+            isDownloading = false;
+            downloadTootipLabel.visible = false;
+            stopDownload.visible = false;
+        }
+        ]]>
 	</fx:Script>
-	
-	<fx:Declarations>
-		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
-	</fx:Declarations>
-	<mx:DataGrid id="myFileGrid" width="100%" height="100%" itemDoubleClick="myFileGrid_itemDoubleClickHandler(event)" doubleClickEnabled="true">
-		<mx:columns>
-				<mx:DataGridColumn itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender" dataField="filename" headerText="{resourceManager.getString('jhaij','filegrid_name_header')}"/>
-				<mx:DataGridColumn width="150"  dataField="size" headerText="{resourceManager.getString('jhaij','filegrid_size_header')}" labelFunction="filesize_labelFun"/>
-				<mx:DataGridColumn width="150"  dataField="servers" headerText="{resourceManager.getString('jhaij','filegrid_servers_header')}"/>
-				<mx:DataGridColumn width="150" 	dataField="relativeLashmodifyDate" headerText="{resourceManager.getString('jhaij','filegrid_lashmodifydate_header')}"/>
-				<mx:DataGridColumn width="150"  dataField="relativeDeployTime" headerText="{resourceManager.getString('jhaij','filegrid_deployTime_header')}"/>
-		</mx:columns>
-	</mx:DataGrid>
-	<mx:ControlBar>
-		<mx:LinkBar id="linkButtonBar" iconField="ico" itemClick="linkButtonBar_itemClickHandler(event)">
-			<mx:dataProvider>
-				<s:ArrayCollection>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button1_label')}" itemData="0" ico="@Embed('/assets/img/bar_img/back.png')" />
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button2_label')}" itemData="1" ico="@Embed('/assets/img/bar_img/world.png')"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button3_label')}" itemData="2" ico="@Embed('/assets/img/bar_img/refresh.png')"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button4_label')}" itemData="3" ico="@Embed('/assets/img/bar_img/remove.png')"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button5_label')}" itemData="4" ico="@Embed('/assets/img/bar_img/upload.gif')"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button6_label')}" itemData="5" ico="@Embed('/assets/img/bar_img/download.gif')"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button7_label')}" itemData="6" ico="@Embed('/assets/img/bar_img/copy.gif')"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button8_label')}" itemData="7" ico="@Embed('/assets/img/bar_img/exec.png')"/>
-				</s:ArrayCollection>
-			</mx:dataProvider>
-		</mx:LinkBar>
-		<mx:Label id="downloadTootipLabel" visible="false"/>
-		<mx:LinkButton id="stopDownload" label="{resourceManager.getString('jhaij','cancel')}" visible="false" click="stopDownload_clickHandler(event)"/>
-	</mx:ControlBar>
+
+    <fx:Declarations>
+        <!-- 将非可视元素（例如服务、值对象）放在此处 -->
+    </fx:Declarations>
+    <mx:DataGrid id="myFileGrid" width="100%" height="100%" itemDoubleClick="downloadFile(event)"
+                 doubleClickEnabled="true">
+        <mx:columns>
+            <mx:DataGridColumn itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender"
+                               dataField="filename"
+                               headerText="{resourceManager.getString('jhaij','filegrid_name_header')}"/>
+            <mx:DataGridColumn width="150" dataField="size"
+                               headerText="{resourceManager.getString('jhaij','filegrid_size_header')}"
+                               labelFunction="filesize_labelFun"/>
+            <mx:DataGridColumn width="150" dataField="servers"
+                               headerText="{resourceManager.getString('jhaij','filegrid_servers_header')}"/>
+            <mx:DataGridColumn width="150" dataField="relativeLashmodifyDate"
+                               headerText="{resourceManager.getString('jhaij','filegrid_lashmodifydate_header')}"/>
+            <mx:DataGridColumn width="150" dataField="relativeDeployTime"
+                               headerText="{resourceManager.getString('jhaij','filegrid_deployTime_header')}"/>
+        </mx:columns>
+    </mx:DataGrid>
+    <mx:ControlBar>
+        <mx:LinkBar id="linkButtonBar" iconField="ico" itemClick="linkButtonBar_itemClickHandler(event)">
+            <mx:dataProvider>
+                <s:ArrayCollection>
+                    <fx:Object label="{resourceManager.getString('jhaij','linkbar_button3_label')}" itemData="2"
+                               ico="@Embed('/assets/img/bar_img/refresh.png')"/>
+                    <fx:Object label="{resourceManager.getString('jhaij','linkbar_button5_label')}" itemData="4"
+                               ico="@Embed('/assets/img/bar_img/upload.gif')"/>
+                    <fx:Object label="{resourceManager.getString('jhaij','linkbar_button8_label')}" itemData="7"
+                               ico="@Embed('/assets/img/bar_img/exec.png')"/>
+                </s:ArrayCollection>
+            </mx:dataProvider>
+        </mx:LinkBar>
+        <searchinput:SearchTextInput id="searchKey" width="200" change="searchTextInputEvent(event)"/>
+        <mx:Label id="downloadTootipLabel" visible="false"/>
+        <mx:LinkButton id="stopDownload" label="{resourceManager.getString('jhaij','cancel')}" visible="false"
+                       click="stopDownload_clickHandler(event)"/>
+    </mx:ControlBar>
 </mx:Panel>

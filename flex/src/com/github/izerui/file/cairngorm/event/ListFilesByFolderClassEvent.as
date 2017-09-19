@@ -5,15 +5,11 @@ package com.github.izerui.file.cairngorm.event
 	
 	public class ListFilesByFolderClassEvent extends CairngormEvent
 	{
-		public var folderPath:String;
-
 		public var responseFun:Function;
 		
-		public function ListFilesByFolderClassEvent(folderPath:String, responseFun:Function)
+		public function ListFilesByFolderClassEvent(responseFun:Function)
 		{
 			super(ZRController.LISTFILES_BY_FOLDER);
-			this.folderPath = folderPath;
-
 			this.responseFun = responseFun;
 		}
 	}

@@ -39,7 +39,7 @@ package com.github.izerui.file.cairngorm.commond
 		{
 			var myEvent:ListFilesByFolderClassEvent = ListFilesByFolderClassEvent(event);
 			responseFun = myEvent.responseFun;
-			delegate.listFilesByFolder(myEvent.folderPath);
+			delegate.listFilesByFolder();
 		}
 	}
 }

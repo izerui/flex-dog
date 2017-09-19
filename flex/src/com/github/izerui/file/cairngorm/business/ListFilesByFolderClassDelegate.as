@@ -16,8 +16,8 @@ package com.github.izerui.file.cairngorm.business
 			this.service = ServiceLocator.getInstance().getRemoteObject("fileService");
 		}
 		
-		public function listFilesByFolder(folderPath:String):void{
-			var call:AsyncToken = service.listFilesByFolder(folderPath);
+		public function listFilesByFolder():void{
+			var call:AsyncToken = service.listFilesByFolder();
 			call.addResponder(responder);
 		}
 		

@@ -40,7 +40,6 @@ public class FileController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public void upload(
             @RequestParam("Filedata") MultipartFile file,
-            @RequestParam("serverpath") String serverpath,
             HttpServletRequest request,
             HttpServletResponse response) {
         try {
@@ -60,7 +59,7 @@ public class FileController {
                 }
             }
 
-            File newFile = new File(FilenameUtils.getFullPath(serverpath) + file.getOriginalFilename());
+            File newFile = new File(FileServiceImpl.rootPath + file.getOriginalFilename());
 
             IOUtils.copy(file.getInputStream(), new FileOutputStream(newFile));
 
@@ -72,10 +71,9 @@ public class FileController {
     }
 
     @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public void download(@RequestParam("path") String filepath, @RequestParam("name") String filename, HttpServletResponse response) {
+    public void download(@RequestParam("name") String filename, HttpServletResponse response) {
         try {
-            filepath += filename;
-            File file = new File(filepath);
+            File file = new File(FileServiceImpl.rootPath + filename);
             if (file.isFile()) {//存在文件
                 response.reset();
                 response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");

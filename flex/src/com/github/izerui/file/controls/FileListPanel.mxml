@@ -115,6 +115,7 @@
                         if (!selItem.isfolder) {
                             LoaderManager.showLoading();
                             CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.filename, function (output) {
+                                LoaderManager.hideLoading();
                                 selItem["relativeDeployTime"] = "1秒前";
                                 ArrayCollection(myFileGrid.dataProvider).itemUpdated(selItem,"relativeDeployTime");
 

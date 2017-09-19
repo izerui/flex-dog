@@ -61,7 +61,7 @@
 
         protected function searchTextInputEvent(event:Event):void {
             if (!searchKey.text) {
-                myFileGrid.dataProvider = dataList;
+                loadFiles();
                 return;
             }
             var tempSearchList:ArrayCollection = new ArrayCollection;

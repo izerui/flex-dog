@@ -113,7 +113,7 @@
                     if (myFileGrid.selectedIndex != -1) {
                         var selItem:FileItem = FileItem(myFileGrid.selectedItem);
                         if (!selItem.isfolder) {
-                            AlertShow.operateConfirm("点了就停不下来了,确认发布服务么?", "发布服务", FlexGlobals.topLevelApplication, exec);
+                            AlertShow.operateConfirm("确认发布服务?", "发布", FlexGlobals.topLevelApplication, exec);
                             function exec():void {
                                 LoaderManager.showLoading();
                                 CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.filename, function (output) {

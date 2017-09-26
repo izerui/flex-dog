@@ -113,16 +113,20 @@
                     if (myFileGrid.selectedIndex != -1) {
                         var selItem:FileItem = FileItem(myFileGrid.selectedItem);
                         if (!selItem.isfolder) {
-                            LoaderManager.showLoading();
-                            CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.filename, function (output) {
-                                selItem["relativeDeployTime"] = "1秒前";
-                                ArrayCollection(myFileGrid.dataProvider).itemUpdated(selItem,"relativeDeployTime");
+                            AlertShow.operateConfirm("确认发布服务?", "发布", FlexGlobals.topLevelApplication, exec);
+                            function exec():void {
+                                LoaderManager.showLoading();
+                                CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.filename, function (output) {
+                                    selItem["relativeDeployTime"] = "1秒前";
+                                    ArrayCollection(myFileGrid.dataProvider).itemUpdated(selItem,"relativeDeployTime");
 
-                                var popUp:DeployTitleWindow = new DeployTitleWindow();
-                                popUp.output = output ? output : "未知";
-                                PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
-                                PopUpManager.centerPopUp(popUp)
-                            }));
+                                    var popUp:DeployTitleWindow = new DeployTitleWindow();
+                                    popUp.output = output ? output : "未知";
+                                    PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+                                    PopUpManager.centerPopUp(popUp)
+                                }));
+                            }
+
                         }
                     }
                     break;

@@ -29,7 +29,7 @@
         <service:Services xmlns:service="com.github.izerui.file.cairngorm.service.*"/>
     </fx:Declarations>
 
-    <s:VGroup width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+    <s:VGroup width="100%" height="100%" verticalAlign="top" horizontalAlign="center">
         <controls:HeaderPanel width="80%" height="64"/>
         <controls:FileListPanel id="filegrid" width="80%" height="80%">
 

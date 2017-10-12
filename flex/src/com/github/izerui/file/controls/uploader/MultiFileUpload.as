@@ -169,14 +169,14 @@ package com.github.izerui.file.controls.uploader {
 	        _sizeColumn = new DataGridColumn;
 	            
 	        _nameColumn.dataField = "name";
-	        _nameColumn.headerText= ResourceManager.getInstance().getString("jhaij","filegrid_name_header");
+	        _nameColumn.headerText= "文件名";
 	        
 	        _typeColumn.dataField = "type";
-	        _typeColumn.headerText = ResourceManager.getInstance().getString("jhaij","filegrid_type_header");
+	        _typeColumn.headerText = "文件类型";
 	        _typeColumn.width = 80;
 	        
 	        _sizeColumn.dataField = "size";
-	        _sizeColumn.headerText = ResourceManager.getInstance().getString("jhaij","filegrid_size_header");
+	        _sizeColumn.headerText = "文件大小(KB)";
 	        _sizeColumn.labelFunction = bytesToKilobytes as Function;
 	        _sizeColumn.width = 150;
 	        
@@ -271,7 +271,7 @@ package com.github.izerui.file.controls.uploader {
 	            for(i=0;i < _files.length;i++){
 	            _totalbytes +=  _files[i].size;
 	            }
-	        _progressbar.label = ResourceManager.getInstance().getString("jhaij","allfilesnumber")+": "+  _files.length+ " "+ResourceManager.getInstance().getString("jhaij","allfileslength")+": " + Math.round(_totalbytes/1024) + " kb"
+	        _progressbar.label = "文件总数: "+  _files.length+ " 文件总大小: " + Math.round(_totalbytes/1024) + " kb"
         }        
         
         // Checks the files do not exceed maxFileSize | if _maxFileSize == 0 No File Limit Set
@@ -306,7 +306,7 @@ package com.github.izerui.file.controls.uploader {
         private function resetForm():void{
             _uploadbutton.enabled = false;
             _uploadbutton.addEventListener(MouseEvent.CLICK,uploadFiles);
-            _uploadbutton.label = ResourceManager.getInstance().getString("jhaij","upload_btn_label");
+            _uploadbutton.label = "传送";
             _progressbar.maximum = 0;
             _totalbytes = 0;
             _progressbar.label = "";
@@ -369,9 +369,9 @@ package com.github.izerui.file.controls.uploader {
 	            }	            
 	            if (dl.length > 0){
 	            	for (i=0;i<dl.length;i++){
-	            	msg += String(dl[i].name + " "+ResourceManager.getInstance().getString("jhaij","tooLarge")+". \n");
+	            	msg += String(dl[i].name + " 文件过大. \n");
 	            	}
-	            	mx.controls.Alert.show(msg + ResourceManager.getInstance().getString("jhaij","Maximum_file_size")+": " + Math.round(_maxFileSize / 1024) + " kb",ResourceManager.getInstance().getString("jhaij","tooLarge"),4,null).clipContent;
+	            	mx.controls.Alert.show(msg + "最大文件大小为: " + Math.round(_maxFileSize / 1024) + " kb","文件过大",4,null).clipContent;
 	            }        
         }        
         
@@ -385,28 +385,13 @@ package com.github.izerui.file.controls.uploader {
         private function progressHandler(event:ProgressEvent):void {        
             _progressbar.setProgress(event.bytesLoaded,event.bytesTotal);
 			if(event.bytesLoaded == event.bytesTotal){
-				_progressbar.label = ResourceManager.getInstance().getString("jhaij","progressbar_label");
+				_progressbar.label = "文件保存中...";
 			}else{
-	            _progressbar.label = ResourceManager.getInstance().getString("jhaij","haveUploadTootip")+" " + Math.round(event.bytesTotal / 1024) + " kb "+ResourceManager.getInstance().getString("jhaij","of")+" " + Math.round(event.bytesLoaded / 1024) + " kb " + (_files.length - 1) + " "+ResourceManager.getInstance().getString("jhaij","remaining_files");
+	            _progressbar.label = "已传送 " + Math.round(event.bytesTotal / 1024) + " kb 的 " + Math.round(event.bytesLoaded / 1024) + " kb " + (_files.length - 1) + " 个文件剩余";
 			}
         }
 
-        // called after a file has been successully uploaded | we use this as well to check if there are any files left to upload and how to handle it
-//        private function completeHandler(event:Event):void{
-//            //trace('completeHanderl triggered');
-//            _files.removeItemAt(0);
-//            if (_files.length > 0){
-//            	_totalbytes = 0;
-//				dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE));
-//                uploadFiles(null);
-//            }else{
-//                setupCancelButton(false);
-//                 _progressbar.label = ResourceManager.getInstance().getString("jhaij","uploadComplete");
-//                 var uploadCompleted:Event = new Event(Event.COMPLETE);
-//                dispatchEvent(uploadCompleted);
-//            }
-//        }
-		
+
         // called after a file has been successully uploaded | we use this as well to check if there are any files left to upload and how to handle it
 		private function successHandler(event:DataEvent):void{
 			if(event&&event.data&&event.data == "success"){ //服务器必须返回一个输出信息,否则不会继续下一个,出错可以不返回信息
@@ -418,7 +403,7 @@ package com.github.izerui.file.controls.uploader {
 					uploadFiles(null);//继续上传下一个文件
 				}else{ // 全部上传完毕触发完成事件
 					setupCancelButton(false);
-					_progressbar.label = ResourceManager.getInstance().getString("jhaij","uploadComplete");
+					_progressbar.label = "传送完毕";
 					var uploadCompleted:Event = new Event(Event.COMPLETE);
 					dispatchEvent(uploadCompleted);
 				}
@@ -429,13 +414,13 @@ package com.github.izerui.file.controls.uploader {
         // only called if there is an  error detected by flash player browsing or uploading a file   
         private function ioErrorHandler(event:IOErrorEvent):void{
             //trace('And IO Error has occured:' +  event);
-			Alert.show(ResourceManager.getInstance().getString("jhaij","uploadErrorTootip"),ResourceManager.getInstance().getString("jhaij","error"));
+			Alert.show("不支持的文件,请联系韦庆兵!","错误");
 //			mx.controls.Alert.show(String(event),"ioError",0);
         }    
         // only called if a security error detected by flash player such as a sandbox violation
         private function securityErrorHandler(event:SecurityErrorEvent):void{
             //trace("securityErrorHandler: " + event);
-            mx.controls.Alert.show(String(event),"Security Error",0);
+            mx.controls.Alert.show(String(event),"安全限制",0);
         }
         
         //  This function its not required

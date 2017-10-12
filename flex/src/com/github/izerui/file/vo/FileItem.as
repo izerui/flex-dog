@@ -1,9 +1,7 @@
 package com.github.izerui.file.vo
 {
-	import com.adobe.cairngorm.vo.IValueObject;
-	
 	[RemoteClass(alias="com.github.izerui.file.vo.FileItem")]
-	public class FileItem implements IValueObject
+	public class FileItem
 	{
 		
 		

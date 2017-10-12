@@ -3,7 +3,7 @@
 				xmlns:s="library://ns.adobe.com/flex/spark"
 				xmlns:mx="library://ns.adobe.com/flex/mx"
 				width="600" height="400"
-				title="{resourceManager.getString('jhaij','exeComplete')}"
+				title="部署完毕"
 				layout="vertical" showCloseButton="true" close="PopUpManager.removePopUp(this);">
 	<fx:Script>
         <![CDATA[
@@ -18,6 +18,6 @@
 	</fx:Declarations>
 	<mx:TextArea width="100%" height="100%" text="{output}" editable="false"/>
 	<mx:ControlBar horizontalAlign="right">
-		<mx:Button label="{resourceManager.getString('jhaij','confirm')}" click="PopUpManager.removePopUp(this);"/>
+		<mx:Button label="确定" click="PopUpManager.removePopUp(this);"/>
 	</mx:ControlBar>
 </mx:TitleWindow>

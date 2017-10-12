@@ -2,7 +2,7 @@
 <mx:TitleWindow
         xmlns:fx="http://ns.adobe.com/mxml/2009"
         xmlns:mx="library://ns.adobe.com/flex/mx"
-        title="{resourceManager.getString('jhaij','uploader_title')}"
+        title="上传文件"
         width="652" height="330"
         creationComplete="initApp();"
         showCloseButton="true"
@@ -80,10 +80,10 @@
 
         <mx:Spacer width="100%"/>
         <mx:HBox>
-            <mx:Button label="{resourceManager.getString('jhaij','browseBTN_label')}" id="browseBTN"/>
-            <mx:Button label="{resourceManager.getString('jhaij','upload_btn_label')}" id="upload_btn"/>
-            <mx:Button label="{resourceManager.getString('jhaij','delButton_label')}" id="delButton"/>
-            <mx:Button label="{resourceManager.getString('jhaij','clearButton_label')}" id="clearButton"/>
+            <mx:Button label="浏览文件" id="browseBTN"/>
+            <mx:Button label="传送" id="upload_btn"/>
+            <mx:Button label="移除" id="delButton"/>
+            <mx:Button label="移除全部" id="clearButton"/>
         </mx:HBox>
 
     </mx:ControlBar>

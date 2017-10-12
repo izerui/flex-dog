@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+         xmlns:mx="library://ns.adobe.com/flex/mx">
+
+
+    <mx:DataGrid width="100%" height="100%">
+        <mx:columns>
+            <mx:DataGridColumn itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender"
+                               dataField="filename"
+                               headerText="文件名"/>
+            <mx:DataGridColumn width="150" dataField="size"
+                               headerText="文件大小(KB)"/>
+            <mx:DataGridColumn width="150" dataField="servers"
+                               headerText="部署服务器"/>
+        </mx:columns>
+    </mx:DataGrid>
+
+</mx:VBox>

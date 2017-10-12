@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
           xmlns:s="library://ns.adobe.com/flex/spark"
-          xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:searchinput="com.github.izerui.file.components.searchInput.*"
-          title="{resourceManager.getString('jhaij','filegrid_title')}" titleIcon="@Embed('/assets/img/billing.png')"
+          xmlns:mx="library://ns.adobe.com/flex/mx"
+          xmlns:searchinput="com.github.izerui.file.components.searchInput.*"
           creationComplete="panel1_creationCompleteHandler(event)">
 
     <fx:Script>
 		<![CDATA[
-        import com.adobe.cairngorm.control.CairngormEventDispatcher;
-        import com.github.izerui.file.cairngorm.event.DeleteFileClassEvent;
-        import com.github.izerui.file.cairngorm.event.ExecClassEvent;
-        import com.github.izerui.file.cairngorm.event.ListFilesByFolderClassEvent;
         import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DeployTitleWindow;
         import com.github.izerui.file.controls.uploader.ServletUploader;
         import com.github.izerui.file.event.FileUploadEvent;
         import com.github.izerui.file.event.I18nEvent;
         import com.github.izerui.file.utils.AlertShow;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
         import com.github.izerui.file.vo.FileItem;
 
         import mx.collections.ArrayCollection;
@@ -27,21 +24,21 @@
         import mx.events.ListEvent;
         import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
+        import mx.rpc.events.ResultEvent;
         import mx.utils.ObjectUtil;
         import mx.utils.URLUtil;
 
         private var dataList:ArrayCollection;
 
         public function loadFiles(selItem:FileItem = null):void {
-            CairngormEventDispatcher.getInstance().dispatchEvent(new ListFilesByFolderClassEvent(listFileResponse));
-            LoaderManager.showLoading(false);
+            LoaderManager.showLoading();
 
-            function listFileResponse(data:ArrayCollection):void {
+            RemoteObjectUtils.execute("fileService", "listFiles", listFileResponse);
+
+            function listFileResponse(event:ResultEvent):void {
+                var data:ArrayCollection = ArrayCollection(event.result);
                 searchKey.reset();
                 LoaderManager.hideLoading();
-//				data.sort = new Sort;
-//				data.sort.fields = [new SortField("isfolder", true, true)];
-//				data.refresh();
                 dataList = data;
                 myFileGrid.dataProvider = dataList;
 
@@ -114,22 +111,28 @@
                         var selItem:FileItem = FileItem(myFileGrid.selectedItem);
                         if (!selItem.isfolder) {
                             AlertShow.operateConfirm("确认发布服务?", "发布", FlexGlobals.topLevelApplication, exec);
-                            function exec():void {
-                                LoaderManager.showLoading();
-                                CairngormEventDispatcher.getInstance().dispatchEvent(new ExecClassEvent(selItem.filename, function (output) {
-                                    selItem["relativeDeployTime"] = "1秒前";
-                                    ArrayCollection(myFileGrid.dataProvider).itemUpdated(selItem,"relativeDeployTime");
-
-                                    var popUp:DeployTitleWindow = new DeployTitleWindow();
-                                    popUp.output = output ? output : "未知";
-                                    PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
-                                    PopUpManager.centerPopUp(popUp)
-                                }));
-                            }
-
                         }
                     }
                     break;
+            }
+
+            function exec():void {
+
+                LoaderManager.showLoading();
+
+                RemoteObjectUtils.execute("fileService", "exec", execResult, selItem.filename);
+
+                function execResult(event:ResultEvent):void {
+                    LoaderManager.hideLoading();
+                    var output = String(event.result);
+                    selItem["relativeDeployTime"] = "1秒前";
+                    ArrayCollection(myFileGrid.dataProvider).itemUpdated(selItem, "relativeDeployTime");
+
+                    var popUp:DeployTitleWindow = new DeployTitleWindow();
+                    popUp.output = output ? output : "未知";
+                    PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+                    PopUpManager.centerPopUp(popUp)
+                }
             }
 
         }
@@ -145,30 +148,13 @@
             return Number(((item as FileItem).size / 1024).toFixed(1)).toString();
         }
 
-
-        private function deleteFiles():void {
-            // TODO Auto Generated method stub
-            AlertShow.operateConfirm(resourceManager.getString("jhaij", "deleteFilesConfirmTooltipLabel"), resourceManager.getString("jhaij", "warn"), FlexGlobals.topLevelApplication, deleteSelectedFilesFunction);
-
-            function deleteSelectedFilesFunction():void {
-
-                CairngormEventDispatcher.getInstance().dispatchEvent(new DeleteFileClassEvent(myFileGrid.selectedItems, deleteFileResponse));
-
-            }
-
-            function deleteFileResponse():void {
-                loadFiles();
-            }
-        }
-
-
         private var fileReference:FileReference;
 
         private var isDownloading:Boolean = false;
 
         private function downloadFile(event:ListEvent):void {
             if (isDownloading) {
-                Alert.show(resourceManager.getString("jhaij", "isDownloadingTootip"), resourceManager.getString("jhaij", "info"));
+                Alert.show("正在下载,请稍等!", "信息");
                 return;
             }
             // TODO Auto Generated method stub
@@ -200,7 +186,7 @@
 
             //下载过程
             function onFileProgress(event:ProgressEvent):void {
-                downloadTootipLabel.text = resourceManager.getString("jhaij", "downloadFileTootip") + Number(event.bytesLoaded / 1024).toFixed(3) + " of " + Number(event.bytesTotal / 1024).toFixed(3) + " bytes";
+                downloadTootipLabel.text = "下载文件:" + Number(event.bytesLoaded / 1024).toFixed(3) + " of " + Number(event.bytesTotal / 1024).toFixed(3) + " 字节";
             }
 
             //下载成功
@@ -215,7 +201,7 @@
             //下载失败
             function ioerrorDownload(event:IOErrorEvent):void {
                 // TODO Auto-generated method stub
-                Alert.show(String(event), resourceManager.getString("jhaij", "error"));
+                Alert.show(String(event), "出错了");
                 isDownloading = false;
                 downloadTootipLabel.visible = false;
                 stopDownload.visible = false;
@@ -241,34 +227,34 @@
         <mx:columns>
             <mx:DataGridColumn itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender"
                                dataField="filename"
-                               headerText="{resourceManager.getString('jhaij','filegrid_name_header')}"/>
+                               headerText="文件名"/>
             <mx:DataGridColumn width="150" dataField="size"
-                               headerText="{resourceManager.getString('jhaij','filegrid_size_header')}"
+                               headerText="文件大小(KB)"
                                labelFunction="filesize_labelFun"/>
             <mx:DataGridColumn width="150" dataField="servers"
-                               headerText="{resourceManager.getString('jhaij','filegrid_servers_header')}"/>
+                               headerText="部署服务器"/>
             <mx:DataGridColumn width="150" dataField="relativeLashmodifyDate"
-                               headerText="{resourceManager.getString('jhaij','filegrid_lashmodifydate_header')}"/>
+                               headerText="修改日期"/>
             <mx:DataGridColumn width="150" dataField="relativeDeployTime"
-                               headerText="{resourceManager.getString('jhaij','filegrid_deployTime_header')}"/>
+                               headerText="最后发布时间"/>
         </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar>
         <mx:LinkBar id="linkButtonBar" iconField="ico" itemClick="linkButtonBar_itemClickHandler(event)">
             <mx:dataProvider>
                 <s:ArrayCollection>
-                    <fx:Object label="{resourceManager.getString('jhaij','linkbar_button3_label')}" itemData="2"
+                    <fx:Object label="刷新" itemData="2"
                                ico="@Embed('/assets/img/bar_img/refresh.png')"/>
-                    <fx:Object label="{resourceManager.getString('jhaij','linkbar_button5_label')}" itemData="4"
+                    <fx:Object label="上传" itemData="4"
                                ico="@Embed('/assets/img/bar_img/upload.gif')"/>
-                    <fx:Object label="{resourceManager.getString('jhaij','linkbar_button8_label')}" itemData="7"
+                    <fx:Object label="发布" itemData="7"
                                ico="@Embed('/assets/img/bar_img/exec.png')"/>
                 </s:ArrayCollection>
             </mx:dataProvider>
         </mx:LinkBar>
         <searchinput:SearchTextInput id="searchKey" width="200" change="searchTextInputEvent(event)"/>
         <mx:Label id="downloadTootipLabel" visible="false"/>
-        <mx:LinkButton id="stopDownload" label="{resourceManager.getString('jhaij','cancel')}" visible="false"
+        <mx:LinkButton id="stopDownload" label="取消" visible="false"
                        click="stopDownload_clickHandler(event)"/>
     </mx:ControlBar>
-</mx:Panel>
+</mx:VBox>

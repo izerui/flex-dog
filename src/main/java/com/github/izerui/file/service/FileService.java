@@ -1,30 +1,15 @@
 package com.github.izerui.file.service;
 
 import com.github.izerui.file.vo.FileItem;
-import com.github.izerui.file.vo.FileTree;
+import com.github.izerui.file.vo.Server;
 
 import java.util.List;
 
 public interface FileService {
 
-	/**
-	 * 根据目录列出当前目录下文件
-	 * @return
-	 */
-	public List<FileItem> listFilesByFolder() throws Exception;
+    public List<FileItem> listFiles() throws Exception;
 
-	/**
-	 * 删除多个文件
-	 * @param fileItems
-	 * @return 
-	 */
-	public void deleteFile(List<FileItem> fileItems);
+    public String exec(String fileName) throws Exception;
 
-	/**
-	 * 发布
-	 * @param fileName
-	 * @return
-	 * @throws Exception
-	 */
-	public String exec(String fileName) throws Exception;
+    public List<Server> getServerList() throws Exception;
 }

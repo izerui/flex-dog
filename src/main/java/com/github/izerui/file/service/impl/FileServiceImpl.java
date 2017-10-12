@@ -45,10 +45,11 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public List<FileItem> listFilesByFolder() throws Exception {
+    public List<FileItem> listFiles() throws Exception {
         List<FileItem> files = new ArrayList<FileItem>();
         File folderFile = new File(rootPath);
         File[] filesArray = folderFile.listFiles();
+        List<Server> servers = getServerList();
         for (File file : filesArray) {
             if (!file.isDirectory()) {
                 FileItem fi = new FileItem();
@@ -70,8 +71,6 @@ public class FileServiceImpl implements FileService {
 
                 File deployFile = new File(rootPath + "deploy.json");
                 if (deployFile.exists()) {
-                    JavaType javaType = objectMapper.getTypeFactory().constructParametricType(List.class, Server.class);
-                    List<Server> servers = objectMapper.readValue(deployFile, javaType);
                     for (Server server : servers) {
                         for (Server.Service service : server.getServices()) {
                             if (service != null && service.getFile().equals(file.getName())) {
@@ -106,74 +105,56 @@ public class FileServiceImpl implements FileService {
     }
 
 
-    public void deleteFile(List<FileItem> fileItems) {
-        // TODO Auto-generated method stub
-        for (FileItem fileItem : fileItems) {
-            try {
-                if (fileItem.isIsfolder()) {
-                    File fileFolder = new File(fileItem.getFilename());
-                    if (fileFolder.list().length == 0) {
-                        fileFolder.delete();
-                    }
-                    //以防万一, 不开放该方法
-                    //					FileUtils.deleteQuietly(new File(fileItem.getFolderpath()));//删除文件夹 及其下属所有文件/文件夹
-                } else {
-                    new File(fileItem.getFolderpath() + fileItem.getFilename()).delete();
-                }
-            } catch (Exception e) {
-                log.error("Folder is not empty");
-//					throw new RuntimeException("Folder is not empty");
-            }
-        }
-    }
-
-
     @Override
     public String exec(String fileName) throws Exception {
         String output = "";
         boolean deployed = false;
-        try {
-            JavaType javaType = objectMapper.getTypeFactory().constructParametricType(List.class, Server.class);
-            List<Server> servers = objectMapper.readValue(new File(rootPath + "deploy.json"), javaType);
-            for (Server server : servers) {
-                for (Server.Service service : server.getServices()) {
-                    if (service != null && service.getFile().equals(fileName)) {
+        List<Server> servers = getServerList();
+        for (Server server : servers) {
+            for (Server.Service service : server.getServices()) {
+                if (service != null && service.getFile().equals(fileName)) {
 
-                        String chmodCommand = "chmod 777 /etc/ansible/application-operation.sh";
-                        Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
-                        chmodProcess.waitFor();
+                    String chmodCommand = "chmod 777 /etc/ansible/application-operation.sh";
+                    Process chmodProcess = Runtime.getRuntime().exec(chmodCommand);
+                    chmodProcess.waitFor();
 
 
-                        String command = "/bin/sh /etc/ansible/application-operation.sh " + service.getType() + " " + server.getServer() + " " + service.getFile();
-                        Process execProcess = Runtime.getRuntime().exec(command);
-                        execProcess.waitFor();
+                    String command = "/bin/sh /etc/ansible/application-operation.sh " + service.getType() + " " + server.getServer() + " " + service.getFile();
+                    Process execProcess = Runtime.getRuntime().exec(command);
+                    execProcess.waitFor();
 
-                        output += IOUtils.toString(execProcess.getInputStream(), "UTF-8") + "\n";
-                        log.info(output);
+                    output += IOUtils.toString(execProcess.getInputStream(), "UTF-8") + "\n";
+                    log.info(output);
 
-                        deployed = true;
-                    }
+                    deployed = true;
                 }
             }
-
-            if (!deployed) {
-                throw new RuntimeException("不支持该文件");
-            }
-
-            //保存发布记录
-            DeployEntity one = deployRepository.findOne(fileName);
-            if (one == null) {
-                one = new DeployEntity();
-                one.setFileName(fileName);
-            }
-            one.setDeployTime(new Date());
-            deployRepository.save(one);
-
-            return output;
-
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
         }
 
+        if (!deployed) {
+            throw new RuntimeException("不支持该文件");
+        }
+
+        //保存发布记录
+        DeployEntity one = deployRepository.findOne(fileName);
+        if (one == null) {
+            one = new DeployEntity();
+            one.setFileName(fileName);
+        }
+        one.setDeployTime(new Date());
+        deployRepository.save(one);
+
+        return output;
+    }
+
+
+    public List<Server> getServerList() throws Exception {
+        File file = new File(rootPath + "deploy.json");
+        if (!file.exists()) {
+            throw new RuntimeException("部署配置文件不存在");
+        }
+        JavaType javaType = objectMapper.getTypeFactory().constructParametricType(List.class, Server.class);
+        List<Server> servers = objectMapper.readValue(new File(rootPath + "deploy.json"), javaType);
+        return servers;
     }
 }

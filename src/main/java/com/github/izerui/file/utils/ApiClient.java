@@ -1,4 +1,4 @@
-package com.github.izerui.file.ucloud;
+package com.github.izerui.file.utils;
 
 import okhttp3.*;
 import okhttp3.logging.HttpLoggingInterceptor;

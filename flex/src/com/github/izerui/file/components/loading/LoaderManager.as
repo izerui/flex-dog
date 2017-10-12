@@ -24,7 +24,7 @@ package com.github.izerui.file.components.loading
 			return instance;
 		}
 		
-		public static function showLoading(modal:Boolean=true):void{
+		public static function showLoading(modal:Boolean=false):void{
 			var loading:ExtendsImage = getLoadingInstance();
 			PopUpManager.addPopUp(loading,FlexGlobals.topLevelApplication as Index,modal);
 			PopUpManager.centerPopUp(loading);

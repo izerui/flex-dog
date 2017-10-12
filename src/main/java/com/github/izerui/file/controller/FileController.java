@@ -1,11 +1,9 @@
 package com.github.izerui.file.controller;
 
-import com.github.izerui.file.service.FileService;
-import com.github.izerui.file.service.impl.FileServiceImpl;
+import com.github.izerui.file.utils.ConfigUtils;
 import com.github.izerui.file.vo.Server;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +22,6 @@ import java.util.List;
 @Controller
 public class FileController {
 
-    @Autowired
-    private FileService fileService;
-
     private Logger log = Logger.getLogger(FileController.class);
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
@@ -37,7 +32,7 @@ public class FileController {
 
         if (!file.getOriginalFilename().equals("deploy.json")) {
             boolean exist = false;
-            List<Server> servers = fileService.getServerList();
+            List<Server> servers = ConfigUtils.getDeployConfig().getServers();
             for (Server server : servers) {
                 for (Server.Service service : server.getServices()) {
                     if (service != null && service.getFile().equals(file.getOriginalFilename())) {
@@ -50,7 +45,7 @@ public class FileController {
             }
         }
 
-        File newFile = new File(FileServiceImpl.rootPath + file.getOriginalFilename());
+        File newFile = new File(ConfigUtils.rootPath + file.getOriginalFilename());
 
         IOUtils.copy(file.getInputStream(), new FileOutputStream(newFile));
 
@@ -60,7 +55,7 @@ public class FileController {
 
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public void download(@RequestParam("name") String filename, HttpServletResponse response) throws Exception {
-        File file = new File(FileServiceImpl.rootPath + filename);
+        File file = new File(ConfigUtils.rootPath + filename);
         if (file.isFile()) {//存在文件
             response.reset();
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");

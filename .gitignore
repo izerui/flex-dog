@@ -78,3 +78,5 @@ buildNumber.properties
 
 
 .idea/
+
+deploy.json

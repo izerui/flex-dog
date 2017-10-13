@@ -32,8 +32,13 @@
             <mx:DataGridColumn dataField="CreateTime"
                                labelFunction="timeLabelFun"
                                headerText="创建时间"/>
+            <mx:DataGridColumn dataField="ExpireTime"
+                               labelFunction="expireTimeLabelFun"
+                               headerText="过期时间"/>
             <mx:DataGridColumn dataField="State"
                                headerText="运行状态"/>
+            <mx:DataGridColumn dataField="NetworkState"
+                               headerText="网络状态"/>
 
         </mx:columns>
     </mx:DataGrid>
@@ -80,6 +85,12 @@
             var df:DateFormatter = new DateFormatter();
             df.formatString = "YYYY-MM-DD";
             return df.format(new Date(new Number(item.CreateTime) * 1000));
+        }
+
+        private function expireTimeLabelFun(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD";
+            return df.format(new Date(new Number(item.ExpireTime) * 1000));
         }
 
         private function configLabelFun(item:Object, column:DataGridColumn):String {

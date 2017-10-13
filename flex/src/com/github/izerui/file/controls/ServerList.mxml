@@ -4,6 +4,15 @@
          creationComplete="loadData()">
 
 
+    <mx:LinkBar height="25" id="linkButtonBar" iconField="ico" itemClick="buttonClick(event)">
+        <mx:dataProvider>
+            <s:ArrayCollection>
+                <fx:Object label="刷新" itemData="0"
+                           ico="@Embed('/assets/img/bar_img/refresh.png')"/>
+            </s:ArrayCollection>
+        </mx:dataProvider>
+    </mx:LinkBar>
+
     <mx:DataGrid id="grid" width="100%" height="100%">
         <mx:columns>
             <mx:DataGridColumn dataField="UHostId"
@@ -28,15 +37,6 @@
 
         </mx:columns>
     </mx:DataGrid>
-
-    <mx:LinkBar id="linkButtonBar" iconField="ico" itemClick="buttonClick(event)">
-        <mx:dataProvider>
-            <s:ArrayCollection>
-                <fx:Object label="刷新" itemData="0"
-                           ico="@Embed('/assets/img/bar_img/refresh.png')"/>
-            </s:ArrayCollection>
-        </mx:dataProvider>
-    </mx:LinkBar>
 
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;

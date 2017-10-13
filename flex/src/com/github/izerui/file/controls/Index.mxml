@@ -32,6 +32,9 @@
                 <controls:ServerList label="机器列表" width="100%" height="100%">
 
                 </controls:ServerList>
+                <controls:MetricList label="监控列表" width="100%" height="100%">
+
+                </controls:MetricList>
                 <controls:FileList label="文件列表" id="filegrid" width="100%" height="100%">
 
                 </controls:FileList>

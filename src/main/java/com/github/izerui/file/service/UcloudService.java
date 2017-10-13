@@ -39,5 +39,17 @@ public class UcloudService {
         return apiClient.execute(params);
     }
 
+    public String getMetricOverview(){
+        Map<String, String> params = new HashMap<>();
+        params.put("ProjectId","org-skwhwp");
+        params.put("Zone","cn-gd-02");
+        params.put("Region","cn-gd");
+        params.put("ResourceType","uhost");
+        params.put("Offset","0");
+        params.put("Limit","60");
+        params.put("Action","GetMetricOverview");
+        return apiClient.execute(params);
+    }
+
 
 }

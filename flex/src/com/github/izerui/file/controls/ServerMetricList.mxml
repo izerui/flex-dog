@@ -20,12 +20,12 @@
                                headerText="CPU使用率(%)"/>
             <mx:DataGridColumn dataField="MemUsage"
                                headerText="内存使用率(%)"/>
-            <mx:DataGridColumn dataField="RunnableProcessCount"
-                               headerText="运行进程数"/>
             <mx:DataGridColumn dataField="DataSpaceUsage"
                                headerText="数据盘使用率(%)"/>
             <mx:DataGridColumn dataField="RootSpaceUsage"
                                headerText="系统盘使用率(%)"/>
+            <mx:DataGridColumn dataField="RunnableProcessCount"
+                               headerText="运行进程数"/>
             <mx:DataGridColumn dataField="BlockProcessCount"
                                headerText="阻塞进程数"/>
             <mx:DataGridColumn dataField="ProcessCount"

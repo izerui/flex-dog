@@ -22,7 +22,7 @@
                                headerText="CPU使用率(%)"/>
             <mx:DataGridColumn dataField="MemUsage"
                                headerText="内存使用率(%)"/>
-            <mx:DataGridColumn dataField="DiskUsage"s
+            <mx:DataGridColumn dataField="DiskUsage"
                                headerText="磁盘使用率(%)"/>
             <mx:DataGridColumn dataField="IO"
                                headerText="IO流量(Mb/s)"/>

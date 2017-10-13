@@ -48,6 +48,32 @@ public class UcloudService {
         params.put("Offset","0");
         params.put("Limit","60");
         params.put("Action","GetMetricOverview");
+        params.put("_timestamp", String.valueOf(System.currentTimeMillis()));
+        return apiClient.execute(params);
+    }
+
+    public String getDbMetricOverview(){
+        Map<String, String> params = new HashMap<>();
+        params.put("ProjectId","org-skwhwp");
+        params.put("Zone","cn-gd-02");
+        params.put("Region","cn-gd");
+        params.put("ResourceType","udb");
+        params.put("Offset","0");
+        params.put("Limit","60");
+        params.put("Action","GetMetricOverview");
+        params.put("_timestamp", String.valueOf(System.currentTimeMillis()));
+        return apiClient.execute(params);
+    }
+    public String getRedisMetricOverview(){
+        Map<String, String> params = new HashMap<>();
+        params.put("ProjectId","org-skwhwp");
+        params.put("Zone","cn-gd-02");
+        params.put("Region","cn-gd");
+        params.put("ResourceType","uredis");
+        params.put("Offset","0");
+        params.put("Limit","60");
+        params.put("Action","GetMetricOverview");
+        params.put("_timestamp", String.valueOf(System.currentTimeMillis()));
         return apiClient.execute(params);
     }
 

@@ -15,27 +15,27 @@
     <mx:DataGrid id="grid" width="100%" height="100%">
         <mx:columns>
             <mx:DataGridColumn dataField="Name"
-                               headerText="机器名"/>
-            <mx:DataGridColumn dataField="CPUUtilization"
-                               headerText="CPU使用率"/>
-            <mx:DataGridColumn dataField="MemUsage"
-                               headerText="内存使用率"/>
-            <mx:DataGridColumn dataField="RunnableProcessCount"
-                               headerText="运行进程数"/>
-            <mx:DataGridColumn dataField="BlockProcessCount"
-                               headerText="阻塞进程数"/>
-            <mx:DataGridColumn dataField="ProcessCount"
-                               headerText="进程总数"/>
-            <mx:DataGridColumn dataField="TcpConnectCount"
-                               headerText="TCP连接数"/>
-            <mx:DataGridColumn dataField="DiskReadOps"
-                               labelFunction="diskReadLabelFun"
-                               headerText="磁盘读写次数"/>
-            <mx:DataGridColumn dataField="NetPacketIn"
-                               labelFunction="netPacketLabelFun"
-                               headerText="网卡出入包(个/s)"/>
-            <mx:DataGridColumn dataField="TcpConnectCount"
-                               headerText="TCP连接数"/>
+                               headerText="redis名称"/>
+            <mx:DataGridColumn dataField="Usage"
+                               headerText="内存使用率(%)"/>
+            <mx:DataGridColumn dataField="InstanceUsage"
+                               headerText="空间使用量"/>
+            <mx:DataGridColumn dataField="QPS"
+                               headerText="QPS"/>
+            <mx:DataGridColumn dataField="NICOut"
+                               headerText="网卡出带宽"/>
+            <mx:DataGridColumn dataField="NICIn"
+                               headerText="网卡入带宽"/>
+            <mx:DataGridColumn dataField="URedisInstanceConnCount"
+                               headerText="实例连接数"/>
+            <mx:DataGridColumn dataField="InstanceKey"
+                               headerText="实例Key数量"/>
+            <mx:DataGridColumn dataField="InstanceGetHit"
+                               headerText="命中次数"/>
+            <mx:DataGridColumn dataField="InstanceGetHitRate"
+                               headerText="命中率"/>
+            <mx:DataGridColumn dataField="RedisSinglenodeMaxload"
+                               headerText="Redis负载"/>
 
 
         </mx:columns>
@@ -50,7 +50,7 @@
 
         private function loadData():void {
             LoaderManager.showLoading();
-            RemoteObjectUtils.execute("ucloudService", "getMetricOverview", function (event:ResultEvent) {
+            RemoteObjectUtils.execute("ucloudService", "getRedisMetricOverview", function (event:ResultEvent) {
                 LoaderManager.hideLoading();
                 var json:String = String(event.result);
                 var data:Object = JSON.parse(json);

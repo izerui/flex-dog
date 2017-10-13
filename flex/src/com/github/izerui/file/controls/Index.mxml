@@ -29,15 +29,21 @@
         <s:HGroup width="100%" height="100%">
 
             <mx:TabNavigator width="100%" height="100%">
-                <controls:ServerList label="机器列表" width="100%" height="100%">
-
-                </controls:ServerList>
-                <controls:MetricList label="监控列表" width="100%" height="100%">
-
-                </controls:MetricList>
-                <controls:FileList label="文件列表" id="filegrid" width="100%" height="100%">
+                <controls:FileList label="服务列表" id="filegrid" width="100%" height="100%">
 
                 </controls:FileList>
+                <controls:ServerList label="服务器列表" width="100%" height="100%">
+
+                </controls:ServerList>
+                <controls:ServerMetricList label="服务器监控" width="100%" height="100%">
+
+                </controls:ServerMetricList>
+                <controls:DbMetricList label="数据库监控" width="100%" height="100%">
+
+                </controls:DbMetricList>
+                <controls:RedisMetricList label="Redis监控" width="100%" height="100%">
+
+                </controls:RedisMetricList>
             </mx:TabNavigator>
 
         </s:HGroup>

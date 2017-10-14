@@ -19,7 +19,8 @@
             <mx:DataGridColumn dataField="Usage"
                                headerText="内存使用率(%)"/>
             <mx:DataGridColumn dataField="InstanceUsage"
-                               headerText="空间使用量"/>
+                               labelFunction="instanceUsageLabelFun"
+                               headerText="空间使用量(Mb)"/>
             <mx:DataGridColumn dataField="QPS"
                                headerText="QPS"/>
             <mx:DataGridColumn dataField="NICOut"
@@ -72,6 +73,10 @@
 
         private function netPacketLabelFun(item:Object, column:DataGridColumn):String{
             return item.NetPacketIn + "/" + item.NetPacketOut;
+        }
+
+        private function instanceUsageLabelFun(item:Object, column:DataGridColumn):String{
+            return Math.round(item.InstanceUsage / 1024).toString();
         }
 
         ]]>

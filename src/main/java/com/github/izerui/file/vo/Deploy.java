@@ -5,7 +5,16 @@ import java.util.List;
 public class Deploy {
     private String publicKey;
     private String privateKey;
+    private List<Ent> entList;
     private List<Server> servers;
+
+    public List<Ent> getEntList() {
+        return entList;
+    }
+
+    public void setEntList(List<Ent> entList) {
+        this.entList = entList;
+    }
 
     public String getPublicKey() {
         return publicKey;

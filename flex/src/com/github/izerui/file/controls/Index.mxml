@@ -44,6 +44,9 @@
                 <controls:RedisMetricList label="Redis监控" width="100%" height="100%">
 
                 </controls:RedisMetricList>
+                <controls:EntList label="在线用户" width="100%" height="100%">
+
+                </controls:EntList>
             </mx:TabNavigator>
 
         </s:HGroup>

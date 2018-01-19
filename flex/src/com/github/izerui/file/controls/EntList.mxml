@@ -23,7 +23,7 @@
                                headerText="账套编号"/>
             <mx:DataGridColumn dataField="name" width="200"
                                headerText="企业名称"/>
-            <mx:DataGridColumn dataField="date" width="80"
+            <mx:DataGridColumn dataField="date" width="100"
                                headerText="开户日期"
                                labelFunction="dateLabelFun"/>
             <mx:DataGridColumn dataField="type" width="80"
@@ -31,7 +31,7 @@
             <mx:DataGridColumn dataField="status" width="80"
                                headerText="状态"/>
             <mx:DataGridColumn dataField="relatedCount" width="80"
-                               headerText="用户数"/>
+                               headerText="授权数"/>
             <mx:DataGridColumn dataField="count" width="80"
                                headerText="在线数"/>
             <mx:DataGridColumn dataField="users" wordWrap="true"

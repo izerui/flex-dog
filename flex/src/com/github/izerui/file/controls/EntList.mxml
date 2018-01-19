@@ -19,10 +19,19 @@
     </s:HGroup>
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true">
         <mx:columns>
-            <mx:DataGridColumn dataField="code" width="150"
+            <mx:DataGridColumn dataField="code" width="100"
                                headerText="账套编号"/>
-            <mx:DataGridColumn dataField="name" width="300"
+            <mx:DataGridColumn dataField="name" width="200"
                                headerText="企业名称"/>
+            <mx:DataGridColumn dataField="date" width="80"
+                               headerText="开户日期"
+                               labelFunction="dateLabelFun"/>
+            <mx:DataGridColumn dataField="type" width="80"
+                               headerText="类型"/>
+            <mx:DataGridColumn dataField="status" width="80"
+                               headerText="状态"/>
+            <mx:DataGridColumn dataField="relatedCount" width="80"
+                               headerText="用户数"/>
             <mx:DataGridColumn dataField="count" width="80"
                                headerText="在线数"/>
             <mx:DataGridColumn dataField="users" wordWrap="true"
@@ -34,6 +43,7 @@
         import com.github.izerui.file.utils.RemoteObjectUtils;
 
         import mx.events.ItemClickEvent;
+        import mx.formatters.DateFormatter;
         import mx.rpc.events.ResultEvent;
 
         private function loadData():void {
@@ -63,6 +73,12 @@
                     this.loadData();
                     break;
             }
+        }
+
+        private function dateLabelFun(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD";
+            return df.format(item.date);
         }
         ]]>
     </fx:Script>

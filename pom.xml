@@ -9,38 +9,30 @@
     <version>1.0-SNAPSHOT</version>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.3.RELEASE</version>
+        <groupId>com.ecworking</groupId>
+        <artifactId>dependencies-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <properties>
         <blazeds.version>4.0.0.14931</blazeds.version>
+        <rbac.version>3.0.1-SNAPSHOT</rbac.version>
     </properties>
 
 
-    <repositories>
-        <repository>
-            <id>aliyun</id>
-            <name>Nexus aliyun</name>
-            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>spring-libs</id>
-            <name>spring-libs</name>
-            <url>http://repo.spring.io/libs-milestone/</url>
-        </repository>
-    </repositories>
-
-
-
-
     <dependencies>
-
+        <dependency>
+            <groupId>com.ecworking</groupId>
+            <artifactId>rbac-remote</artifactId>
+            <version>${rbac.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecworking</groupId>
+            <artifactId>audit-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.9.0</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -50,7 +42,6 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
         </dependency>
 
         <!-- db -->
@@ -63,9 +54,39 @@
             <artifactId>h2</artifactId>
         </dependency>
 
+        <!-- web应用依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 提供的对应用系统的自省和监控的集成功能，可以对应用系统进行配置查看、相关功能统计等 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- cloud配置客户端,拉取配置 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-client</artifactId>
+        </dependency>
+        <!-- 将配置更新的消息通知给各节点,重新加载配置 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-kafka</artifactId>
+        </dependency>
+        <!-- 服务注册发现 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>
+        <!-- 断路器 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-hystrix</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
         </dependency>
 
 
@@ -83,7 +104,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0</version>
         </dependency>
 
         <!--<dependency>-->
@@ -123,7 +143,6 @@
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.2</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -133,7 +152,6 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -144,13 +162,67 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
 
+
+    <repositories>
+        <repository>
+            <id>nexus</id>
+            <url>http://192.168.1.235:8081/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+
+
+    <!-- 项目构建各环境的文件列表 -->
+    <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <profiles.active>local</profiles.active>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profiles.active>dev</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <profiles.active>test</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profiles.active>prod</profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
+
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>dev/*</exclude>
+                    <exclude>test/*</exclude>
+                    <exclude>prod/*</exclude>
+                    <exclude>local/*</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/${profiles.active}</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -158,13 +230,6 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
             <plugin>

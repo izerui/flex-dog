@@ -80,3 +80,4 @@ buildNumber.properties
 .idea/
 
 deploy.json
+deploy.sh

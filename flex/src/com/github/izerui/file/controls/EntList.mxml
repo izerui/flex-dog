@@ -13,9 +13,13 @@
                 </s:ArrayCollection>
             </mx:dataProvider>
         </mx:LinkBar>
-        <mx:Label id="countText0" text="当前在线:"/>
-        <mx:Label id="countText1" color="blue"/>
-        <mx:Label id="countText2" text="人"/>
+        <s:HGroup id="info">
+            <mx:Label text="授权数:"/>
+            <mx:Label id="userCount" color="red"/>
+            <mx:Label text="在线数:"/>
+            <mx:Label id="onlineCount" color="blue"/>
+        </s:HGroup>
+
     </s:HGroup>
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true">
         <mx:columns>
@@ -47,23 +51,22 @@
         import mx.rpc.events.ResultEvent;
 
         private function loadData():void {
-            countText0.visible = false;
-            countText1.visible = false;
-            countText2.visible = false;
+            info.visible = false;
             LoaderManager.showLoading();
             RemoteObjectUtils.execute("onlineService", "onlineUsers", function (event:ResultEvent) {
                 LoaderManager.hideLoading();
                 grid.dataProvider = event.result;
 
-                var count:Number = 0;
+                var _onlineCount:Number = 0;
+                var _userCount:Number = 0;
                 for each(var item in ArrayCollection(grid.dataProvider)) {
-                    count += Number(item.count);
+                    _onlineCount += Number(item.count);
+                    _userCount += Number(item.relatedCount);
                 }
-                countText1.text = count.toString();
+                onlineCount.text = _onlineCount.toString();
+                userCount.text = _userCount.toString();
 
-                countText0.visible = true;
-                countText1.visible = true;
-                countText2.visible = true;
+                info.visible = true;
             })
         }
 

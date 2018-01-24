@@ -17,10 +17,20 @@
     <properties>
         <blazeds.version>4.0.0.14931</blazeds.version>
         <rbac.version>3.0.1-SNAPSHOT</rbac.version>
+        <mrp-remote.version>3.0.0-SNAPSHOT</mrp-remote.version>
     </properties>
 
 
     <dependencies>
+        <dependency>
+            <groupId>com.ecworking</groupId>
+            <artifactId>business-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ecworking</groupId>
+            <artifactId>mrp-remote</artifactId>
+            <version>${mrp-remote.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.ecworking</groupId>
             <artifactId>rbac-remote</artifactId>

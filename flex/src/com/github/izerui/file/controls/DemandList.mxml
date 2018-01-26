@@ -17,7 +17,7 @@
                                width="40"/>
             <mx:DataGridColumn dataField="inventoryCode"
                                headerText="货品编码"/>
-            <mx:DataGridColumn dataField="inventoryName" width="300"
+            <mx:DataGridColumn dataField="inventoryName" width="350"
                                headerText="货品名称"/>
             <mx:DataGridColumn dataField="totalDemandQty"
                                headerText="总需求量"/>

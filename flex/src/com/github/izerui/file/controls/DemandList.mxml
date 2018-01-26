@@ -5,21 +5,26 @@
 
 
     <s:HGroup>
-        <mx:ComboBox id="box" labelField="name" rowCount="10">
+        <mx:ComboBox id="box" labelField="name" rowCount="20">
         </mx:ComboBox>
-        <mx:LinkButton icon="@Embed('/assets/img/bar_img/refresh.png')" label="加载" click="loadData()">
+        <mx:TextInput id="input" width="200"/>
+        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查询" click="page.number = 0; loadData()">
         </mx:LinkButton>
     </s:HGroup>
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true">
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}">
         <mx:columns>
+            <mx:DataGridColumn dataField="index"
+                               headerText="序号"
+                               labelFunction="indexNumLabelFun"
+                               width="40"/>
             <mx:DataGridColumn dataField="inventoryCode"
                                headerText="货品编码"/>
-            <mx:DataGridColumn dataField="inventoryName"
+            <mx:DataGridColumn dataField="inventoryName" width="300"
                                headerText="货品名称"/>
             <mx:DataGridColumn dataField="totalDemandQty"
-                               headerText="总需"/>
+                               headerText="总需求量"/>
             <mx:DataGridColumn dataField="totalPurgeQty"
-                               headerText="总净需"/>
+                               headerText="总在途在制量"/>
             <mx:DataGridColumn dataField="stockQty"
                                headerText="库存量"/>
             <mx:DataGridColumn dataField="occupiedStockQty"
@@ -30,12 +35,31 @@
                                headerText="单位"/>
         </mx:columns>
     </mx:DataGrid>
+    <mx:ControlBar>
+        <mx:LinkBar id="linkButtonBar" iconField="ico" horizontalAlign="right" itemClick="pageClick(event)">
+            <mx:dataProvider>
+                <s:ArrayCollection>
+                    <fx:Object label="首页" itemData="0" ico="@Embed('/assets/img/bar_img/resultset_first.png')"/>
+                    <fx:Object label="上一页" itemData="1" ico="@Embed('/assets/img/bar_img/resultset_previous.png')"/>
+                    <fx:Object label="下一页" itemData="2" ico="@Embed('/assets/img/bar_img/resultset_next.png')"/>
+                    <fx:Object label="末页" itemData="3" ico="@Embed('/assets/img/bar_img/resultset_last.png')"/>
+                </s:ArrayCollection>
+            </mx:dataProvider>
+        </mx:LinkBar>
+        <mx:Label text="{page.number + 1} / {page.totalPages} 页"/>
+        <mx:Label text="共 {page.totalElements} 条记录"/>
+    </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.utils.RemoteObjectUtils;
+        import com.github.izerui.file.vo.PageVo;
 
+        import mx.events.ItemClickEvent;
         import mx.formatters.DateFormatter;
         import mx.rpc.events.ResultEvent;
+
+        [Bindable]
+        protected var page:PageVo = new PageVo();
 
         private function loadEnts():void {
             LoaderManager.showLoading();
@@ -50,8 +74,8 @@
             LoaderManager.showLoading();
             RemoteObjectUtils.execute("demandService", "inventoryDemands", function (event:ResultEvent) {
                 LoaderManager.hideLoading();
-                grid.dataProvider = event.result.content;
-            },box.selectedItem.code,0,200,"")
+                page = PageVo(event.result);
+            }, box.selectedItem.code, page.number, page.size, input.text)
 
         }
 
@@ -59,6 +83,39 @@
             var df:DateFormatter = new DateFormatter();
             df.formatString = "YYYY-MM-DD";
             return df.format(item.date);
+        }
+
+        private function pageClick(event:ItemClickEvent):void {
+            switch (event.item["itemData"]) {
+                case 0: {
+                    page.number = 0;
+                    break;
+                }
+                case 1: {
+                    page.number--;
+                    break;
+                }
+                case 2: {
+                    page.number++;
+                    break;
+                }
+                case 3: {
+                    page.number = page.totalPages - 1;
+                    break;
+                }
+            }
+            if (page.number == page.totalPages) {
+                page.number = page.totalPages - 1;
+            }
+            if (page.number < 0) {
+                page.number = 0;
+            }
+            loadData();
+        }
+
+        private function indexNumLabelFun(item:Object, column:DataGridColumn):String {
+            var indexNum:int = (page.content.getItemIndex(item) + 1);
+            return indexNum.toString();
         }
         ]]>
     </fx:Script>

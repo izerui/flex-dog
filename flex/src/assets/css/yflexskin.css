@@ -205,15 +205,15 @@ mx|CursorManager
 //  DataGrid
 //------------------------------
 */
-mx|DataGrid
-{
+/*mx|DataGrid*/
+/*{*/
 
-	columnDropIndicatorSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_columnDropIndicatorSkin");
-	columnResizeSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_columnResizeSkin");
-	headerSeparatorSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_headerSeparatorSkin");
-	sortArrowSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_sortArrowSkin");
-	stretchCursor: Embed(source="/yflexskin.swf",symbol="DataGrid_stretchCursor");
-}
+	/*columnDropIndicatorSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_columnDropIndicatorSkin");*/
+	/*columnResizeSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_columnResizeSkin");*/
+	/*headerSeparatorSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_headerSeparatorSkin");*/
+	/*sortArrowSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_sortArrowSkin");*/
+	/*stretchCursor: Embed(source="/yflexskin.swf",symbol="DataGrid_stretchCursor");*/
+/*}*/
 
 /*
 //------------------------------

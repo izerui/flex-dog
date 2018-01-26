@@ -47,6 +47,9 @@
                 <controls:EntList label="在线用户" width="100%" height="100%">
 
                 </controls:EntList>
+                <controls:DemandList label="物料情况" width="100%" height="100%">
+
+                </controls:DemandList>
             </mx:TabNavigator>
 
         </s:HGroup>

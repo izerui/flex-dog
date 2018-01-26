@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+         xmlns:mx="library://ns.adobe.com/flex/mx"
+         creationComplete="loadEnts()">
+
+
+    <s:HGroup>
+        <mx:ComboBox id="box" labelField="name" rowCount="10">
+        </mx:ComboBox>
+        <mx:LinkButton icon="@Embed('/assets/img/bar_img/refresh.png')" label="加载" click="loadData()">
+        </mx:LinkButton>
+    </s:HGroup>
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true">
+        <mx:columns>
+            <mx:DataGridColumn dataField="inventoryCode"
+                               headerText="货品编码"/>
+            <mx:DataGridColumn dataField="inventoryName"
+                               headerText="货品名称"/>
+            <mx:DataGridColumn dataField="totalDemandQty"
+                               headerText="总需"/>
+            <mx:DataGridColumn dataField="totalPurgeQty"
+                               headerText="总净需"/>
+            <mx:DataGridColumn dataField="stockQty"
+                               headerText="库存量"/>
+            <mx:DataGridColumn dataField="occupiedStockQty"
+                               headerText="库存占用量"/>
+            <mx:DataGridColumn dataField="usableQty"
+                               headerText="可用量"/>
+            <mx:DataGridColumn dataField="unitName"
+                               headerText="单位"/>
+        </mx:columns>
+    </mx:DataGrid>
+    <fx:Script><![CDATA[
+        import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.formatters.DateFormatter;
+        import mx.rpc.events.ResultEvent;
+
+        private function loadEnts():void {
+            LoaderManager.showLoading();
+            RemoteObjectUtils.execute("demandService", "getEntList", function (event:ResultEvent) {
+                box.dataProvider = event.result;
+                LoaderManager.hideLoading();
+            });
+
+        }
+
+        private function loadData():void {
+            LoaderManager.showLoading();
+            RemoteObjectUtils.execute("demandService", "inventoryDemands", function (event:ResultEvent) {
+                LoaderManager.hideLoading();
+                grid.dataProvider = event.result.content;
+            },box.selectedItem.code,0,200,"")
+
+        }
+
+        private function dateLabelFun(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD";
+            return df.format(item.date);
+        }
+        ]]>
+    </fx:Script>
+</mx:VBox>

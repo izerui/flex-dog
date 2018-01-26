@@ -2,6 +2,8 @@ package com.github.izerui.file.service;
 
 import com.ecworking.commons.vo.PageVo;
 import com.ecworking.mrp.vo.*;
+import com.ecworking.rbac.remote.vo.ent.SimplifiedEntVo;
+import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.MrpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,6 +23,15 @@ public class DemandService {
 
     @Autowired
     private MrpClient mrpClient;
+
+    @Autowired
+    private EnterpriseClient enterpriseClient;
+
+
+    public List<SimplifiedEntVo> getEntList() {
+        List<SimplifiedEntVo> simplifiedEntVos = enterpriseClient.searchAll();
+        return simplifiedEntVos;
+    }
 
     /**
      * 获取货品的占用情况

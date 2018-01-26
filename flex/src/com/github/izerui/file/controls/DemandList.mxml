@@ -16,13 +16,62 @@
                                labelFunction="indexNumLabelFun"
                                width="40"/>
             <mx:DataGridColumn dataField="inventoryCode"
-                               headerText="货品编码"/>
+                               headerText="货品编码">
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="inventoryName" width="350"
                                headerText="货品名称"/>
             <mx:DataGridColumn dataField="totalDemandQty"
-                               headerText="总需求量"/>
+                               headerText="总需求量">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:Label click="viewLog(data)" color="0x0061ff" text="{data.totalDemandQty}">
+                            <fx:Script>
+                                <![CDATA[
+                                import com.github.izerui.file.controls.demand.InventoryDemandLog;
+
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewLog(data:Object):void {
+                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                    demandLog.inventory = data;
+                                    demandLog.setFocus();
+
+                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(demandLog);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:Label>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="totalPurgeQty"
-                               headerText="总在途在制量"/>
+                               headerText="总在途在制量">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:Label click="viewLog(data)" color="0x0061ff" text="{data.totalPurgeQty}">
+                            <fx:Script>
+                                <![CDATA[
+                                import com.github.izerui.file.controls.demand.InventoryDemandLog;
+
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewLog(data:Object):void {
+                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                    demandLog.inventory = data;
+                                    demandLog.setFocus();
+
+                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(demandLog);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:Label>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="stockQty"
                                headerText="库存量"/>
             <mx:DataGridColumn dataField="occupiedStockQty"

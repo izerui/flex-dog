@@ -5,6 +5,7 @@ import com.ecworking.mrp.vo.*;
 import com.ecworking.rbac.remote.vo.ent.SimplifiedEntVo;
 import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.MrpClient;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
@@ -30,11 +31,11 @@ public class DemandService {
 
     /**
      * 获取账套列表
+     *
      * @return
      */
     public List<SimplifiedEntVo> getEntList() {
-        List<SimplifiedEntVo> simplifiedEntVos = enterpriseClient.searchAll();
-        return simplifiedEntVos;
+        return enterpriseClient.searchAll();
     }
 
     /**

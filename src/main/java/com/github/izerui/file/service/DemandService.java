@@ -28,6 +28,10 @@ public class DemandService {
     private EnterpriseClient enterpriseClient;
 
 
+    /**
+     * 获取账套列表
+     * @return
+     */
     public List<SimplifiedEntVo> getEntList() {
         List<SimplifiedEntVo> simplifiedEntVos = enterpriseClient.searchAll();
         return simplifiedEntVos;

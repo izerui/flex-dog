@@ -3,17 +3,21 @@ package com.github.izerui.file.service;
 import com.ecworking.commons.vo.PageVo;
 import com.ecworking.mrp.vo.*;
 import com.ecworking.rbac.remote.vo.ent.SimplifiedEntVo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.MrpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +38,8 @@ public class DemandService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * 获取账套列表
@@ -59,7 +65,6 @@ public class DemandService {
                                                       String keyword) {
         return mrpClient.inventoryDemands(entCode, page, pageSize, keyword);
     }
-
 
 
     /**
@@ -112,16 +117,36 @@ public class DemandService {
 
 
     /**
-     * 获取货品亏的数量
+     * 出入库记录
      *
      * @param entCode
      * @param inventoryId
+     * @param page
+     * @param pageSize
      * @return
      */
-    public BigDecimal getLossQty(String entCode,
-                                 String inventoryId) {
-        return mrpClient.getLossQty(entCode, inventoryId);
+    public PageVo inventoryStockHistory(String entCode,
+                                        String inventoryId,
+                                        Integer page,
+                                        Integer pageSize) throws IOException {
+        String s = "{\n" +
+                "\t\"inventoryId\":\"%s\",\n" +
+                "\t\"page\":\"%s\",\n" +
+                "\t\"pageSize\":\"%s\"\n" +
+                "}";
+        s = String.format(s, inventoryId, page, pageSize);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("entCode", entCode);
+        headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+        HttpEntity<String> bodyEntity = new HttpEntity<String>(s, headers);
+        Map map = restTemplate.postForObject("http://warehouse-pc/v3/pc/warehouse/stock/query/stock/change/detail", bodyEntity, Map.class);
+
+        String data = objectMapper.writeValueAsString(map.get("data"));
+
+        return objectMapper.readValue(data, PageVo.class);
     }
+
 
     /**
      * 获取货品的占用情况
@@ -150,18 +175,17 @@ public class DemandService {
 
 
     /**
-     * 获取单据任务上的货品需求情况
+     * 获取货品亏的数量
      *
      * @param entCode
-     * @param businessKey
      * @param inventoryId
      * @return
      */
-    public DemandResultVo findDemandResult(String entCode,
-                                           String businessKey,
-                                           String inventoryId) {
-        return mrpClient.findDemandResult(entCode, businessKey, inventoryId);
+    public BigDecimal getLossQty(String entCode,
+                                 String inventoryId) {
+        return mrpClient.getLossQty(entCode, inventoryId);
     }
+
 
     /**
      * 获取净需求列表

@@ -17,7 +17,7 @@
                                width="40"/>
             <mx:DataGridColumn dataField="businessKey" width="250"
                                headerText="业务主键"/>
-            <mx:DataGridColumn dataField="businessDocNo" width="80"
+            <mx:DataGridColumn dataField="businessDocNo"
                                headerText="订单号"/>
             <mx:DataGridColumn dataField="businessTypeName"
                                headerText="订单类型"/>
@@ -31,7 +31,7 @@
                                labelFunction="dateLabelFun"
                                headerText="创建时间"/>
             <mx:DataGridColumn dataField="updateTime"
-                               labelFunction="dateLabelFun"
+                               labelFunction="dateLabelFun2"
                                headerText="更新时间"/>
         </mx:columns>
     </mx:DataGrid>
@@ -79,6 +79,13 @@
             df.formatString = "YYYY-MM-DD JJ:NN:SS";
             return df.format(item.createTime);
         }
+
+        private function dateLabelFun2(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD JJ:NN:SS";
+            return df.format(item.updateTime);
+        }
+
 
         private function pageClick(event:ItemClickEvent):void {
             switch (event.item["itemData"]) {

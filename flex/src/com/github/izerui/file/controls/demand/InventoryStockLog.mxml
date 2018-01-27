@@ -11,22 +11,22 @@
 
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}">
         <mx:columns>
-            <mx:DataGridColumn dataField="index"
+            <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
                                width="40"/>
-            <mx:DataGridColumn dataField="warehouseName"
+            <mx:DataGridColumn dataField="warehouseName" textAlign="center"
                                headerText="仓库"/>
-            <mx:DataGridColumn dataField="batchNo"
+            <mx:DataGridColumn dataField="batchNo" textAlign="center"
                                headerText="批次"/>
-            <mx:DataGridColumn dataField="docDate"
+            <mx:DataGridColumn dataField="docDate" textAlign="center"
                                labelFunction="dateLabelFun"
                                headerText="日期"/>
-            <mx:DataGridColumn dataField="typeName"
+            <mx:DataGridColumn dataField="typeName" textAlign="center"
                                headerText="类型"/>
-            <mx:DataGridColumn dataField="srcDocNo"
+            <mx:DataGridColumn dataField="srcDocNo" textAlign="center"
                                headerText="单号"/>
-            <mx:DataGridColumn dataField="quantity"
+            <mx:DataGridColumn dataField="quantity" textAlign="center"
                                headerText="数量"/>
         </mx:columns>
     </mx:DataGrid>

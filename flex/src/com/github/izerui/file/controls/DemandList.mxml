@@ -12,11 +12,11 @@
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"
                  itemRollOver="itemRollOver(event)" itemRollOut="itemRollOut(event)">
         <mx:columns>
-            <mx:DataGridColumn dataField="index"
+            <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
                                width="40"/>
-            <mx:DataGridColumn dataField="inventoryCode"
+            <mx:DataGridColumn dataField="inventoryCode" textAlign="center"
                                headerText="货品编码">
                 <mx:itemRenderer>
                     <fx:Component>
@@ -44,7 +44,7 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="inventoryName" width="450"
+            <mx:DataGridColumn dataField="inventoryName" width="500" textAlign="center"
                                headerText="货品名称">
                 <mx:itemRenderer>
                     <fx:Component>
@@ -72,7 +72,9 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="totalDemandQty"
+            <mx:DataGridColumn dataField="unitName" textAlign="center"
+                               headerText="单位"/>
+            <mx:DataGridColumn dataField="totalDemandQty" textAlign="center"
                                headerText="总需求量">
                 <mx:itemRenderer>
                     <fx:Component>
@@ -100,7 +102,7 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="totalPurgeQty"
+            <mx:DataGridColumn dataField="totalPurgeQty" textAlign="center"
                                headerText="总在途在制量">
                 <mx:itemRenderer>
                     <fx:Component>
@@ -128,7 +130,7 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="stockQty"
+            <mx:DataGridColumn dataField="stockQty" textAlign="center"
                                headerText="库存量">
                 <mx:itemRenderer>
                     <fx:Component>
@@ -156,7 +158,7 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="occupiedStockQty"
+            <mx:DataGridColumn dataField="occupiedStockQty" textAlign="center"
                                headerText="库存占用量">
                 <mx:itemRenderer>
                     <fx:Component>
@@ -184,10 +186,8 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="usableQty"
+            <mx:DataGridColumn dataField="usableQty" textAlign="center"
                                headerText="可用量"/>
-            <mx:DataGridColumn dataField="unitName"
-                               headerText="单位"/>
         </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar>

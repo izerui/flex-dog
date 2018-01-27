@@ -14,14 +14,15 @@
             <mx:DataGridColumn dataField="index"
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
+                               textAlign="center"
                                width="40"/>
-            <mx:DataGridColumn dataField="businessKey" width="250"
+            <mx:DataGridColumn dataField="businessKey" width="250" textAlign="center"
                                headerText="业务主键"/>
-            <mx:DataGridColumn dataField="businessDocNo" width="120"
+            <mx:DataGridColumn dataField="businessDocNo" width="120" textAlign="center"
                                headerText="订单号"/>
-            <mx:DataGridColumn dataField="businessTypeName"
+            <mx:DataGridColumn dataField="businessTypeName" textAlign="center"
                                headerText="订单类型"/>
-            <mx:DataGridColumn dataField="remark"
+            <mx:DataGridColumn dataField="remark" textAlign="center"
                                headerText="动作">
                 <mx:itemRenderer>
                     <fx:Component>
@@ -45,19 +46,19 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="changeDemandQty"
+            <mx:DataGridColumn dataField="changeDemandQty" textAlign="center"
                                headerText="需求改变量"/>
-            <mx:DataGridColumn dataField="totalDemandQty"
+            <mx:DataGridColumn dataField="totalDemandQty" textAlign="center"
                                headerText="改变后总需"/>
-            <mx:DataGridColumn dataField="changePurgeQty"
+            <mx:DataGridColumn dataField="changePurgeQty" textAlign="center"
                                headerText="净需改变量"/>
-            <mx:DataGridColumn dataField="totalPurgeQty"
+            <mx:DataGridColumn dataField="totalPurgeQty" textAlign="center"
                                headerText="改变后总净需"/>
-            <mx:DataGridColumn dataField="stockQty"
+            <mx:DataGridColumn dataField="stockQty" textAlign="center"
                                headerText="库存量"/>
-            <mx:DataGridColumn dataField="usableQty"
+            <mx:DataGridColumn dataField="usableQty" textAlign="center"
                                headerText="可用量"/>
-            <mx:DataGridColumn dataField="createTime" width="120"
+            <mx:DataGridColumn dataField="createTime" width="120" textAlign="center"
                                labelFunction="dateLabelFun"
                                headerText="时间"/>
         </mx:columns>

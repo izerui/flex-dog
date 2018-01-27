@@ -6,7 +6,7 @@
                 width="{this.parentApplication.width - 100}"
                 height="{this.parentApplication.height - 100}"
                 close="PopUpManager.removePopUp(this);"
-                title="{inventory.inventoryCode} {inventory.inventoryName} 占用情况"
+                title="货品: {inventory.inventoryCode} {inventory.inventoryName} 占用情况"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true">

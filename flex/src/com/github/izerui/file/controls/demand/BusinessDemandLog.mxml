@@ -15,14 +15,36 @@
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
                                width="40"/>
-            <mx:DataGridColumn dataField="businessKey" width="250" textAlign="center"
-                               headerText="业务主键"/>
             <mx:DataGridColumn dataField="businessDocNo" width="120" textAlign="center"
                                headerText="订单号"/>
             <mx:DataGridColumn dataField="businessTypeName" textAlign="center"
                                headerText="订单类型"/>
             <mx:DataGridColumn dataField="inventoryCode" textAlign="center"
-                               headerText="货品编码"/>
+                               headerText="货品编码">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                       label="{data.inventoryCode}"
+                                       click="viewDemand()">
+                            <fx:Script>
+                                <![CDATA[
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewDemand():void {
+                                    var orderDemand:InventoryOrderDemand = new InventoryOrderDemand();
+                                    orderDemand.inventory = data;
+                                    orderDemand.setFocus();
+
+                                    PopUpManager.addPopUp(orderDemand, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(orderDemand);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:LinkButton>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="inventoryName" textAlign="center"
                                headerText="货品名称"/>
             <mx:DataGridColumn dataField="attributeName" textAlign="center"
@@ -70,6 +92,7 @@
             df.formatString = "YYYY-MM-DD JJ:NN:SS";
             return df.format(item.createTime);
         }
+
         private function dateLabelFun2(item:Object, column:DataGridColumn):String {
             var df:DateFormatter = new DateFormatter();
             df.formatString = "YYYY-MM-DD JJ:NN:SS";

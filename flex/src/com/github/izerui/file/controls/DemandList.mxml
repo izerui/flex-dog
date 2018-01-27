@@ -45,33 +45,7 @@
                 </mx:itemRenderer>
             </mx:DataGridColumn>
             <mx:DataGridColumn dataField="inventoryName" width="500" textAlign="center"
-                               headerText="货品名称">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                       label="{data.inventoryName}"
-                                       click="viewDemand()">
-                            <fx:Script>
-                                <![CDATA[
-                                import com.github.izerui.file.controls.demand.InventoryOrderDemand;
-
-                                import mx.core.Application;
-                                import mx.managers.PopUpManager;
-
-                                private function viewDemand():void {
-                                    var orderDemand:InventoryOrderDemand = new InventoryOrderDemand();
-                                    orderDemand.inventory = data;
-                                    orderDemand.setFocus();
-
-                                    PopUpManager.addPopUp(orderDemand, Application.application as DisplayObject, true);
-                                    PopUpManager.centerPopUp(orderDemand);
-                                }
-                                ]]>
-                            </fx:Script>
-                        </mx:LinkButton>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
+                               headerText="货品名称"/>
             <mx:DataGridColumn dataField="unitName" textAlign="center"
                                headerText="单位"/>
             <mx:DataGridColumn dataField="totalDemandQty" textAlign="center"

@@ -6,7 +6,7 @@
                 width="{this.parentApplication.width - 100}"
                 height="{this.parentApplication.height - 100}"
                 close="PopUpManager.removePopUp(this);"
-                title="{inventory.inventoryCode} {inventory.inventoryName} 需求日志记录"
+                title="本次 {selItem.remark} 影响的物料需求情况"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}">
@@ -22,29 +22,7 @@
             <mx:DataGridColumn dataField="businessTypeName"
                                headerText="订单类型"/>
             <mx:DataGridColumn dataField="remark"
-                               headerText="动作">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7" label="{data.remark}" click="viewSourceLog()">
-                            <fx:Script>
-                                <![CDATA[
-                                import mx.core.Application;
-                                import mx.managers.PopUpManager;
-
-                                private function viewSourceLog():void {
-                                    var demandLog:SourceDemandLog = new SourceDemandLog();
-                                    demandLog.selItem = data;
-                                    demandLog.setFocus();
-
-                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
-                                    PopUpManager.centerPopUp(demandLog);
-                                }
-                                ]]>
-                            </fx:Script>
-                        </mx:LinkButton>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
+                               headerText="动作"/>
             <mx:DataGridColumn dataField="changeDemandQty"
                                headerText="需求改变量"/>
             <mx:DataGridColumn dataField="totalDemandQty"
@@ -87,7 +65,7 @@
         import mx.rpc.events.ResultEvent;
 
         [Bindable]
-        public var inventory:Object;
+        public var selItem:Object;
 
         [Bindable]
         protected var page:PageVo = new PageVo();
@@ -97,7 +75,7 @@
             RemoteObjectUtils.execute("demandService", "inventoryDemandsHistory", function (event:ResultEvent) {
                 LoaderManager.hideLoading();
                 page = PageVo(event.result);
-            }, inventory.entCode, inventory.inventoryId, null, page.number, page.size)
+            }, selItem.entCode, null, selItem.sourceId, page.number, page.size)
 
         }
 

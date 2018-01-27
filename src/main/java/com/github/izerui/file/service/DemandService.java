@@ -170,7 +170,11 @@ public class DemandService {
      */
     public List<DemandResultVo> findDemandResults(String entCode,
                                                   String businessKey) {
-        return mrpClient.findDemandResults(entCode, businessKey);
+        MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
+        valueMap.set("entCode", entCode);
+        valueMap.set("businessKey", businessKey);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
+        return restTemplate.postForObject("http://mrp-api/v3/demand/list", httpEntity, List.class);
     }
 
 

@@ -17,14 +17,61 @@
                                width="40"/>
             <mx:DataGridColumn dataField="inventoryCode"
                                headerText="货品编码">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:Label click="viewLog(data)" color="#026c6e" text="{data.inventoryCode}">
+                            <fx:Script>
+                                <![CDATA[
+                                import com.github.izerui.file.controls.demand.InventoryOrderDemand;
+
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewLog(data:Object):void {
+                                    var orderDemand:InventoryOrderDemand = new InventoryOrderDemand();
+                                    orderDemand.inventory = data;
+                                    orderDemand.setFocus();
+
+                                    PopUpManager.addPopUp(orderDemand, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(orderDemand);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:Label>
+                    </fx:Component>
+                </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="inventoryName" width="350"
-                               headerText="货品名称"/>
+            <mx:DataGridColumn dataField="inventoryName" width="450"
+                               headerText="货品名称">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:Label click="viewLog(data)" color="#026c6e" text="{data.inventoryName}">
+                            <fx:Script>
+                                <![CDATA[
+                                import com.github.izerui.file.controls.demand.InventoryOrderDemand;
+
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewLog(data:Object):void {
+                                    var orderDemand:InventoryOrderDemand = new InventoryOrderDemand();
+                                    orderDemand.inventory = data;
+                                    orderDemand.setFocus();
+
+                                    PopUpManager.addPopUp(orderDemand, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(orderDemand);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:Label>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="totalDemandQty"
                                headerText="总需求量">
                 <mx:itemRenderer>
                     <fx:Component>
-                        <mx:Label click="viewLog(data)" color="0x0061ff" text="{data.totalDemandQty}">
+                        <mx:Label click="viewLog(data)" color="#4e6e14" text="{data.totalDemandQty}">
                             <fx:Script>
                                 <![CDATA[
                                 import com.github.izerui.file.controls.demand.InventoryDemandLog;
@@ -50,7 +97,7 @@
                                headerText="总在途在制量">
                 <mx:itemRenderer>
                     <fx:Component>
-                        <mx:Label click="viewLog(data)" color="0x0061ff" text="{data.totalPurgeQty}">
+                        <mx:Label click="viewLog(data)" color="#4e6e14" text="{data.totalPurgeQty}">
                             <fx:Script>
                                 <![CDATA[
                                 import com.github.izerui.file.controls.demand.InventoryDemandLog;

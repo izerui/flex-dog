@@ -5,11 +5,14 @@ import com.ecworking.mrp.vo.*;
 import com.ecworking.rbac.remote.vo.ent.SimplifiedEntVo;
 import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.MrpClient;
-import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,6 +31,9 @@ public class DemandService {
     @Autowired
     private EnterpriseClient enterpriseClient;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
 
     /**
      * 获取账套列表
@@ -37,19 +43,6 @@ public class DemandService {
     public List<SimplifiedEntVo> getEntList() {
         return enterpriseClient.searchAll();
     }
-
-    /**
-     * 获取货品的占用情况
-     *
-     * @param entCode
-     * @param inventoryId
-     * @return
-     */
-    public List<OccupiedStockVo> occupiedDetail(String entCode,
-                                                String inventoryId) {
-        return mrpClient.occupiedDetail(entCode, inventoryId);
-    }
-
 
     /**
      * 查看需求情况
@@ -68,20 +61,9 @@ public class DemandService {
     }
 
 
-    /**
-     * 获取货品亏的数量
-     *
-     * @param entCode
-     * @param inventoryId
-     * @return
-     */
-    public BigDecimal getLossQty(String entCode,
-                                 String inventoryId) {
-        return mrpClient.getLossQty(entCode, inventoryId);
-    }
 
     /**
-     * 查看货品在单据上的需求情况
+     * 货品的订单需求
      *
      * @param entCode
      * @param page
@@ -93,12 +75,18 @@ public class DemandService {
                                                            Integer page,
                                                            Integer pageSize,
                                                            String inventoryId) {
-        return mrpClient.inventoryBusinessDemands(entCode, page, pageSize, inventoryId);
+        MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
+        valueMap.set("entCode", entCode);
+        valueMap.set("inventoryId", inventoryId);
+        valueMap.set("page", page);
+        valueMap.set("pageSize", pageSize);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
+        return restTemplate.postForObject("http://mrp-api/v3/inventory/business/demands", httpEntity, PageVo.class);
     }
 
 
     /**
-     * 查看货品需求改变历史
+     * 需求日志
      *
      * @param entCode
      * @param inventoryId
@@ -112,7 +100,39 @@ public class DemandService {
                                                        String sourceId,
                                                        Integer page,
                                                        Integer pageSize) {
-        return mrpClient.inventoryDemandsHistory(entCode, inventoryId, sourceId, page, pageSize);
+        MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
+        valueMap.set("entCode", entCode);
+        valueMap.set("inventoryId", inventoryId);
+        valueMap.set("sourceId", sourceId);
+        valueMap.set("page", page);
+        valueMap.set("pageSize", pageSize);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
+        return restTemplate.postForObject("http://mrp-api/v3/inventory/demands/history", httpEntity, PageVo.class);
+    }
+
+
+    /**
+     * 获取货品亏的数量
+     *
+     * @param entCode
+     * @param inventoryId
+     * @return
+     */
+    public BigDecimal getLossQty(String entCode,
+                                 String inventoryId) {
+        return mrpClient.getLossQty(entCode, inventoryId);
+    }
+
+    /**
+     * 获取货品的占用情况
+     *
+     * @param entCode
+     * @param inventoryId
+     * @return
+     */
+    public List<OccupiedStockVo> occupiedDetail(String entCode,
+                                                String inventoryId) {
+        return mrpClient.occupiedDetail(entCode, inventoryId);
     }
 
 

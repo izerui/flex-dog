@@ -100,6 +100,7 @@
         </mx:LinkBar>
         <mx:Label text="{page.number + 1} / {page.totalPages} 页"/>
         <mx:Label text="共 {page.totalElements} 条记录"/>
+        <mx:LinkButton icon="@Embed('/assets/img/bar_img/406.png')" label="复制选中行" click="copy()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
@@ -158,6 +159,14 @@
                 page.number = 0;
             }
             loadData();
+        }
+
+        private function copy():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var copyText:String = JSON.stringify(grid.selectedItem);
+            System.setClipboard(copyText);
         }
 
         private function indexNumLabelFun(item:Object, column:DataGridColumn):String {

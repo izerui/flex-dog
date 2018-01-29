@@ -67,6 +67,9 @@
                                headerText="更新时间"/>
         </mx:columns>
     </mx:DataGrid>
+    <mx:ControlBar>
+        <mx:LinkButton icon="@Embed('/assets/img/bar_img/406.png')" label="复制选中行" click="copy()"/>
+    </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.utils.RemoteObjectUtils;
@@ -102,6 +105,14 @@
         private function indexNumLabelFun(item:Object, column:DataGridColumn):String {
             var indexNum:int = (grid.dataProvider.getItemIndex(item) + 1);
             return indexNum.toString();
+        }
+
+        private function copy():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var copyText:String = JSON.stringify(grid.selectedItem);
+            System.setClipboard(copyText);
         }
         ]]>
     </fx:Script>

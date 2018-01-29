@@ -7,7 +7,8 @@
         creationComplete="initApp();"
         showCloseButton="true"
         close="titlewindow1_closeHandler(event)"
-        layout="absolute" paddingTop="10">
+        layout="absolute" paddingTop="10"
+        keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
     <fx:Script>
         <![CDATA[
         import com.github.izerui.file.event.FileUploadEvent;

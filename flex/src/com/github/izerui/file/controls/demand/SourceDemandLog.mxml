@@ -15,6 +15,31 @@
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
                                width="40"/>
+            <mx:DataGridColumn dataField="businessKey" width="250" textAlign="center"
+                               headerText="业务主键">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7" label="{data.businessKey}"
+                                       click="viewBusiness()">
+                            <fx:Script>
+                                <![CDATA[
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewBusiness():void {
+                                    var demandLog:BusinessDemandLog = new BusinessDemandLog();
+                                    demandLog.selItem = data;
+                                    demandLog.setFocus();
+
+                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(demandLog);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:LinkButton>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="businessDocNo" width="120" textAlign="center"
                                headerText="订单号"/>
             <mx:DataGridColumn dataField="inventoryCode" textAlign="center"

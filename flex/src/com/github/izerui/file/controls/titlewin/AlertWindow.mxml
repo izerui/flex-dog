@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+                xmlns:s="library://ns.adobe.com/flex/spark"
+                xmlns:mx="library://ns.adobe.com/flex/mx"
+                title="安全验证"
+                layout="vertical"
+                showCloseButton="true"
+                close="PopUpManager.removePopUp(this);"
+                keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
+    <fx:Script>
+        <![CDATA[
+        import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.event.DeployEvent;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+        import com.github.izerui.file.vo.FileItem;
+
+        import mx.controls.Alert;
+        import mx.core.FlexGlobals;
+
+        import mx.managers.PopUpManager;
+        import mx.rpc.events.ResultEvent;
+
+        public var selItem:FileItem;
+
+        private function validateCap():void {
+            if (!captcha.text) {
+                return;
+            }
+            var _win:AlertWindow = this;
+            RemoteObjectUtils.execute("smsService", "validate", function (event:ResultEvent) {
+                LoaderManager.hideLoading();
+                if (Boolean(event.result)) {
+                    if (selItem.isfolder) {
+                        return;
+                    }
+                    PopUpManager.removePopUp(_win);
+                    exec();
+                }else{
+                    Alert.show("验证码错误","错误");
+                }
+            }, "139116523134", captcha.text);
+
+
+            function exec():void {
+
+                LoaderManager.showLoading();
+
+                RemoteObjectUtils.execute("fileService", "exec", execResult, selItem.filename);
+
+                function execResult(event:ResultEvent):void {
+                    LoaderManager.hideLoading();
+                    var output = String(event.result);
+                    selItem["relativeDeployTime"] = "1秒前";
+
+                    var popUp:DeployTitleWindow = new DeployTitleWindow();
+                    popUp.output = output ? output : "未知";
+                    PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+                    PopUpManager.centerPopUp(popUp)
+
+                    var deployEvent:DeployEvent = new DeployEvent("deployEvent",true,false);
+                    deployEvent.item = selItem;
+                    dispatchEvent(deployEvent);
+
+                }
+            }
+
+
+        }
+
+        private function sendSms():void {
+            RemoteObjectUtils.execute("smsService", "sendCaptcha", function (event:ResultEvent) {
+                LoaderManager.hideLoading();
+                captchaButton.enabled = false;
+                captchaButton.label = "10分钟有效";
+            }, "139116523134");
+        }
+        ]]>
+    </fx:Script>
+    <fx:Declarations>
+        <!-- 将非可视元素（例如服务、值对象）放在此处 -->
+    </fx:Declarations>
+    <s:HGroup>
+        <mx:TextInput id="captcha" width="100"/>
+        <mx:LinkButton id="captchaButton" label="获取验证码" click="sendSms()"/>
+    </s:HGroup>
+
+    <mx:ControlBar horizontalAlign="right">
+        <mx:Button label="确定" click="validateCap()"/>
+        <mx:Button label="取消" click="PopUpManager.removePopUp(this);"/>
+    </mx:ControlBar>
+</mx:TitleWindow>

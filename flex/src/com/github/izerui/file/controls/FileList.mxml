@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
-          xmlns:s="library://ns.adobe.com/flex/spark"
-          xmlns:mx="library://ns.adobe.com/flex/mx"
-          xmlns:searchinput="com.github.izerui.file.components.searchInput.*"
-          creationComplete="panel1_creationCompleteHandler(event)">
+         xmlns:s="library://ns.adobe.com/flex/spark"
+         xmlns:mx="library://ns.adobe.com/flex/mx"
+         xmlns:searchinput="com.github.izerui.file.components.searchInput.*"
+         creationComplete="panel1_creationCompleteHandler(event)">
 
     <fx:Script>
 		<![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
-        import com.github.izerui.file.controls.titlewin.DeployTitleWindow;
+        import com.github.izerui.file.controls.titlewin.AlertWindow;
         import com.github.izerui.file.controls.uploader.ServletUploader;
+        import com.github.izerui.file.event.DeployEvent;
         import com.github.izerui.file.event.FileUploadEvent;
         import com.github.izerui.file.event.I18nEvent;
-        import com.github.izerui.file.utils.AlertShow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
         import com.github.izerui.file.vo.FileItem;
 
@@ -109,30 +109,19 @@
 
                     if (myFileGrid.selectedIndex != -1) {
                         var selItem:FileItem = FileItem(myFileGrid.selectedItem);
-                        if (!selItem.isfolder) {
-                            AlertShow.operateConfirm("确认发布服务?", "发布", FlexGlobals.topLevelApplication, exec);
+                        if (selItem.isfolder) {
+                            return;
                         }
+                        var deployWin:AlertWindow = new AlertWindow();
+                        deployWin.selItem = selItem;
+                        deployWin.addEventListener("deployEvent", function (event:DeployEvent):void {
+                            ArrayCollection(myFileGrid.dataProvider).itemUpdated(event.item, "relativeDeployTime");
+                        });
+                        PopUpManager.addPopUp(deployWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
+                        PopUpManager.centerPopUp(deployWin);
+
                     }
                     break;
-            }
-
-            function exec():void {
-
-                LoaderManager.showLoading();
-
-                RemoteObjectUtils.execute("fileService", "exec", execResult, selItem.filename);
-
-                function execResult(event:ResultEvent):void {
-                    LoaderManager.hideLoading();
-                    var output = String(event.result);
-                    selItem["relativeDeployTime"] = "1秒前";
-                    ArrayCollection(myFileGrid.dataProvider).itemUpdated(selItem, "relativeDeployTime");
-
-                    var popUp:DeployTitleWindow = new DeployTitleWindow();
-                    popUp.output = output ? output : "未知";
-                    PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
-                    PopUpManager.centerPopUp(popUp)
-                }
             }
 
         }

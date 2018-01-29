@@ -24,6 +24,16 @@
     <dependencies>
         <dependency>
             <groupId>com.ecworking</groupId>
+            <artifactId>sms-autoconfigure</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecworking</groupId>
+            <artifactId>esms-autoconfig</artifactId>
+            <version>1.2.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecworking</groupId>
             <artifactId>business-commons</artifactId>
         </dependency>
         <dependency>

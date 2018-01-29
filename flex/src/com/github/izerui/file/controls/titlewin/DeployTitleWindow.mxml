@@ -4,7 +4,10 @@
 				xmlns:mx="library://ns.adobe.com/flex/mx"
 				width="600" height="400"
 				title="部署完毕"
-				layout="vertical" showCloseButton="true" close="PopUpManager.removePopUp(this);">
+				layout="vertical"
+				showCloseButton="true"
+				close="PopUpManager.removePopUp(this);"
+				keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 	<fx:Script>
         <![CDATA[
 			import mx.managers.PopUpManager;

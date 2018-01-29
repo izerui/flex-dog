@@ -47,9 +47,57 @@
             <mx:DataGridColumn dataField="attributeName" textAlign="center"
                                headerText="货品属性"/>
             <mx:DataGridColumn dataField="demandQty" textAlign="center"
-                               headerText="需求量"/>
+                               headerText="需求量">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                       label="{data.demandQty}"
+                                       click="viewLog()">
+                            <fx:Script>
+                                <![CDATA[
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewLog():void {
+                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                    demandLog.inventory = data;
+                                    demandLog.setFocus();
+
+                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(demandLog);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:LinkButton>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="purgeQty" textAlign="center"
-                               headerText="在途在制量"/>
+                               headerText="在途在制量">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                       label="{data.purgeQty}"
+                                       click="viewLog()">
+                            <fx:Script>
+                                <![CDATA[
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewLog():void {
+                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                    demandLog.inventory = data;
+                                    demandLog.setFocus();
+
+                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(demandLog);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:LinkButton>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="createTime" textAlign="center"
                                labelFunction="dateLabelFun"
                                headerText="创建时间"/>

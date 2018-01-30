@@ -6,6 +6,7 @@
                 layout="vertical"
                 showCloseButton="true"
                 close="PopUpManager.removePopUp(this);"
+                creationComplete="init()"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
     <fx:Script>
         <![CDATA[
@@ -14,16 +15,23 @@
         import com.github.izerui.file.utils.RemoteObjectUtils;
         import com.github.izerui.file.vo.FileItem;
 
+        import mx.collections.ArrayCollection;
+
+        import mx.collections.ArrayCollection;
+
         import mx.controls.Alert;
         import mx.core.FlexGlobals;
 
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
 
+        [Bindable]
+        public var publishers:ArrayCollection;
+
         public var selItem:FileItem;
 
         private function validateCap():void {
-            if (!captcha.text) {
+            if (!captcha.text || box.selectedIndex == -1) {
                 return;
             }
             var _win:AlertWindow = this;
@@ -38,7 +46,7 @@
                 }else{
                     Alert.show("验证码错误","错误");
                 }
-            }, "139116523134", captcha.text);
+            }, box.selectedItem.phone, captcha.text);
 
 
             function exec():void {
@@ -68,22 +76,34 @@
         }
 
         private function sendSms():void {
+            if(box.selectedIndex == -1){
+                return;
+            }
+            box.enabled = false;
             RemoteObjectUtils.execute("smsService", "sendCaptcha", function (event:ResultEvent) {
-                LoaderManager.hideLoading();
                 captchaButton.enabled = false;
                 captchaButton.label = "10分钟有效";
-            }, "139116523134");
+            }, box.selectedItem.phone);
+        }
+
+        private function init():void {
+            RemoteObjectUtils.execute("smsService", "getPublishers", function (event:ResultEvent) {
+                LoaderManager.hideLoading();
+                publishers = ArrayCollection(event.result);
+            });
         }
         ]]>
     </fx:Script>
     <fx:Declarations>
         <!-- 将非可视元素（例如服务、值对象）放在此处 -->
     </fx:Declarations>
-    <s:HGroup>
+    <s:VGroup>
+        <s:HGroup>
+            <mx:ComboBox id="box" dataProvider="{publishers}" labelField="name"/>
+            <mx:LinkButton id="captchaButton" label="获取验证码" click="sendSms()"/>
+        </s:HGroup>
         <mx:TextInput id="captcha" width="100"/>
-        <mx:LinkButton id="captchaButton" label="获取验证码" click="sendSms()"/>
-    </s:HGroup>
-
+    </s:VGroup>
     <mx:ControlBar horizontalAlign="right">
         <mx:Button label="确定" click="validateCap()"/>
         <mx:Button label="取消" click="PopUpManager.removePopUp(this);"/>

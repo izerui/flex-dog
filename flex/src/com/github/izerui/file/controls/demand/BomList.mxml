@@ -29,7 +29,7 @@
         </mx:columns>
     </mx:AdvancedDataGrid>
     <mx:ControlBar>
-        <mx:LinkButton icon="@Embed('/assets/img/bar_img/406.png')" label="复制选中行" click="copy()"/>
+        <mx:LinkButton icon="@Embed('/assets/img/bar_img/406.png')" label="复制BOM信息" click="copy()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
@@ -75,10 +75,10 @@
         }
 
         private function copy():void {
-            if (grid.selectedIndex == -1) {
+            if (!dataList) {
                 return;
             }
-            var copyText:String = JSON.stringify(grid.selectedItem);
+            var copyText:String = JSON.stringify(dataList);
             System.setClipboard(copyText);
         }
 

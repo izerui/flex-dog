@@ -4,8 +4,10 @@ import com.ecworking.commons.vo.PageVo;
 import com.ecworking.mrp.vo.*;
 import com.ecworking.rbac.remote.vo.ent.SimplifiedEntVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.izerui.file.client.BomClient;
 import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.MrpClient;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
@@ -40,6 +42,9 @@ public class DemandService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private BomClient bomClient;
 
     /**
      * 获取账套列表
@@ -223,5 +228,21 @@ public class DemandService {
     public Map<String, BigDecimal> getUsableQtys(String entCode,
                                                  Set<String> inventoryIds) {
         return mrpClient.getUsableQtys(entCode, inventoryIds);
+    }
+
+    /**
+     * 根据bomId获取bom
+     *
+     * @param entCode
+     * @param bomId
+     * @return
+     */
+    public List<Map> getBom(String entCode, String bomId) {
+        MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
+        valueMap.set("entCode", entCode);
+        valueMap.set("bomId", bomId);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
+        Map bom = restTemplate.postForObject("http://development-api/v3/bom/get", httpEntity, Map.class);
+        return Lists.newArrayList(bom);
     }
 }

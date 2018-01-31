@@ -16,6 +16,34 @@
                                labelFunction="indexNumLabelFun"
                                textAlign="center"
                                width="40"/>
+            <mx:DataGridColumn dataField="bomId" width="250" textAlign="center"
+                               headerText="BOM">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7" label="{data.bomId}"
+                                       click="viewBom()">
+                            <fx:Script>
+                                <![CDATA[
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewBom():void {
+                                    if(!data.bomId){
+                                        return;
+                                    }
+                                    var bomList:BomList = new BomList();
+                                    bomList.inventory = data;
+                                    bomList.setFocus();
+
+                                    PopUpManager.addPopUp(bomList, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(bomList);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:LinkButton>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="businessKey" width="250" textAlign="center"
                                headerText="业务主键">
                 <mx:itemRenderer>

@@ -3,7 +3,7 @@
   <component name="FlexBuildConfigurationManager" active="flex">
     <configurations>
       <configuration name="flex" main-class="com.github.izerui.file.controls.Index" output-file="index.swf" output-folder="$MODULE_DIR$/../src/main/resources/public" use-html-wrapper="true" wrapper-template-path="$MODULE_DIR$/html-template">
-        <dependencies target-player="11.1">
+        <dependencies target-player="28.0">
           <entries>
             <entry library-id="66a84f79-857f-4dbe-9c79-82cfc8ca999b">
               <dependency linkage="Merged" />
@@ -12,7 +12,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="4.6.0" />
+          <sdk name="Apache Flex Sdk" />
         </dependencies>
         <compiler-options>
           <map>
@@ -33,7 +33,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="4.6.0" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="Apache Flex Sdk" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library type="flex">

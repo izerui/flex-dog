@@ -56,6 +56,7 @@ public class OnlineService {
             }else{
                 map.put("relatedCount",0);
             }
+            map.put("postCount",userClient.postAttachedUserCount(entity.getCode()));
             map.put("count", online.get("在线用户数"));
             map.put("date",entity.getCreateDate());
             map.put("users", StringUtils.join(((List<String>) online.get("在线用户列表")).toArray(),","));

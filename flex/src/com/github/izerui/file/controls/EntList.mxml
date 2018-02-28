@@ -22,26 +22,28 @@
 
     </s:HGroup>
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true">
-        <mx:columns>
-            <mx:DataGridColumn dataField="code" width="100"
-                               headerText="账套编号"/>
-            <mx:DataGridColumn dataField="name" width="200"
-                               headerText="企业名称"/>
-            <mx:DataGridColumn dataField="date" width="100"
-                               headerText="开户日期"
-                               labelFunction="dateLabelFun"/>
-            <mx:DataGridColumn dataField="type" width="80"
-                               headerText="类型"/>
-            <mx:DataGridColumn dataField="status" width="80"
-                               headerText="状态"/>
-            <mx:DataGridColumn dataField="relatedCount" width="80"
-                               headerText="授权数"/>
-            <mx:DataGridColumn dataField="count" width="80"
-                               headerText="在线数"/>
-            <mx:DataGridColumn dataField="users" wordWrap="true"
-                               headerText="在线用户"/>
-        </mx:columns>
-    </mx:DataGrid>
+    <mx:columns>
+        <mx:DataGridColumn dataField="code" width="100"
+                           headerText="账套编号"/>
+        <mx:DataGridColumn dataField="name" width="200"
+                           headerText="企业名称"/>
+        <mx:DataGridColumn dataField="date" width="100"
+                           headerText="开户日期"
+                           labelFunction="dateLabelFun"/>
+        <mx:DataGridColumn dataField="type" width="80"
+                           headerText="类型"/>
+        <mx:DataGridColumn dataField="status" width="80"
+                           headerText="状态"/>
+        <mx:DataGridColumn dataField="relatedCount" width="80"
+                           headerText="员工数"/>
+        <mx:DataGridColumn dataField="postCount" width="80"
+                           headerText="授权数"/>
+        <mx:DataGridColumn dataField="count" width="80"
+                           headerText="在线数"/>
+        <mx:DataGridColumn dataField="users" wordWrap="true"
+                           headerText="在线用户"/>
+    </mx:columns>
+</mx:DataGrid>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.utils.RemoteObjectUtils;
@@ -61,7 +63,7 @@
                 var _userCount:Number = 0;
                 for each(var item in ArrayCollection(grid.dataProvider)) {
                     _onlineCount += Number(item.count);
-                    _userCount += Number(item.relatedCount);
+                    _userCount += Number(item.postCount);
                 }
                 onlineCount.text = _onlineCount.toString();
                 userCount.text = _userCount.toString();

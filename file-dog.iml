@@ -87,8 +87,8 @@
     <orderEntry type="library" name="Maven: io.springfox:springfox-swagger-ui:2.6.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:rest-exception-autoconfigure:1.1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:mrp-remote:3.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:rbac-remote:3.0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:rbac-global:3.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:rbac-remote:3.2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:rbac-global:3.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:audit-core:1.1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-sleuth-stream:1.1.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-sleuth-core:1.1.4.RELEASE" level="project" />

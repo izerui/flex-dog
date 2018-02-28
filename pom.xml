@@ -16,7 +16,7 @@
 
     <properties>
         <blazeds.version>4.0.0.14931</blazeds.version>
-        <rbac.version>3.0.1-SNAPSHOT</rbac.version>
+        <rbac.version>3.2.0-SNAPSHOT</rbac.version>
         <mrp-remote.version>3.0.0-SNAPSHOT</mrp-remote.version>
     </properties>
 

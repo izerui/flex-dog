@@ -54,12 +54,9 @@ public class DemandService {
      *
      * @return
      */
-    public List<EnterpriseEntity> getEntList(String name) {
+    public List<EnterpriseEntity> getEntList() {
         EntSearch entSearch = new EntSearch();
         entSearch.setType(1);
-        if(StringUtils.isNotEmpty(name)){
-            entSearch.setName(name);
-        }
         return enterpriseClient.data(entSearch);
     }
 

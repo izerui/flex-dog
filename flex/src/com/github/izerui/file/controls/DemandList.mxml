@@ -197,7 +197,7 @@
             RemoteObjectUtils.execute("demandService", "getEntList", function (event:ResultEvent) {
                 box.dataProvider = event.result;
                 LoaderManager.hideLoading();
-            }, "");
+            });
 
         }
 

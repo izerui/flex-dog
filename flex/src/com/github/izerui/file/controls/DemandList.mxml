@@ -6,8 +6,8 @@
 
     <s:HGroup>
         <mx:ComboBox id="box" labelField="name" rowCount="20"/>
-        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查询" click="page.number = 0; loadData()"/>
         <mx:TextInput id="input" width="200"/>
+        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查询" click="page.number = 0; loadData()"/>
     </s:HGroup>
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"
                  itemRollOver="itemRollOver(event)" itemRollOut="itemRollOut(event)">
@@ -197,7 +197,7 @@
             RemoteObjectUtils.execute("demandService", "getEntList", function (event:ResultEvent) {
                 box.dataProvider = event.result;
                 LoaderManager.hideLoading();
-            });
+            }, "");
 
         }
 

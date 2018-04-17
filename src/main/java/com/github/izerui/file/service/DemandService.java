@@ -2,12 +2,15 @@ package com.github.izerui.file.service;
 
 import com.ecworking.commons.vo.PageVo;
 import com.ecworking.mrp.vo.*;
+import com.ecworking.rbac.dto.EntSearch;
+import com.ecworking.rbac.dto.EnterpriseEntity;
 import com.ecworking.rbac.remote.vo.ent.SimplifiedEntVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.client.BomClient;
 import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.MrpClient;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
@@ -51,8 +54,13 @@ public class DemandService {
      *
      * @return
      */
-    public List<SimplifiedEntVo> getEntList() {
-        return enterpriseClient.searchAll();
+    public List<EnterpriseEntity> getEntList(String name) {
+        EntSearch entSearch = new EntSearch();
+        entSearch.setType(1);
+        if(StringUtils.isNotEmpty(name)){
+            entSearch.setName(name);
+        }
+        return enterpriseClient.data(entSearch);
     }
 
     /**

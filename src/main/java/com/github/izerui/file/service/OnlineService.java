@@ -37,7 +37,10 @@ public class OnlineService {
     public List<Map<String, Object>> onlineUsers() throws Exception {
         List<Map<String, Object>> results = new ArrayList<>();
 
-        List<EnterpriseEntity> entities = enterpriseClient.data(new EntSearch());
+        EntSearch entSearch = new EntSearch();
+        entSearch.setType(1);
+
+        List<EnterpriseEntity> entities = enterpriseClient.data(entSearch);
 
         for (EnterpriseEntity entity : entities) {
             if(!entity.isEnable()){

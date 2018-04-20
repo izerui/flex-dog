@@ -43,7 +43,7 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="businessKey" width="250" textAlign="center"
+            <mx:DataGridColumn dataField="businessKey" textAlign="center"
                                headerText="业务主键">
                 <mx:itemRenderer>
                     <fx:Component>
@@ -102,6 +102,8 @@
                                headerText="货品属性"/>
             <mx:DataGridColumn dataField="changeDemandQty" textAlign="center"
                                headerText="需求改变量"/>
+            <mx:DataGridColumn dataField="demandQty" textAlign="center"
+                               headerText="改变后单需"/>
             <mx:DataGridColumn dataField="totalDemandQty" textAlign="center"
                                headerText="改变后总需">
                 <mx:itemRenderer>
@@ -130,6 +132,8 @@
             </mx:DataGridColumn>
             <mx:DataGridColumn dataField="changePurgeQty" textAlign="center"
                                headerText="净需改变量"/>
+            <mx:DataGridColumn dataField="purgeQty" textAlign="center"
+                               headerText="改变后单净需"/>
             <mx:DataGridColumn dataField="totalPurgeQty" textAlign="center"
                                headerText="改变后总净需">
                 <mx:itemRenderer>

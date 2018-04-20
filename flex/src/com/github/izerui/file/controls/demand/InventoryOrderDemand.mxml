@@ -43,7 +43,7 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="businessKey" width="250" textAlign="center"
+            <mx:DataGridColumn dataField="businessKey" width="260" textAlign="center"
                                headerText="业务主键">
                 <mx:itemRenderer>
                     <fx:Component>

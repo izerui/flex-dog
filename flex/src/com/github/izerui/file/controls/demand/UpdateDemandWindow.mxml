@@ -2,7 +2,7 @@
 <mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
                 xmlns:mx="library://ns.adobe.com/flex/mx"
                 width="350" height="250"
-                title="{demandItem.inventoryCode} {demandItem.inventoryName}"
+                title="修改当前需求、净需"
                 layout="vertical"
                 showCloseButton="true"
                 creationComplete="sendSms()"

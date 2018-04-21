@@ -148,11 +148,14 @@
         <mx:Label text="{page.number + 1} / {page.totalPages} 页"/>
         <mx:Label text="共 {page.totalElements} 条记录"/>
         <mx:LinkButton icon="@Embed('/assets/img/bar_img/406.png')" label="复制选中行" click="copy()"/>
+        <mx:LinkButton icon="@Embed('/assets/img/renameFolder.png')" label="修改" click="update()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.utils.RemoteObjectUtils;
         import com.github.izerui.file.vo.PageVo;
+
+        import mx.core.FlexGlobals;
 
         import mx.events.ItemClickEvent;
         import mx.formatters.DateFormatter;
@@ -226,6 +229,20 @@
         private function indexNumLabelFun(item:Object, column:DataGridColumn):String {
             var indexNum:int = (page.content.getItemIndex(item) + 1);
             return indexNum.toString();
+        }
+
+        private function update():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var udw:UpdateDemandWindow = new UpdateDemandWindow();
+            udw.demandItem = grid.selectedItem;
+            udw.setFocus();
+            udw.addEventListener("DataChange",function (event:Event) {
+                loadData();
+            });
+            PopUpManager.addPopUp(udw,DisplayObject(FlexGlobals.topLevelApplication),true);
+            PopUpManager.centerPopUp(udw);
         }
         ]]>
     </fx:Script>

@@ -1,16 +1,18 @@
 package com.github.izerui.file.service;
 
 import com.ecworking.commons.vo.PageVo;
+import com.ecworking.esms.global.mchuan.SmsSendResponse;
+import com.ecworking.esms.mchuan.MchuanSmsService;
 import com.ecworking.mrp.vo.*;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
-import com.ecworking.rbac.remote.vo.ent.SimplifiedEntVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.client.BomClient;
 import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.MrpClient;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
@@ -18,12 +20,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +52,12 @@ public class DemandService {
 
     @Autowired
     private BomClient bomClient;
+
+    @Autowired
+    private MchuanSmsService mchuanSmsService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 获取账套列表
@@ -250,4 +260,40 @@ public class DemandService {
         Map bom = restTemplate.postForObject("http://development-api/v3/bom/get", httpEntity, Map.class);
         return Lists.newArrayList(bom);
     }
+
+
+    public void sendUpdateDemandCaptcha(String phone) {
+        String content = "验证码: [%s] ，请在1分钟内输入。";
+        String captcha = RandomStringUtils.randomNumeric(4);
+        content = String.format(content, captcha);
+        SmsSendResponse smsSendResponse = mchuanSmsService.sendCaptcha("file-dog", phone, content, "update-demand", captcha, 60);
+        if (smsSendResponse.getError() != null) {
+            throw new RuntimeException("无法发送验证码：" + smsSendResponse.getError().getMessage() + "[错误代码：" + smsSendResponse.getError().getCode() + "]");
+        }
+    }
+
+
+    public void updateDemand(String phone,
+                             String captcha,
+                             String entCode,
+                             String businessKey,
+                             String sourceId,
+                             String remark,
+                             String inventoryId,
+                             BigDecimal changeDemandQty,
+                             BigDecimal changePurgeQty) {
+        boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
+        Assert.state(isValid,"验证码无效");
+
+        Map<String,Object> msg = new HashMap<>();
+        msg.put("entCode",entCode);
+        msg.put("businessKey",businessKey);
+        msg.put("sourceId",sourceId);
+        msg.put("remark",remark);
+        msg.put("inventoryId",inventoryId);
+        msg.put("changeDemandQty",changeDemandQty);
+        msg.put("changePurgeQty",changePurgeQty);
+        rabbitTemplate.convertAndSend("ierp","ierp.demand.update",msg);
+    }
+
 }

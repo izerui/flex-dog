@@ -5,7 +5,6 @@
                 title="修改当前需求、净需"
                 layout="vertical"
                 showCloseButton="true"
-                creationComplete="sendSms()"
                 close="PopUpManager.removePopUp(this);"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
     <fx:Script>
@@ -67,6 +66,9 @@
         </mx:FormItem>
         <mx:FormItem label="验证码">
             <mx:TextInput id="code"/>
+        </mx:FormItem>
+        <mx:FormItem>
+            <mx:Button id="button" label="发送验证码" click="sendSms();button.enabled=false;"/>
         </mx:FormItem>
     </mx:Form>
     <mx:ControlBar horizontalAlign="right">

@@ -98,13 +98,13 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="changeDemandQty" textAlign="center"
+            <mx:DataGridColumn dataField="changeDemandQty" textAlign="center" color="#026c6e"
                                headerText="需求改变量"/>
             <mx:DataGridColumn dataField="demandQty" textAlign="center"
                                headerText="改变后单需"/>
             <mx:DataGridColumn dataField="totalDemandQty" textAlign="center"
                                headerText="改变后总需"/>
-            <mx:DataGridColumn dataField="changePurgeQty" textAlign="center"
+            <mx:DataGridColumn dataField="changePurgeQty" textAlign="center" color="#b77219"
                                headerText="净需改变量"/>
             <mx:DataGridColumn dataField="purgeQty" textAlign="center"
                                headerText="改变后单净需"/>

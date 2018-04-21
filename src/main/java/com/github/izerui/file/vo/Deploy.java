@@ -8,7 +8,6 @@ import java.util.List;
 public class Deploy {
     private String publicKey;
     private String privateKey;
-    private List<Ent> entList;
     private List<Server> servers;
     private List<Publisher> publishers;
 }

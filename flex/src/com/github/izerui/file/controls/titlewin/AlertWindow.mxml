@@ -43,8 +43,8 @@
                     }
                     PopUpManager.removePopUp(_win);
                     exec();
-                }else{
-                    Alert.show("验证码错误","错误");
+                } else {
+                    Alert.show("验证码错误", "错误");
                 }
             }, box.selectedItem.phone, captcha.text);
 
@@ -60,12 +60,13 @@
                     var output = String(event.result);
                     selItem["relativeDeployTime"] = "1秒前";
 
-                    var popUp:DeployTitleWindow = new DeployTitleWindow();
+                    var popUp:DetailTitleWindow = new DetailTitleWindow();
                     popUp.output = output ? output : "未知";
+                    popUp.setFocus();
                     PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
                     PopUpManager.centerPopUp(popUp)
 
-                    var deployEvent:DeployEvent = new DeployEvent("deployEvent",true,false);
+                    var deployEvent:DeployEvent = new DeployEvent("deployEvent", true, false);
                     deployEvent.item = selItem;
                     dispatchEvent(deployEvent);
 
@@ -76,7 +77,7 @@
         }
 
         private function sendSms():void {
-            if(box.selectedIndex == -1){
+            if (box.selectedIndex == -1) {
                 return;
             }
             box.enabled = false;

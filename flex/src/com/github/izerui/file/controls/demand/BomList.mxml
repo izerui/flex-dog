@@ -28,12 +28,17 @@
             <mx:AdvancedDataGridColumn dataField="inventoryRemark" headerText="备注"/>
         </mx:columns>
     </mx:AdvancedDataGrid>
+    <mx:ControlBar>
+        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查看" click="view()"/>
+    </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
 
         import mx.collections.ArrayCollection;
         import mx.controls.dataGridClasses.DataGridColumn;
+        import mx.core.FlexGlobals;
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
 
@@ -73,6 +78,19 @@
         private function indexNumLabelFun(item:Object, column:DataGridColumn):String {
             var indexNum:int = (grid.dataProvider.getItemIndex(item) + 1);
             return indexNum.toString();
+        }
+
+        private function view():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var popUp:DetailTitleWindow = new DetailTitleWindow();
+            popUp.output = JSON.stringify(grid.selectedItem,null,"  ");
+            popUp.setFocus();
+            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+            PopUpManager.centerPopUp(popUp)
+//            var copyText:String = JSON.stringify(grid.selectedItem);
+//            System.setClipboard(copyText);
         }
         ]]>
     </fx:Script>

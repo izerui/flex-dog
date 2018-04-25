@@ -3,7 +3,7 @@
 				xmlns:s="library://ns.adobe.com/flex/spark"
 				xmlns:mx="library://ns.adobe.com/flex/mx"
 				width="600" height="400"
-				title="部署完毕"
+				title="查看器"
 				layout="vertical"
 				showCloseButton="true"
 				close="PopUpManager.removePopUp(this);"

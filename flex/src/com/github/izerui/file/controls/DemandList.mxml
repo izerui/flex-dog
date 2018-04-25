@@ -177,16 +177,20 @@
         </mx:LinkBar>
         <mx:Label text="{page.number + 1} / {page.totalPages} 页"/>
         <mx:Label text="共 {page.totalElements} 条记录"/>
-        <mx:LinkButton icon="@Embed('/assets/img/bar_img/406.png')" label="复制选中行" click="copy()"/>
+        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查看" click="view()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
         import com.github.izerui.file.vo.PageVo;
+
+        import mx.core.FlexGlobals;
 
         import mx.events.ItemClickEvent;
         import mx.events.ListEvent;
         import mx.formatters.DateFormatter;
+        import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
 
         [Bindable]
@@ -244,12 +248,17 @@
             loadData();
         }
 
-        private function copy():void {
+        private function view():void {
             if (grid.selectedIndex == -1) {
                 return;
             }
-            var copyText:String = JSON.stringify(grid.selectedItem);
-            System.setClipboard(copyText);
+            var popUp:DetailTitleWindow = new DetailTitleWindow();
+            popUp.output = JSON.stringify(grid.selectedItem,null,"  ");
+            popUp.setFocus();
+            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+            PopUpManager.centerPopUp(popUp)
+//            var copyText:String = JSON.stringify(grid.selectedItem);
+//            System.setClipboard(copyText);
         }
 
         private function indexNumLabelFun(item:Object, column:DataGridColumn):String {

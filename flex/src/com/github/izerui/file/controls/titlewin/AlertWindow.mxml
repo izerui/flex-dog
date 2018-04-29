@@ -38,9 +38,6 @@
             RemoteObjectUtils.execute("smsService", "validate", function (event:ResultEvent) {
                 LoaderManager.hideLoading();
                 if (Boolean(event.result)) {
-                    if (selItem.isfolder) {
-                        return;
-                    }
                     PopUpManager.removePopUp(_win);
                     exec();
                 } else {
@@ -53,7 +50,7 @@
 
                 LoaderManager.showLoading();
 
-                RemoteObjectUtils.execute("fileService", "exec", execResult, selItem.filename);
+                RemoteObjectUtils.execute("fileService", "exec", execResult, selItem.fileName);
 
                 function execResult(event:ResultEvent):void {
                     LoaderManager.hideLoading();

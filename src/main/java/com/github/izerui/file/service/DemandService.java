@@ -266,7 +266,7 @@ public class DemandService {
         String content = "验证码: [%s] ，请在1分钟内输入。";
         String captcha = RandomStringUtils.randomNumeric(4);
         content = String.format(content, captcha);
-        SmsSendResponse smsSendResponse = mchuanSmsService.sendCaptcha("file-dog", phone, content, "update-demand", captcha, 60);
+        SmsSendResponse smsSendResponse = mchuanSmsService.sendCaptcha("file-dog", phone, content, "update-demand", captcha, 300);
         if (smsSendResponse.getError() != null) {
             throw new RuntimeException("无法发送验证码：" + smsSendResponse.getError().getMessage() + "[错误代码：" + smsSendResponse.getError().getCode() + "]");
         }

@@ -1,23 +1,22 @@
-package com.github.izerui.file.vo
-{
-	[RemoteClass(alias="com.github.izerui.file.vo.FileItem")]
-	public class FileItem
-	{
-		
-		
-		public var filename:String;//文件全名
-		public var extension:String;//后缀名
-		public var basename:String;//去掉后缀名
-		public var folderpath:String;//所属文件夹路径
-		public var size:Number;//文件大小
-		public var ishidden:Boolean ;//是否是隐藏文件
-		public var isfolder:Boolean;//是否是文件夹
-		public var lashmodifyDate:Date;//是否是文件夹
-		public var relativeLashmodifyDate:String;
-		public var deployTime:Date;
-		public var relativeDeployTime:String;
-		public var servers:String;
+package com.github.izerui.file.vo {
+[RemoteClass(alias="com.github.izerui.file.entity.FileEntity")]
+public class FileItem {
 
+    public var id:String;
+    //上传时间
+    public var uploadTime:Date;
+    //发布时间
+    public var deployTime:Date;
+    //文件名
+    public var fileName:String;
+    //服务器
+    public var server:String;
+    //发布方式
+    public var deployType:String;//发布方式
+    //文件大小
+    public var size:Number;//文件大小
+    public var uploadTimeStr:String;
+    public var deployTimeStr:String;
 
-	}
+}
 }

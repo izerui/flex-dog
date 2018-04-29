@@ -5,6 +5,7 @@ import com.github.izerui.file.entity.FileEntity;
 import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.repository.FileRepository;
 import com.github.izerui.file.utils.ConfigUtils;
+import com.github.izerui.file.vo.Deploy;
 import com.github.izerui.file.vo.Server;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +33,28 @@ public class FileService {
     private DeployRepository deployRepository;
     @Autowired
     private FileRepository fileRepository;
+
+    public void init() throws Exception {
+        fileRepository.deleteAll();
+        Deploy config = ConfigUtils.getDeployConfig();
+        config.getServers().forEach(server -> {
+            server.getServices().forEach(service -> {
+                FileEntity fileEntity = new FileEntity();
+                fileEntity.setId(UUID.randomUUID().toString());
+                fileEntity.setFileName(service.getFile());
+                fileEntity.setServer(server.getServer());
+                fileEntity.setDeployType(service.getType());
+//                fileEntity.setUploadTime(new Date());
+//                fileEntity.setDeployTime(new Date());
+//                fileEntity.setSize(0L);
+//                fileEntity.setUploadTimeStr("");
+//                fileEntity.setDeployTimeStr("");
+//                fileEntity.setFileBytes(null);
+                fileRepository.save(fileEntity);
+
+            });
+        });
+    }
 
 
     public void addService(FileEntity fileEntity) {

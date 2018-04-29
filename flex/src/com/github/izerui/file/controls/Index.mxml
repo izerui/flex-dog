@@ -12,14 +12,13 @@
         import mx.managers.BrowserManager;
 
         protected function application1_creationCompleteHandler(event:FlexEvent):void {
-            BrowserManager.getInstance().setTitle("网狗盘");
+            BrowserManager.getInstance().setTitle("我的经管-发布工具");
         }
         ]]>
 	</fx:Script>
 
     <fx:Style source="/assets/css/yflexskin.css"/>
     <fx:Style source="/assets/css/styles.css"/>
-
     <fx:Declarations>
         <!-- 将非可视元素（例如服务、值对象）放在此处 -->
     </fx:Declarations>

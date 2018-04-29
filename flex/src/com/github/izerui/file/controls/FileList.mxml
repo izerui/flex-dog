@@ -53,7 +53,7 @@
                 filterResult();
                 if (selFileId) {
                     for (var i = 0; i < dataList.length; i++) {
-                        var item:FileItem = data[i];
+                        var item:FileItem = dataList[i];
                         if (item.id == selFileId) {
                             myFileGrid.selectedIndex = i;
                             myFileGrid.scrollToIndex(i);
@@ -114,6 +114,10 @@
 
         protected function linkButtonBar_itemClickHandler(event:ItemClickEvent):void {
             switch (event.item["itemData"]) {
+                case 100:{
+                    RemoteObjectUtils.execute("fileService", "init", function (event:Object) {loadServers();});
+                    return;
+                }
                 case 1: {
                     newService();
                     return;
@@ -178,9 +182,6 @@
                 return;
             }
             if (myFileGrid.selectedIndex != -1) {
-                if (myFileGrid.selectedItem["isfolder"]) {
-                    return;
-                }
                 if (!fileReference) {
                     fileReference = new FileReference();
                     fileReference.addEventListener(ProgressEvent.PROGRESS, onFileProgress);
@@ -270,13 +271,14 @@
             </mx:columns>
         </mx:DataGrid>
     </mx:HDividedBox>
-    <mx:ControlBar>
+    <mx:ControlBar width="100%">
         <mx:LinkBar id="linkButtonBar" height="100%" iconField="ico"
                     itemClick="linkButtonBar_itemClickHandler(event)">
             <mx:dataProvider>
                 <s:ArrayCollection>
                     <fx:Object label="新建" itemData="1"
                                ico="@Embed('/assets/img/bar_img/refresh.png')"/>
+                    <fx:Object label="重置" itemData="100"/>
                     <fx:Object label="刷新" itemData="2"
                                ico="@Embed('/assets/img/bar_img/refresh.png')"/>
                     <fx:Object label="上传" itemData="4"

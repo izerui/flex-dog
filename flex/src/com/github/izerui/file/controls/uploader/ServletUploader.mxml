@@ -74,8 +74,7 @@
         ]]>
     </fx:Script>
     <mx:DataGrid id="filesDG" left="0" right="0" bottom="30" top="5"/>
-    <mx:ProgressBar id="progressbar" labelPlacement="center" trackHeight="15" left="0" right="0" bottom="5"
-                    height="20"/>
+    <mx:ProgressBar id="progressbar" labelPlacement="center" trackHeight="15" left="0" right="0" bottom="5"/>
 
     <mx:ControlBar>
 

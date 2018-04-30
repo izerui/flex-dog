@@ -17,6 +17,8 @@
         import com.github.izerui.file.event.I18nEvent;
         import com.github.izerui.file.utils.RemoteObjectUtils;
         import com.github.izerui.file.vo.FileItem;
+        import com.github.izerui.file.vo.FileItem;
+        import com.github.izerui.file.vo.FileItem;
 
         import mx.collections.ArrayCollection;
         import mx.controls.Alert;
@@ -44,7 +46,7 @@
                 server = serverList.selectedItem.Name;
             }
             var selFileId:String = null;
-            if(myFileGrid.selectedIndex != -1){
+            if (myFileGrid.selectedIndex != -1) {
                 selFileId = myFileGrid.selectedItem.id;
             }
             RemoteObjectUtils.execute("fileService", "listFiles", function (event:Object) {
@@ -114,8 +116,10 @@
 
         protected function linkButtonBar_itemClickHandler(event:ItemClickEvent):void {
             switch (event.item["itemData"]) {
-                case 100:{
-                    RemoteObjectUtils.execute("fileService", "init", function (event:Object) {loadServers();});
+                case 100: {
+                    RemoteObjectUtils.execute("fileService", "init", function (event:Object) {
+                        loadServers();
+                    });
                     return;
                 }
                 case 1: {
@@ -169,7 +173,16 @@
         }
 
         protected function filesize_labelFun(item:Object, column:DataGridColumn):String {
-            return Number(((item as FileItem).size / 1024).toFixed(1)).toString();
+            if(!(item as FileItem).size){
+                return null;
+            }
+            var kbNum:Number = (item as FileItem).size / 1024;
+            var mbNum:Number = (item as FileItem).size / 1024 / 1024;
+            if(mbNum>0){
+                return mbNum.toFixed(1)+" Mb";
+            }else{
+                return kbNum.toFixed(1)+" Kb";
+            }
         }
 
         private var fileReference:FileReference;
@@ -241,6 +254,7 @@
         private function serverList_itemClickHandler(event:ListEvent):void {
             loadFiles();
         }
+
         ]]>
 	</fx:Script>
 
@@ -254,43 +268,41 @@
                      height="100%" width="160" fontSize="12" fontWeight="bold" labelField="Name" iconFunction="_icon">
 
         </mx:TileList>
-        <mx:DataGrid id="myFileGrid" width="100%" height="100%" itemDoubleClick="downloadFile(event)"
-                     doubleClickEnabled="true">
-            <mx:columns>
-                <mx:DataGridColumn width="60" dataField="server"
-                                   headerText="服务器"/>
-                <mx:DataGridColumn dataField="fileName"
-                                   headerText="服务程序文件"/>
-                <mx:DataGridColumn width="150" dataField="size"
-                                   headerText="文件大小(KB)"
-                                   labelFunction="filesize_labelFun"/>
-                <mx:DataGridColumn width="150" dataField="updateTimeStr"
-                                   headerText="更新时间"/>
-                <mx:DataGridColumn width="150" dataField="deployTimeStr"
-                                   headerText="最后发布时间"/>
-            </mx:columns>
-        </mx:DataGrid>
+        <mx:Box width="100%" height="100%">
+            <mx:HBox width="100%">
+                <mx:LinkBar id="linkButtonBar" height="100%"
+                            itemClick="linkButtonBar_itemClickHandler(event)">
+                    <mx:dataProvider>
+                        <s:ArrayCollection>
+                            <fx:Object label="新建" itemData="1"/>
+                            <fx:Object label="重置" itemData="100"/>
+                            <fx:Object label="刷新" itemData="2"/>
+                            <fx:Object label="上传" itemData="4"/>
+                            <fx:Object label="发布" itemData="7"/>
+                        </s:ArrayCollection>
+                    </mx:dataProvider>
+                </mx:LinkBar>
+                <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
+                <mx:Label id="downloadTootipLabel" visible="false"/>
+                <mx:LinkButton id="stopDownload" label="取消" visible="false"
+                               click="stopDownload_clickHandler(event)"/>
+            </mx:HBox>
+            <mx:DataGrid id="myFileGrid" width="100%" height="100%" itemDoubleClick="downloadFile(event)"
+                         doubleClickEnabled="true">
+                <mx:columns>
+                    <mx:DataGridColumn width="60" dataField="server"
+                                       headerText="服务器"/>
+                    <mx:DataGridColumn dataField="fileName" itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender"
+                                       headerText="服务程序文件"/>
+                    <mx:DataGridColumn width="150" dataField="size"
+                                       headerText="文件大小"
+                                       labelFunction="filesize_labelFun"/>
+                    <mx:DataGridColumn width="150" dataField="updateTimeStr"
+                                       headerText="更新时间"/>
+                    <mx:DataGridColumn width="150" dataField="deployTimeStr"
+                                       headerText="最后发布时间"/>
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:Box>
     </mx:HDividedBox>
-    <mx:ControlBar width="100%">
-        <mx:LinkBar id="linkButtonBar" height="100%" iconField="ico"
-                    itemClick="linkButtonBar_itemClickHandler(event)">
-            <mx:dataProvider>
-                <s:ArrayCollection>
-                    <fx:Object label="新建" itemData="1"
-                               ico="@Embed('/assets/img/bar_img/refresh.png')"/>
-                    <fx:Object label="重置" itemData="100"/>
-                    <fx:Object label="刷新" itemData="2"
-                               ico="@Embed('/assets/img/bar_img/refresh.png')"/>
-                    <fx:Object label="上传" itemData="4"
-                               ico="@Embed('/assets/img/bar_img/upload.gif')"/>
-                    <fx:Object label="发布" itemData="7"
-                               ico="@Embed('/assets/img/bar_img/exec.png')"/>
-                </s:ArrayCollection>
-            </mx:dataProvider>
-        </mx:LinkBar>
-        <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
-        <mx:Label id="downloadTootipLabel" visible="false"/>
-        <mx:LinkButton id="stopDownload" label="取消" visible="false"
-                       click="stopDownload_clickHandler(event)"/>
-    </mx:ControlBar>
 </mx:VBox>

@@ -28,11 +28,25 @@ public class FileEntity implements Serializable{
     //发布方式
     private String deployType;//发布方式
     //文件大小
-    private long size;//文件大小
+    private Long size = 0L;//文件大小
+    @Transient
     private String uploadTimeStr;
+    @Transient
     private String deployTimeStr;
-    //文件内容
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] fileBytes;
+    //文件url
+    private String fileUrl;
+
+    public String getUploadTimeStr(){
+        if(uploadTime == null){
+            return null;
+        }
+        return RelativeDateFormat.format(uploadTime);
+    }
+
+    public String getDeployTimeStr(){
+        if(deployTime == null){
+            return null;
+        }
+        return RelativeDateFormat.format(deployTime);
+    }
 }

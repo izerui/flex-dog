@@ -29,11 +29,6 @@
         </dependency>
         <dependency>
             <groupId>com.ecworking</groupId>
-            <artifactId>sms-autoconfigure</artifactId>
-            <version>1.2.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.ecworking</groupId>
             <artifactId>esms-autoconfig</artifactId>
             <version>1.2.4-SNAPSHOT</version>
         </dependency>
@@ -70,6 +65,11 @@
         </dependency>
 
         <!-- db -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -143,7 +143,16 @@
             <!--<version>4.7.3-SNAPSHOT</version>-->
         <!--</dependency>-->
 
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-exec</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>7.2.11</version>
+        </dependency>
         <!-- spring-flex -->
         <dependency>
             <groupId>org.springframework.flex</groupId>
@@ -198,13 +207,14 @@
     </dependencies>
 
 
-
     <repositories>
         <repository>
             <id>nexus</id>
             <url>http://192.168.1.235:8081/nexus/content/groups/public/</url>
         </repository>
     </repositories>
+
+
 
 
     <!-- 项目构建各环境的文件列表 -->

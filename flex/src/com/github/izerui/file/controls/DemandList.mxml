@@ -6,11 +6,11 @@
 
     <mx:HBox>
         <mx:ComboBox id="box" labelField="name" rowCount="20"/>
-        <mx:TextInput id="input" width="200"/>
+        <mx:TextInput id="input" width="200" enter="page.number = 0; loadData()"/>
         <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查询" click="page.number = 0; loadData()"/>
     </mx:HBox>
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"
-                 itemRollOver="itemRollOver(event)" itemRollOut="itemRollOut(event)">
+                 itemRollOver="itemRollOver(event)" itemRollOut="itemRollOut(event)" doubleClickEnabled="true" doubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
@@ -164,7 +164,7 @@
                                headerText="可用量"/>
         </mx:columns>
     </mx:DataGrid>
-    <mx:ControlBar>
+    <mx:ControlBar width="100%">
         <mx:LinkBar id="linkButtonBar" iconField="ico" horizontalAlign="right" itemClick="pageClick(event)">
             <mx:dataProvider>
                 <s:ArrayCollection>
@@ -177,7 +177,6 @@
         </mx:LinkBar>
         <mx:Label text="{page.number + 1} / {page.totalPages} 页"/>
         <mx:Label text="共 {page.totalElements} 条记录"/>
-        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查看" click="view()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;

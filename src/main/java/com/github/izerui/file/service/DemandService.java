@@ -283,17 +283,17 @@ public class DemandService {
                              BigDecimal changeDemandQty,
                              BigDecimal changePurgeQty) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
-        Assert.state(isValid,"验证码无效");
+        Assert.state(isValid, "验证码无效");
 
-        Map<String,Object> msg = new HashMap<>();
-        msg.put("entCode",entCode);
-        msg.put("businessKey",businessKey);
-        msg.put("sourceId",sourceId);
-        msg.put("remark",remark);
-        msg.put("inventoryId",inventoryId);
-        msg.put("changeDemandQty",changeDemandQty);
-        msg.put("changePurgeQty",changePurgeQty);
-        rabbitTemplate.convertAndSend("ierp","ierp.demand.update",msg);
+        Map<String, Object> msg = new HashMap<>();
+        msg.put("entCode", entCode);
+        msg.put("businessKey", businessKey);
+        msg.put("sourceId", sourceId);
+        msg.put("remark", remark);
+        msg.put("inventoryId", inventoryId);
+        msg.put("changeDemandQty", changeDemandQty);
+        msg.put("changePurgeQty", changePurgeQty);
+        rabbitTemplate.convertAndSend("ierp", "ierp.demand.update", msg);
     }
 
 }

@@ -51,6 +51,7 @@
             if (this.getChildByName("closeButton")) {
                 this.removeChild(clearButton);
             }
+            this.setFocus();
         }
         ]]>
     </fx:Script>

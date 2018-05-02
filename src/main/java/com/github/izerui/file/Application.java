@@ -15,6 +15,8 @@ import org.springframework.web.client.RestTemplate;
  */
 @SpringCloudApplication
 @EnableFeignClients(basePackages = {"com.github.izerui.file.client"})
+//@SpringBootApplication
+//@EnableAutoConfiguration(exclude = {MchuanSmsConfiguration.class, BaseAutoConfiguration.class, SleuthStreamAutoConfiguration.class, SwaggerConfiguration.class})
 public class Application {
 
     @LoadBalanced

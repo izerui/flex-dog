@@ -45,32 +45,30 @@
                 }
             }, box.selectedItem.phone, captcha.text);
 
+        }
 
-            function exec():void {
+        protected function exec():void {
 
-                LoaderManager.showLoading();
+            LoaderManager.showLoading();
 
-                RemoteObjectUtils.execute("fileService", "exec", execResult, selItem.fileName);
+            RemoteObjectUtils.execute("fileService", "exec", execResult, selItem.id);
 
-                function execResult(event:ResultEvent):void {
-                    LoaderManager.hideLoading();
-                    var output = String(event.result);
-                    selItem["relativeDeployTime"] = "1秒前";
+            function execResult(event:ResultEvent):void {
+                LoaderManager.hideLoading();
+                var output = String(event.result);
+                selItem["deployTimeStr"] = "1秒前";
 
-                    var popUp:DetailTitleWindow = new DetailTitleWindow();
-                    popUp.output = output ? output : "未知";
-                    popUp.setFocus();
-                    PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
-                    PopUpManager.centerPopUp(popUp)
+                var popUp:DetailTitleWindow = new DetailTitleWindow();
+                popUp.output = output ? output : "未知";
+                popUp.setFocus();
+                PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+                PopUpManager.centerPopUp(popUp)
 
-                    var deployEvent:DeployEvent = new DeployEvent("deployEvent", true, false);
-                    deployEvent.item = selItem;
-                    dispatchEvent(deployEvent);
+                var deployEvent:DeployEvent = new DeployEvent("deployEvent", true, false);
+                deployEvent.item = selItem;
+                dispatchEvent(deployEvent);
 
-                }
             }
-
-
         }
 
         private function sendSms():void {

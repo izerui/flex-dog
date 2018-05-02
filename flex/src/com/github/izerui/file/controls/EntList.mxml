@@ -21,7 +21,7 @@
         </s:HGroup>
 
     </s:HGroup>
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true">
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true" doubleClick="view()">
     <mx:columns>
         <mx:DataGridColumn dataField="code" width="100"
                            headerText="账套编号"/>
@@ -46,10 +46,14 @@
 </mx:DataGrid>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.core.FlexGlobals;
 
         import mx.events.ItemClickEvent;
         import mx.formatters.DateFormatter;
+        import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
 
         private function loadData():void {
@@ -84,6 +88,17 @@
             var df:DateFormatter = new DateFormatter();
             df.formatString = "YYYY-MM-DD";
             return df.format(item.date);
+        }
+
+        private function view():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var popUp:DetailTitleWindow = new DetailTitleWindow();
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
+            popUp.setFocus();
+            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+            PopUpManager.centerPopUp(popUp)
         }
         ]]>
     </fx:Script>

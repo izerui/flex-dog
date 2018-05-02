@@ -2,7 +2,6 @@
 <mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
          xmlns:s="library://ns.adobe.com/flex/spark"
          xmlns:mx="library://ns.adobe.com/flex/mx"
-         xmlns:searchinput="com.github.izerui.file.components.searchInput.*"
          xmlns:components="com.github.izerui.file.components.*"
          creationComplete="loadServers()">
 
@@ -10,14 +9,13 @@
 		<![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.AlertWindow;
+        import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.controls.titlewin.NewService;
         import com.github.izerui.file.controls.uploader.ServletUploader;
         import com.github.izerui.file.event.DeployEvent;
         import com.github.izerui.file.event.FileUploadEvent;
         import com.github.izerui.file.event.I18nEvent;
         import com.github.izerui.file.utils.RemoteObjectUtils;
-        import com.github.izerui.file.vo.FileItem;
-        import com.github.izerui.file.vo.FileItem;
         import com.github.izerui.file.vo.FileItem;
 
         import mx.collections.ArrayCollection;
@@ -30,7 +28,6 @@
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
         import mx.utils.ObjectUtil;
-        import mx.utils.URLUtil;
 
         [Bindable]
         private var dataList:ArrayCollection;
@@ -126,10 +123,6 @@
                     newService();
                     return;
                 }
-                case 2: {
-                    loadFiles();
-                    break;
-                }
                 case 4: {
                     var servletUploader:ServletUploader = new ServletUploader;
                     PopUpManager.addPopUp(servletUploader, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
@@ -140,8 +133,11 @@
                     break;
                 }
                 case 7:
-
                     if (myFileGrid.selectedIndex != -1) {
+                        if(!myFileGrid.selectedItem.fileUrl){
+                            Alert.show("请先上传程序文件,再发布.","提示");
+                            return;
+                        }
                         var deployWin:AlertWindow = new AlertWindow();
                         deployWin.selItem = FileItem(myFileGrid.selectedItem);
                         deployWin.addEventListener("deployEvent", function (event:DeployEvent):void {
@@ -150,6 +146,14 @@
                         PopUpManager.addPopUp(deployWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
                         PopUpManager.centerPopUp(deployWin);
 
+                    }
+                    break;
+                case 8:
+                    if (myFileGrid.selectedIndex != -1) {
+                        var url:String = myFileGrid.selectedItem["fileUrl"] as String;
+                        if (url) {
+                            navigateToURL(new URLRequest(url), "_blank");
+                        }
                     }
                     break;
             }
@@ -167,84 +171,21 @@
 
 
         protected function fileUploadComplete(event:FileUploadEvent):void {
-            // TODO Auto-generated method stub
             trace("上传完毕");
             loadFiles();
         }
 
         protected function filesize_labelFun(item:Object, column:DataGridColumn):String {
-            if(!(item as FileItem).size){
-                return null;
+            if (!(item as FileItem).size) {
+                return "0 Kb";
             }
             var kbNum:Number = (item as FileItem).size / 1024;
             var mbNum:Number = (item as FileItem).size / 1024 / 1024;
-            if(mbNum>0){
-                return mbNum.toFixed(1)+" Mb";
-            }else{
-                return kbNum.toFixed(1)+" Kb";
+            if (new Number(mbNum.toFixed(0)) > 0) {
+                return mbNum.toFixed(0) + " Mb";
+            } else {
+                return kbNum.toFixed(0) + " Kb";
             }
-        }
-
-        private var fileReference:FileReference;
-
-        private var isDownloading:Boolean = false;
-
-        private function downloadFile(event:ListEvent):void {
-            if (isDownloading) {
-                Alert.show("正在下载,请稍等!", "信息");
-                return;
-            }
-            if (myFileGrid.selectedIndex != -1) {
-                if (!fileReference) {
-                    fileReference = new FileReference();
-                    fileReference.addEventListener(ProgressEvent.PROGRESS, onFileProgress);
-                    fileReference.addEventListener(Event.COMPLETE, fileDownloadCompelete);
-                    fileReference.addEventListener(IOErrorEvent.IO_ERROR, ioerrorDownload);
-                    fileReference.addEventListener(Event.SELECT, filedownloadselect);
-                }
-                var xlsUrl:String = "download?path=" + encodeURI(myFileGrid.selectedItem["folderpath"]) + "&name=" + encodeURI(myFileGrid.selectedItem["filename"]);
-                xlsUrl = URLUtil.getFullURL(this.parentApplication.url, xlsUrl);
-                trace(xlsUrl);
-                var fileUrlRequest:URLRequest = new URLRequest(xlsUrl);
-                fileReference.download(fileUrlRequest, myFileGrid.selectedItem["filename"]);
-            }
-
-            //开始下载
-            function filedownloadselect(event:Event):void {
-                isDownloading = true;
-                stopDownload.visible = true;
-                downloadTootipLabel.visible = true;
-            }
-
-            //下载过程
-            function onFileProgress(event:ProgressEvent):void {
-                downloadTootipLabel.text = "下载文件:" + Number(event.bytesLoaded / 1024).toFixed(3) + " of " + Number(event.bytesTotal / 1024).toFixed(3) + " 字节";
-            }
-
-            //下载成功
-            function fileDownloadCompelete(event:Event):void {
-                trace("下载成功");
-                isDownloading = false;
-                downloadTootipLabel.visible = false;
-                stopDownload.visible = false;
-            }
-
-            //下载失败
-            function ioerrorDownload(event:IOErrorEvent):void {
-                Alert.show(String(event), "出错了");
-                isDownloading = false;
-                downloadTootipLabel.visible = false;
-                stopDownload.visible = false;
-            }
-        }
-
-
-        protected function stopDownload_clickHandler(event:MouseEvent):void {
-            // TODO Auto-generated method
-            fileReference.cancel();
-            isDownloading = false;
-            downloadTootipLabel.visible = false;
-            stopDownload.visible = false;
         }
 
         protected function _icon(item:Object):Class {
@@ -255,6 +196,16 @@
             loadFiles();
         }
 
+        private function view():void {
+            if (myFileGrid.selectedIndex == -1) {
+                return;
+            }
+            var popUp:DetailTitleWindow = new DetailTitleWindow();
+            popUp.output = JSON.stringify(myFileGrid.selectedItem, null, "  ");
+            popUp.setFocus();
+            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+            PopUpManager.centerPopUp(popUp)
+        }
         ]]>
 	</fx:Script>
 
@@ -270,34 +221,32 @@
         </mx:TileList>
         <mx:Box width="100%" height="100%">
             <mx:HBox width="100%">
-                <mx:LinkBar id="linkButtonBar" height="100%"
+                <mx:LinkBar id="linkButtonBar" height="100%" iconField="icon"
                             itemClick="linkButtonBar_itemClickHandler(event)">
                     <mx:dataProvider>
                         <s:ArrayCollection>
-                            <fx:Object label="新建" itemData="1"/>
-                            <fx:Object label="重置" itemData="100"/>
-                            <fx:Object label="刷新" itemData="2"/>
-                            <fx:Object label="上传" itemData="4"/>
-                            <fx:Object label="发布" itemData="7"/>
+                            <fx:Object label="新建" itemData="1" icon="@Embed('/assets/img/add.png')"/>
+                            <!--<fx:Object label="重置" itemData="100" icon="@Embed('/assets/img/qingkong.png')"/>-->
+                            <fx:Object label="上传" itemData="4" icon="@Embed('/assets/img/filebrowser.gif')"/>
+                            <fx:Object label="下载" itemData="8" icon="@Embed('/assets/img/bar_img/world.png')"/>
+                            <fx:Object label="发布" itemData="7" icon="@Embed('/assets/img/exec.png')"/>
                         </s:ArrayCollection>
                     </mx:dataProvider>
                 </mx:LinkBar>
                 <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
-                <mx:Label id="downloadTootipLabel" visible="false"/>
-                <mx:LinkButton id="stopDownload" label="取消" visible="false"
-                               click="stopDownload_clickHandler(event)"/>
             </mx:HBox>
-            <mx:DataGrid id="myFileGrid" width="100%" height="100%" itemDoubleClick="downloadFile(event)"
+            <mx:DataGrid id="myFileGrid" width="100%" height="100%" itemDoubleClick="view()"
                          doubleClickEnabled="true">
                 <mx:columns>
                     <mx:DataGridColumn width="60" dataField="server"
                                        headerText="服务器"/>
-                    <mx:DataGridColumn dataField="fileName" itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender"
+                    <mx:DataGridColumn dataField="fileName"
+                                       itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender"
                                        headerText="服务程序文件"/>
                     <mx:DataGridColumn width="150" dataField="size"
                                        headerText="文件大小"
                                        labelFunction="filesize_labelFun"/>
-                    <mx:DataGridColumn width="150" dataField="updateTimeStr"
+                    <mx:DataGridColumn width="150" dataField="uploadTimeStr"
                                        headerText="更新时间"/>
                     <mx:DataGridColumn width="150" dataField="deployTimeStr"
                                        headerText="最后发布时间"/>

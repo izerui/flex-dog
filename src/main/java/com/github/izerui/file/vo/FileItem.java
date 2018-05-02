@@ -1,111 +1,26 @@
 package com.github.izerui.file.vo;
 
-import com.github.izerui.file.utils.RelativeDateFormat;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class FileItem implements Serializable{
-	private String filename;//文件全名
-	private String extension;//后缀名
-	private String basename;//去掉后缀名
-	private String folderpath;//所属文件夹路径
-	private Long size;//文件大小
-	private Boolean ishidden;//是否是隐藏文件
-	private Boolean isfolder;
-	private Date lashmodifyDate;
-	private String relativeLashmodifyDate;
-	private Date deployTime;
-	private String servers;
-	private String relativeDeployTime;
+@Data
+public class FileItem implements Serializable {
+    private String id;
+    //修改时间
+    private Date uploadTime;
+    //发布时间
+    private Date deployTime;
+    //文件名
+    private String fileName;
+    //服务器
+    private String server;
+    //发布方式
+    private String deployType;//发布方式
+    //文件大小
+    private Long size = 0L;//文件大小
+    private String uploadTimeStr;
+    private String deployTimeStr;
 
-	public String getRelativeLashmodifyDate() {
-		return relativeLashmodifyDate;
-	}
-
-	public void setRelativeLashmodifyDate(String relativeLashmodifyDate) {
-		this.relativeLashmodifyDate = relativeLashmodifyDate;
-	}
-
-	public String getServers() {
-		return servers;
-	}
-
-	public void setServers(String servers) {
-		this.servers = servers;
-	}
-
-	public Date getLashmodifyDate() {
-		return lashmodifyDate;
-	}
-
-	public void setLashmodifyDate(Date lashmodifyDate) {
-		this.lashmodifyDate = lashmodifyDate;
-	}
-
-	public Boolean isIshidden() {
-		return ishidden;
-	}
-	public Boolean getIshidden() {
-		return ishidden;
-	}
-	public void setIshidden(Boolean ishidden) {
-		this.ishidden = ishidden;
-	}
-	public Boolean isIsfolder() {
-		return isfolder;
-	}
-
-	public Boolean getIsfolder(){
-		return isfolder;
-	}
-	public void setIsfolder(Boolean isfolder) {
-		this.isfolder = isfolder;
-	}
-	public String getFilename() {
-		return filename;
-	}
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
-	public String getExtension() {
-		return extension;
-	}
-	public void setExtension(String extension) {
-		this.extension = extension;
-	}
-	public String getBasename() {
-		return basename;
-	}
-	public void setBasename(String basename) {
-		this.basename = basename;
-	}
-	public String getFolderpath() {
-		return folderpath;
-	}
-	public void setFolderpath(String folderpath) {
-		this.folderpath = folderpath;
-	}
-	public Long getSize() {
-		return size;
-	}
-	public void setSize(Long size) {
-		this.size = size;
-	}
-
-	public Date getDeployTime() {
-		return deployTime;
-	}
-
-	public void setDeployTime(Date deployTime) {
-		this.deployTime = deployTime;
-	}
-
-	public void setRelativeDeployTime(String relativeDeployTime) {
-		this.relativeDeployTime = relativeDeployTime;
-	}
-
-	public String getRelativeDeployTime() {
-		return this.relativeDeployTime;
-	}
 }

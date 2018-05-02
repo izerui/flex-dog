@@ -9,7 +9,7 @@
                 title="业务主键: {inventory.businessKey} 的BOM信息"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:AdvancedDataGrid id="grid" width="100%" height="100%" variableRowHeight="true">
+    <mx:AdvancedDataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true" itemDoubleClick="view()">
         <mx:dataProvider>
             <mx:HierarchicalData source="{dataList}"/>
         </mx:dataProvider>
@@ -28,9 +28,6 @@
             <mx:AdvancedDataGridColumn dataField="inventoryRemark" headerText="备注"/>
         </mx:columns>
     </mx:AdvancedDataGrid>
-    <mx:ControlBar>
-        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查看" click="view()"/>
-    </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
@@ -41,6 +38,7 @@
         import mx.core.FlexGlobals;
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
+        import mx.utils.ObjectUtil;
 
         [Bindable]
         public var inventory:Object;
@@ -85,7 +83,9 @@
                 return;
             }
             var popUp:DetailTitleWindow = new DetailTitleWindow();
-            popUp.output = JSON.stringify(grid.selectedItem,null,"  ");
+            var _selItem:Object = ObjectUtil.clone(grid.selectedItem);
+            _selItem.children = [];
+            popUp.output = JSON.stringify(_selItem,null,"  ");
             popUp.setFocus();
             PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
             PopUpManager.centerPopUp(popUp)

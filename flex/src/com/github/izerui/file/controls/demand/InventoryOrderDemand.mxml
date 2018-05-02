@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx"
+                xmlns:components="com.github.izerui.file.components.*"
                 layout="vertical"
                 creationComplete="loadData()"
                 showCloseButton="true"
@@ -9,7 +10,7 @@
                 title="货品: {inventory.inventoryCode} {inventory.inventoryName} 的需求"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}">
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}" doubleClickEnabled="true" itemDoubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
@@ -147,8 +148,9 @@
         </mx:LinkBar>
         <mx:Label text="{page.number + 1} / {page.totalPages} 页"/>
         <mx:Label text="共 {page.totalElements} 条记录"/>
-        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查看" click="view()"/>
-        <mx:LinkButton icon="@Embed('/assets/img/renameFolder.png')" label="修改" click="update()"/>
+        <mx:Label text="按订单搜索:"/>
+        <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
+        <mx:LinkButton icon="@Embed('/assets/img/renameFolder.png')" label="手动修改" click="update()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
@@ -162,6 +164,7 @@
         import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
+        import mx.utils.ObjectUtil;
 
         [Bindable]
         public var inventory:Object;
@@ -174,6 +177,7 @@
             RemoteObjectUtils.execute("demandService", "inventoryBusinessDemands", function (event:ResultEvent) {
                 LoaderManager.hideLoading();
                 page = PageVo(event.result);
+                filterResult();
             }, inventory.entCode, page.number, page.size, inventory.inventoryId)
 
         }
@@ -250,6 +254,22 @@
             PopUpManager.addPopUp(udw,DisplayObject(FlexGlobals.topLevelApplication),true);
             PopUpManager.centerPopUp(udw);
         }
+
+        private function filterResult():void {
+            if (!searchKey.text) {
+                grid.dataProvider = page.content;
+                return;
+            }
+            var tempSearchList:ArrayCollection = new ArrayCollection;
+
+            for each (var fi:Object in page.content) {
+                if (fi.businessKey.indexOf(searchKey.text) != -1 || fi.businessDocNo.indexOf(searchKey.text) != -1) {
+                    tempSearchList.addItem(ObjectUtil.clone(fi));
+                }
+            }
+            grid.dataProvider = tempSearchList;
+        }
+
         ]]>
     </fx:Script>
 </mx:TitleWindow>

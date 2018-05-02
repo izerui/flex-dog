@@ -9,7 +9,7 @@
                 title="货品: {inventory.inventoryCode} {inventory.inventoryName} 占用情况"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true">
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true" itemDoubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"

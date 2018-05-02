@@ -12,6 +12,7 @@
     <fx:Script>
         <![CDATA[
         import com.github.izerui.file.event.FileUploadEvent;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
 
         import mx.core.SoundAsset;
         import mx.events.CloseEvent;
@@ -36,11 +37,10 @@
         // Place File Filters into the Array that is passed to the MultiFileUpload instance
         public var filesToFilter:Array = new Array(allTypes, imageTypes, documentTypes, zipTypes);
 
-        public static const uploadDestination:String = "upload";
+        public static const uploadDestination:String = "";
 
 
         protected function titlewindow1_closeHandler(event:CloseEvent):void {
-            // TODO Auto-generated method stub
             PopUpManager.removePopUp(this);
             multiFileUpload.cancelUploadHandler();
         }
@@ -63,6 +63,7 @@
                     filesToFilter
             );
             multiFileUpload.addEventListener(Event.COMPLETE, uploadsfinished);
+            multiFileUpload.addEventListener(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE, multiFileUpload_upload_single_file_completeHandler);
 
         }
 
@@ -71,9 +72,16 @@
             this.dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_COMPLETE));
             PopUpManager.removePopUp(this);
         }
+
+        private function multiFileUpload_upload_single_file_completeHandler(event:FileUploadEvent):void {
+            RemoteObjectUtils.execute("fileService", "updateFileUrl", function (event:Object) {
+
+            },event.fileName,event.servers,event.fileId,event.size);
+
+        }
         ]]>
     </fx:Script>
-    <mx:DataGrid id="filesDG" left="0" right="0" bottom="30" top="5"/>
+    <mx:DataGrid id="filesDG" left="0" right="0" bottom="30" top="5" />
     <mx:ProgressBar id="progressbar" labelPlacement="center" trackHeight="15" left="0" right="0" bottom="5"/>
 
     <mx:ControlBar>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx"
+                xmlns:components="com.github.izerui.file.components.*"
                 layout="vertical"
                 creationComplete="loadData()"
                 showCloseButton="true"
@@ -9,7 +10,7 @@
                 title="订单: {selItem.businessKey} 现在的物料需求情况"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true">
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true" itemDoubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
@@ -116,26 +117,35 @@
         </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar>
-        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查看" click="view()"/>
+        <mx:Label text="按货品搜索:"/>
+        <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
 
+        import mx.collections.ArrayCollection;
+
         import mx.core.FlexGlobals;
         import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
+        import mx.utils.ObjectUtil;
 
         [Bindable]
         public var selItem:Object;
+
+        [Bindable]
+        private var dataList:ArrayCollection;
 
         private function loadData():void {
             LoaderManager.showLoading();
             RemoteObjectUtils.execute("demandService", "findDemandResults", function (event:ResultEvent) {
                 LoaderManager.hideLoading();
-                grid.dataProvider = event.result;
+                dataList = event.result as ArrayCollection;
+                grid.dataProvider = dataList;
+                filterResult();
             }, selItem.entCode, selItem.businessKey)
 
         }
@@ -168,6 +178,21 @@
             PopUpManager.centerPopUp(popUp)
 //            var copyText:String = JSON.stringify(grid.selectedItem);
 //            System.setClipboard(copyText);
+        }
+
+        private function filterResult():void {
+            if (!searchKey.text) {
+                grid.dataProvider = dataList;
+                return;
+            }
+            var tempSearchList:ArrayCollection = new ArrayCollection;
+
+            for each (var fi:Object in dataList) {
+                if (fi.inventoryCode.indexOf(searchKey.text) != -1 || fi.inventoryName.indexOf(searchKey.text) != -1) {
+                    tempSearchList.addItem(ObjectUtil.clone(fi));
+                }
+            }
+            grid.dataProvider = tempSearchList;
         }
         ]]>
     </fx:Script>

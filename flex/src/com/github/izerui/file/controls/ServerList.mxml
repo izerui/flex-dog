@@ -13,7 +13,7 @@
         </mx:dataProvider>
     </mx:LinkBar>
 
-    <mx:DataGrid id="grid" width="100%" height="100%">
+    <mx:DataGrid id="grid" width="100%" height="100%" doubleClickEnabled="true" doubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="UHostId"
                                headerText="资源ID"/>
@@ -45,10 +45,14 @@
 
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.core.FlexGlobals;
 
         import mx.events.ItemClickEvent;
         import mx.formatters.DateFormatter;
+        import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
 
         private function loadData():void {
@@ -109,6 +113,17 @@
 
             _label += ",磁盘(" + _disk + ")";
             return _label;
+        }
+
+        private function view():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var popUp:DetailTitleWindow = new DetailTitleWindow();
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
+            popUp.setFocus();
+            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+            PopUpManager.centerPopUp(popUp)
         }
         ]]>
     </fx:Script>

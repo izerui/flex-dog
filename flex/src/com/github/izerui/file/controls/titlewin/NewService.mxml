@@ -46,7 +46,7 @@
     </fx:Declarations>
 
     <mx:Form>
-        <mx:FormItem label="发布服务器">
+        <mx:FormItem label="服务器">
             <mx:ComboBox id="server" dataProvider="{serverDataList}" labelField="Name"/>
         </mx:FormItem>
         <mx:FormItem label="文件名">

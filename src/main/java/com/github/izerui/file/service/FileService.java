@@ -4,8 +4,6 @@ import com.github.izerui.file.config.FileConfig;
 import com.github.izerui.file.entity.FileEntity;
 import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.repository.FileRepository;
-import com.github.izerui.file.utils.ConfigUtils;
-import com.github.izerui.file.vo.Deploy;
 import com.qiniu.common.QiniuException;
 import com.qiniu.storage.Configuration;
 import com.qiniu.util.Auth;
@@ -55,30 +53,6 @@ public class FileService {
         return map;
     }
 
-    public void init() throws Exception {
-        fileRepository.deleteAll();
-        Deploy config = ConfigUtils.getDeployConfig();
-        config.getServers().forEach(server -> {
-            server.getServices().forEach(service -> {
-                FileEntity fileEntity = new FileEntity();
-                fileEntity.setId(UUID.randomUUID().toString());
-                fileEntity.setFileName(service.getFile());
-                fileEntity.setServer(server.getServer());
-                fileEntity.setDeployType(service.getType());
-                fileEntity.setSize(0L);
-//                fileEntity.setUploadTime(new Date());
-//                fileEntity.setDeployTime(new Date());
-//                fileEntity.setSize(0L);
-//                fileEntity.setUploadTimeStr("");
-//                fileEntity.setDeployTimeStr("");
-//                fileEntity.setFileBytes(null);
-                fileRepository.save(fileEntity);
-
-            });
-        });
-    }
-
-
     public void addService(FileEntity fileEntity) {
         fileEntity.setId(UUID.randomUUID().toString());
         fileRepository.save(fileEntity);
@@ -95,7 +69,7 @@ public class FileService {
 
     public String exec(String id) throws Exception {
         FileEntity entity = fileRepository.getOne(id);
-        if(StringUtils.isEmpty(entity.getFileUrl())){
+        if (StringUtils.isEmpty(entity.getFileUrl())) {
             throw new IllegalArgumentException("未上传程序包,发布失败.");
         }
 
@@ -109,13 +83,13 @@ public class FileService {
 
         exec.setStreamHandler(streamHandler);
         File file = new File("/home/ftpuser/");
-        if(!file.exists()){
+        if (!file.exists()) {
             file.mkdir();
         }
 
         exec.setWorkingDirectory(file);
-        exec.execute(CommandLine.parse("rm -rf "+entity.getFileName()));
-        exec.execute(CommandLine.parse("curl -o "+entity.getFileName()+" "+entity.getFileUrl()));
+        exec.execute(CommandLine.parse("rm -rf " + entity.getFileName()));
+        exec.execute(CommandLine.parse("curl -o " + entity.getFileName() + " " + entity.getFileUrl()));
         exec.execute(CommandLine.parse("chmod 777 /etc/ansible/application-operation.sh"));
         exec.execute(CommandLine.parse("/bin/sh /etc/ansible/application-operation.sh " + entity.getDeployType() + " " + entity.getServer() + " " + entity.getFileName()));
 
@@ -127,7 +101,7 @@ public class FileService {
         return output;
     }
 
-    public void updateFileUrl(String fileName, List<String> servers,String fileId,Long size) throws IOException {
+    public void updateFileUrl(String fileName, List<String> servers, String fileId, Long size) throws IOException {
         List<FileEntity> fileEntities = fileRepository.findByServerInAndFileName(servers, fileName);
         for (FileEntity fileEntity : fileEntities) {
             fileEntity.setFileUrl(fileConfig.getUrlPrefix() + "/" + fileId);
@@ -137,12 +111,12 @@ public class FileService {
         }
     }
 
-    public List<Map<String,Object>> getServers(String fileName){
+    public List<Map<String, Object>> getServers(String fileName) {
         List<FileEntity> entities = fileRepository.findByFileName(fileName);
         return entities.stream().map(fileEntity -> {
-            Map<String,Object> servers = new HashMap<>();
-            servers.put("label",fileEntity.getServer());
-            servers.put("selected",true);
+            Map<String, Object> servers = new HashMap<>();
+            servers.put("label", fileEntity.getServer());
+            servers.put("selected", true);
             return servers;
         }).collect(Collectors.toList());
     }

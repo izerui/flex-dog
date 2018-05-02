@@ -1,27 +1,16 @@
 package ucloud;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.utils.ApiClient;
-import com.github.izerui.file.utils.ConfigUtils;
-import com.github.izerui.file.vo.Deploy;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JunitExemple {
 
-    private static ApiClient apiClient;
-
-    static {
-        try {
-            Deploy deploy = new ObjectMapper().readValue(new File(ConfigUtils.rootPath + "deploy.json"), Deploy.class);
-            apiClient = new ApiClient(deploy.getPublicKey(), deploy.getPrivateKey());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    private static ApiClient apiClient = new ApiClient(
+            "YDpdHw/bRMv/E4ROKDPVcL3PVMO2dnHO2NnX7gi4Dng9zRtX7qC3aw=="
+            , "a4593c02274873fa0ae03f7ccb1d546edd950fe4");
 
     @Test
     public void DescribeUHostInstance() throws Exception {

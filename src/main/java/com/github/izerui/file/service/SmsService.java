@@ -2,8 +2,8 @@ package com.github.izerui.file.service;
 
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
-import com.github.izerui.file.utils.ConfigUtils;
-import com.github.izerui.file.vo.Publisher;
+import com.github.izerui.file.entity.PublisherEntity;
+import com.github.izerui.file.repository.PublisherRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.flex.remoting.RemotingDestination;
@@ -20,6 +20,8 @@ public class SmsService {
 
     @Autowired
     private MchuanSmsService mchuanSmsService;
+    @Autowired
+    private PublisherRepository publisherRepository;
 
     private final int SMS_EXPIRE_MINUTES = 10;
 
@@ -38,8 +40,8 @@ public class SmsService {
         return isValid;
     }
 
-    public List<Publisher> getPublishers() throws Exception {
-        return ConfigUtils.getDeployConfig().getPublishers();
+    public List<PublisherEntity> getPublishers() throws Exception {
+        return publisherRepository.findAll();
     }
 
 }

@@ -97,7 +97,7 @@ public class MultiFileUpload extends EventDispatcher {
     private var _filefilter:Array;
 
     //config vars
-    private var _url:String = ""; // location of the file upload handler can be a relative path or FQDM
+    private var _url:String = "upload"; // location of the file upload handler can be a relative path or FQDM
 
     //Constructor
 //        private var continueUploadStatus:Boolean = true;

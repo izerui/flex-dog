@@ -263,7 +263,7 @@ public class DemandService {
 
 
     public void sendUpdateDemandCaptcha(String phone) {
-        String content = "验证码: [%s] ，请在1分钟内输入。";
+        String content = "验证码: [%s] ，请在5分钟内输入。";
         String captcha = RandomStringUtils.randomNumeric(4);
         content = String.format(content, captcha);
         SmsSendResponse smsSendResponse = mchuanSmsService.sendCaptcha("file-dog", phone, content, "update-demand", captcha, 300);

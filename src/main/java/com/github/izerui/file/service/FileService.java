@@ -1,5 +1,7 @@
 package com.github.izerui.file.service;
 
+import com.ecworking.esms.global.mchuan.SmsSendResponse;
+import com.ecworking.esms.mchuan.MchuanSmsService;
 import com.github.izerui.file.config.FileConfig;
 import com.github.izerui.file.entity.DeployEntity;
 import com.github.izerui.file.entity.FileEntity;
@@ -14,6 +16,7 @@ import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,8 @@ public class FileService {
     private FileRepository fileRepository;
     @Autowired
     private FileConfig fileConfig;
+    @Autowired
+    private MchuanSmsService mchuanSmsService;
 
     private Configuration configuration = new Configuration();
 
@@ -76,6 +81,19 @@ public class FileService {
         }
     }
 
+    public void sendCaptcha(String phone){
+        String content = "验证码: [%s] ，请在1分钟内输入。";
+        String captcha = RandomStringUtils.randomNumeric(4);
+        content = String.format(content, captcha);
+        SmsSendResponse smsSendResponse = mchuanSmsService.sendCaptcha("file-dog", phone, content, "new-service", captcha, 60);
+        if (smsSendResponse.getError() != null) {
+            throw new RuntimeException("无法发送验证码：" + smsSendResponse.getError().getMessage() + "[错误代码：" + smsSendResponse.getError().getCode() + "]");
+        }
+    }
+
+    public boolean validateCaptcha(String phone,String captcha){
+        return mchuanSmsService.isValidCaptcha(phone, "new-service", captcha);
+    }
 
     public Map<String, String> getUpToken() throws QiniuException {
         Auth auth = Auth.create(fileConfig.getAccessKey(), fileConfig.getSecretKey());

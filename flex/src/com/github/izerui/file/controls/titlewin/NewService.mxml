@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
                 xmlns:mx="library://ns.adobe.com/flex/mx"
-                width="400" height="260"
+                width="400" height="280"
                 title="新建发布服务"
                 layout="vertical"
                 showCloseButton="true"
@@ -39,6 +39,24 @@
         private function close():void {
             PopUpManager.removePopUp(this);
         }
+
+        private function captcha_changeHandler(event:Event):void {
+            if (captcha.text) {
+                RemoteObjectUtils.execute("fileService", "validateCaptcha", function (data:ResultEvent) {
+                    if(data.result){
+                        queding.enabled = true;
+                    }else{
+                        queding.enabled = false;
+                    }
+                }, "13911523134",captcha.text);
+            }
+        }
+
+        private function captchaButton_clickHandler(event:MouseEvent):void {
+            captchaButton.enabled = false;
+            RemoteObjectUtils.execute("fileService", "sendCaptcha", function (data:ResultEvent) {
+            },"13911523134");
+        }
         ]]>
     </fx:Script>
     <fx:Declarations>
@@ -63,10 +81,14 @@
                 </mx:dataProvider>
             </mx:ComboBox>
         </mx:FormItem>
+        <mx:FormItem label="验证码">
+            <mx:TextInput id="captcha" width="100" change="captcha_changeHandler(event)"/>
+            <mx:LinkButton id="captchaButton" label="获取验证码" click="captchaButton_clickHandler(event)"/>
+        </mx:FormItem>
     </mx:Form>
 
     <mx:ControlBar horizontalAlign="right">
-        <mx:Button label="确定" click="confirm()"/>
+        <mx:Button id="queding" label="确定" click="confirm()" enabled="false"/>
         <mx:Button label="取消" click="close()"/>
     </mx:ControlBar>
 </mx:TitleWindow>

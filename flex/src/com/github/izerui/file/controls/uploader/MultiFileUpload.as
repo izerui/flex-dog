@@ -55,7 +55,6 @@ import flash.net.FileReference;
 import flash.net.FileReferenceList;
 import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
-import flash.net.URLVariables;
 
 import mx.collections.ArrayCollection;
 import mx.controls.Alert;
@@ -259,21 +258,11 @@ public class MultiFileUpload extends EventDispatcher {
     }
 
 
-    // Feed the progress bar a meaningful label
-    private function getByteCount():void {
-        var i:int;
-        _totalbytes = 0;
-        for (i = 0; i < _files.length; i++) {
-            _totalbytes += _files[i].size;
-        }
-//        _progressbar.label = "文件总数: " + _files.length + " 文件总大小: " + Math.round(_totalbytes / 1024) + " kb"
-    }
-
 
     // restores progress bar back to normal
     private function resetProgressBar():void {
 
-//        _progressbar.label = "";
+        _progressbar.label = "";
         _progressbar.maximum = 0;
         _progressbar.minimum = 0;
     }
@@ -293,7 +282,6 @@ public class MultiFileUpload extends EventDispatcher {
 
     // whenever the _files arraycollection changes this function is called to make sure the datagrid data jives
     private function popDataGrid(event:CollectionEvent):void {
-        getByteCount();
         checkCue();
     }
 
@@ -329,13 +317,9 @@ public class MultiFileUpload extends EventDispatcher {
      *  File IO Event Handlers                                *
      *********************************************************/
 
-    //  called after user selected files form the browse dialouge box.
+    //  选择文件回调
     private function selectHandler(event:Event):void {
-        var i:int;
-        var msg:String = "";
-        var dl:Array = [];
-        for (i = 0; i < event.currentTarget.fileList.length; i++) {
-            var currentFile:FileReference = event.currentTarget.fileList[i] as FileReference;
+        for each(var currentFile in event.currentTarget.fileList) {
             RemoteObjectUtils.execute("fileService", "getServers", function (ev:ResultEvent):void {
 
                 var fileItem:Object = {

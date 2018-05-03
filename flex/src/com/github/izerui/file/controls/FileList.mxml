@@ -244,7 +244,7 @@
                                        headerText="文件大小"
                                        labelFunction="filesize_labelFun"/>
                     <mx:DataGridColumn width="150" dataField="uploadTimeStr"
-                                       headerText="更新时间"/>
+                                       headerText="上传时间"/>
                     <mx:DataGridColumn width="150" dataField="deployTimeStr"
                                        headerText="最后发布时间"/>
                 </mx:columns>

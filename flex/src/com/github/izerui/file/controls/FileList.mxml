@@ -134,8 +134,8 @@
                 }
                 case 7:
                     if (myFileGrid.selectedIndex != -1) {
-                        if(!myFileGrid.selectedItem.fileUrl){
-                            Alert.show("请先上传程序文件,再发布.","提示");
+                        if (!myFileGrid.selectedItem.filePath) {
+                            Alert.show("请先上传程序文件,再发布.", "提示");
                             return;
                         }
                         var deployWin:AlertWindow = new AlertWindow();
@@ -150,10 +150,7 @@
                     break;
                 case 8:
                     if (myFileGrid.selectedIndex != -1) {
-                        var url:String = myFileGrid.selectedItem["fileUrl"] as String;
-                        if (url) {
-                            navigateToURL(new URLRequest(url), "_blank");
-                        }
+                        navigateToURL(new URLRequest("download?id=" + myFileGrid.selectedItem["id"]), "_blank");
                     }
                     break;
             }

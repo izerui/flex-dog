@@ -177,7 +177,8 @@ public class MultiFileUpload extends EventDispatcher {
         _typeColumn.dataField = "server";
         _typeColumn.headerText = "服务器";
         _typeColumn.width = 200;
-        _typeColumn.itemRenderer = new ClassFactory(ServerItemRenderer);
+//        _typeColumn.itemRenderer = new ClassFactory(ServerItemRenderer);
+        _typeColumn.labelFunction = _typeLabelFun;
 
         _sizeColumn.dataField = "size";
         _sizeColumn.headerText = "文件大小(KB)";
@@ -210,6 +211,19 @@ public class MultiFileUpload extends EventDispatcher {
      ********************************************************/
 
 
+    private function _typeLabelFun(item:Object):String {
+        var _lb:String = "";
+        for each(var obj in item.servers) {
+            if(_lb){
+                _lb = obj.label;
+            }else{
+                _lb += " , "+obj.label;
+            }
+        }
+        return _lb;
+    }
+
+
     //Browse for files
     private function browseFiles(event:Event):void {
 
@@ -228,29 +242,33 @@ public class MultiFileUpload extends EventDispatcher {
         }
 
         if (_files.length > 0) {
-            RemoteObjectUtils.execute("fileService", "getUpToken", function (event:ResultEvent) {
-
-                _file = FileReference(_files.getItemAt(0)["file"]);
-                _file.addEventListener(Event.OPEN, openHandler);
-                _file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+            _file = FileReference(_files.getItemAt(0)["file"]);
+            _file.addEventListener(Event.OPEN, openHandler);
+            _file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
 //                _file.addEventListener(Event.COMPLETE, completeHandler);
-                _file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, successHandler);
-                _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+            _file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, successHandler);
+            _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 //                _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
-                _file.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+            _file.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 
 
-                var token:String = event.result.token;
-                var url:String = event.result.url;
-                _uploadURL.url = url;
-                _uploadURL.data.key = UIDUtil.createUID() + "__" + _file.name;
-                _uploadURL.data.token = token;
+            var _fileIds:Array = new Array()
+            var _servers:ArrayCollection = _files.getItemAt(0).servers as ArrayCollection;
+            for each(var serv in _servers) {
+                if(serv.selected){
+                    _fileIds.push(serv.fileId);
+                }
 
-                _file.upload(_uploadURL, "file");
-                setupCancelButton(true);
+            }
+            if(_fileIds == null || _fileIds.length == 0){
+                Alert.show("请选择发布服务器","提示");
+                return;
+            }
 
+            _uploadURL.data["fileIds[]"] = _fileIds;
 
-            });
+            _file.upload(_uploadURL, "file");
+            setupCancelButton(true);
         }
     }
 
@@ -426,23 +444,28 @@ public class MultiFileUpload extends EventDispatcher {
     private function successHandler(event:DataEvent):void {
         if (event && event.data) { //服务器必须返回一个输出信息,否则不会继续下一个,出错可以不返回信息
             var result:Object = JSON.parse(event.data);
-            var uploadedItem:Object = _files.removeItemAt(0);
-            trace(uploadedItem.servers);
-            var _servers:ArrayCollection = new ArrayCollection();
-            for each(var obj in uploadedItem.servers) {
-                if(obj.selected){
-                    _servers.addItem(obj.label);
+            if(result.success){
+                var uploadedItem:Object = _files.removeItemAt(0);
+                trace(uploadedItem.servers);
+                var _servers:ArrayCollection = new ArrayCollection();
+                for each(var obj in uploadedItem.servers) {
+                    if(obj.selected){
+                        _servers.addItem(obj.label);
+                    }
                 }
-            }
-            dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE, uploadedItem["file"].name, result.key, uploadedItem["file"].size,_servers));
-            if (_files.length > 0) {
-                _totalbytes = 0;
-                uploadFiles(null);//继续上传下一个文件
-            } else { // 全部上传完毕触发完成事件
-                setupCancelButton(false);
-                _progressbar.label = "传送完毕";
-                var uploadCompleted:Event = new Event(Event.COMPLETE);
-                dispatchEvent(uploadCompleted);
+                dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE, uploadedItem["file"].name, result.key, uploadedItem["file"].size,_servers));
+                if (_files.length > 0) {
+                    _totalbytes = 0;
+                    uploadFiles(null);//继续上传下一个文件
+                } else { // 全部上传完毕触发完成事件
+                    setupCancelButton(false);
+                    _progressbar.label = "传送完毕";
+                    var uploadCompleted:Event = new Event(Event.COMPLETE);
+                    dispatchEvent(uploadCompleted);
+                }
+            }else{
+                Alert.show(result.data.message,"失败");
+                setupCancelButton(true);
             }
         }
 

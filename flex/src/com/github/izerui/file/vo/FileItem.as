@@ -17,7 +17,7 @@ public class FileItem {
     public var size:Number;//文件大小
     public var uploadTimeStr:String;
     public var deployTimeStr:String;
-    public var fileUrl:String;
+    public var filePath:String;
 
 }
 }

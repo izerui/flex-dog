@@ -33,8 +33,8 @@ public class FileEntity implements Serializable{
     private String uploadTimeStr;
     @Transient
     private String deployTimeStr;
-    //文件url
-    private String fileUrl;
+    //文件路径
+    private String filePath;
 
     public String getUploadTimeStr(){
         if(uploadTime == null){

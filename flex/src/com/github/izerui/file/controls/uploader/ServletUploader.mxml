@@ -37,7 +37,7 @@
         // Place File Filters into the Array that is passed to the MultiFileUpload instance
         public var filesToFilter:Array = new Array(allTypes, imageTypes, documentTypes, zipTypes);
 
-        public static const uploadDestination:String = "";
+        public static const uploadDestination:String = "upload";
 
 
         protected function titlewindow1_closeHandler(event:CloseEvent):void {
@@ -63,7 +63,6 @@
                     filesToFilter
             );
             multiFileUpload.addEventListener(Event.COMPLETE, uploadsfinished);
-            multiFileUpload.addEventListener(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE, multiFileUpload_upload_single_file_completeHandler);
 
         }
 
@@ -73,12 +72,6 @@
             PopUpManager.removePopUp(this);
         }
 
-        private function multiFileUpload_upload_single_file_completeHandler(event:FileUploadEvent):void {
-            RemoteObjectUtils.execute("fileService", "updateFileUrl", function (event:Object) {
-
-            },event.fileName,event.servers,event.fileId,event.size);
-
-        }
         ]]>
     </fx:Script>
     <mx:DataGrid id="filesDG" left="0" right="0" bottom="30" top="5" />

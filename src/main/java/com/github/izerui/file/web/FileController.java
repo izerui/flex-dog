@@ -36,7 +36,7 @@ public class FileController {
     @ResponseBody
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public Map<String, Object> upload(
-            @RequestParam("file") MultipartFile file) throws Exception {
+            @RequestParam("Filedata") MultipartFile file) throws Exception {
         fileService.saveFile(file);
         Map<String, Object> result = new HashMap<>();
         result.put("success", "true");

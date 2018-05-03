@@ -220,7 +220,7 @@ public class MultiFileUpload extends EventDispatcher {
 //                _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
             _file.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 
-            _file.upload(_uploadURL, "file");
+            _file.upload(_uploadURL, "Filedata");
             setupCancelButton(true);
         }
     }

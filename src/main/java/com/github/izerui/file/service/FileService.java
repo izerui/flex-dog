@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,6 +55,8 @@ public class FileService {
     }
 
     public void addService(FileEntity fileEntity) {
+        long count = fileRepository.countByFileNameAndServer(fileEntity.getFileName(), fileEntity.getServer());
+        Assert.state(count==0,"服务器已经存在当前服务");
         fileEntity.setId(UUID.randomUUID().toString());
         fileRepository.save(fileEntity);
     }

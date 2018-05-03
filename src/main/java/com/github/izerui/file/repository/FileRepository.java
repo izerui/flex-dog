@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface FileRepository extends JpaRepository<FileEntity, String> {
 
+    long countByFileNameAndServer(String fileName,String server);
+
     List<FileEntity> findByServerOrderByUploadTimeDesc(String server);
 
     @Query("select a from FileEntity a order by a.uploadTime desc")

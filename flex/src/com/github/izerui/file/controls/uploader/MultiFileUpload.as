@@ -58,8 +58,6 @@ import flash.net.URLRequestMethod;
 import flash.net.URLVariables;
 
 import mx.collections.ArrayCollection;
-
-import mx.collections.ArrayCollection;
 import mx.controls.Alert;
 import mx.controls.Button;
 import mx.controls.DataGrid;
@@ -68,7 +66,6 @@ import mx.controls.dataGridClasses.*;
 import mx.core.ClassFactory;
 import mx.events.CollectionEvent;
 import mx.rpc.events.ResultEvent;
-import mx.utils.UIDUtil;
 
 public class MultiFileUpload extends EventDispatcher {
 
@@ -87,9 +84,6 @@ public class MultiFileUpload extends EventDispatcher {
     private var _nameColumn:DataGridColumn;
     private var _typeColumn:DataGridColumn;
     private var _sizeColumn:DataGridColumn;
-    private var _creationDate:DataGridColumn;
-    private var _modificationDate:DataGridColumn;
-    private var _progressColumn:DataGridColumn;
     private var _columns:Array;
 
     //File Reference Vars
@@ -104,9 +98,7 @@ public class MultiFileUpload extends EventDispatcher {
     private var _filefilter:Array;
 
     //config vars
-    private var _url:String; // location of the file upload handler can be a relative path or FQDM
-    private var _maxFileSize:Number; //bytes
-    private var _variables:URLVariables; //variables to passed along to the file upload handler on the server.
+    private var _url:String = ""; // location of the file upload handler can be a relative path or FQDM
 
     //Constructor
 //        private var continueUploadStatus:Boolean = true;
@@ -117,20 +109,13 @@ public class MultiFileUpload extends EventDispatcher {
                                     removeSelectedButton:Button,
                                     uploadButton:Button,
                                     progressBar:ProgressBar,
-                                    url:String,
-                                    variables:URLVariables,
-                                    maxFileSize:Number,
                                     filter:Array) {
         _datagrid = dataGrid;
-        _datagrid.rowHeight = 40;
         _browsebutton = browseButton;
         _remallbutton = removeAllButton;
         _remselbutton = removeSelectedButton;
         _uploadbutton = uploadButton;
-        _url = url;
         _progressbar = progressBar;
-        _variables = variables;
-        _maxFileSize = maxFileSize;
         _filefilter = filter;
         init();
     }
@@ -157,6 +142,7 @@ public class MultiFileUpload extends EventDispatcher {
         // Set Up Progress Bar UI
         _progressbar.mode = "manual";
         _progressbar.label = "";
+        _progressbar.height = 5;
 
         // Set Up UI Buttons;
         _uploadbutton.enabled = false;
@@ -174,11 +160,9 @@ public class MultiFileUpload extends EventDispatcher {
 
         _nameColumn.itemRenderer = new ClassFactory(FileNameRenderer)
 
-        _typeColumn.dataField = "server";
+        _typeColumn.dataField = "servers";
         _typeColumn.headerText = "服务器";
         _typeColumn.width = 200;
-//        _typeColumn.itemRenderer = new ClassFactory(ServerItemRenderer);
-        _typeColumn.labelFunction = _typeLabelFun;
 
         _sizeColumn.dataField = "size";
         _sizeColumn.headerText = "文件大小(KB)";
@@ -199,7 +183,6 @@ public class MultiFileUpload extends EventDispatcher {
         _uploadURL = new URLRequest;
         _uploadURL.url = _url;
 
-        _uploadURL.data = _variables;
         _uploadURL.method = URLRequestMethod.POST;  // this can also be set to "GET" depending on your needs
         _uploadURL.contentType = "multipart/form-data";
 
@@ -209,19 +192,6 @@ public class MultiFileUpload extends EventDispatcher {
     /********************************************************
      *   PRIVATE METHODS                                     *
      ********************************************************/
-
-
-    private function _typeLabelFun(item:Object):String {
-        var _lb:String = "";
-        for each(var obj in item.servers) {
-            if(_lb){
-                _lb = obj.label;
-            }else{
-                _lb += " , "+obj.label;
-            }
-        }
-        return _lb;
-    }
 
 
     //Browse for files
@@ -250,22 +220,6 @@ public class MultiFileUpload extends EventDispatcher {
             _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 //                _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
             _file.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
-
-
-            var _fileIds:Array = new Array()
-            var _servers:ArrayCollection = _files.getItemAt(0).servers as ArrayCollection;
-            for each(var serv in _servers) {
-                if(serv.selected){
-                    _fileIds.push(serv.fileId);
-                }
-
-            }
-            if(_fileIds == null || _fileIds.length == 0){
-                Alert.show("请选择发布服务器","提示");
-                return;
-            }
-
-            _uploadURL.data["fileIds[]"] = _fileIds;
 
             _file.upload(_uploadURL, "file");
             setupCancelButton(true);
@@ -312,33 +266,14 @@ public class MultiFileUpload extends EventDispatcher {
         for (i = 0; i < _files.length; i++) {
             _totalbytes += _files[i].size;
         }
-        _progressbar.label = "文件总数: " + _files.length + " 文件总大小: " + Math.round(_totalbytes / 1024) + " kb"
+//        _progressbar.label = "文件总数: " + _files.length + " 文件总大小: " + Math.round(_totalbytes / 1024) + " kb"
     }
 
-//    // Checks the files do not exceed maxFileSize | if _maxFileSize == 0 No File Limit Set
-    private function checkFileSize(filesize:Number):Boolean {
-
-        var r:Boolean = false;
-        //if  filesize greater then _maxFileSize
-        if (filesize > _maxFileSize) {
-            r = false;
-//		        	trace("false");
-        } else if (filesize <= _maxFileSize) {
-            r = true;
-//		        	trace("true");
-        }
-
-        if (_maxFileSize == 0) {
-            r = true;
-        }
-
-        return r;
-    }
 
     // restores progress bar back to normal
     private function resetProgressBar():void {
 
-        _progressbar.label = "";
+//        _progressbar.label = "";
         _progressbar.maximum = 0;
         _progressbar.minimum = 0;
     }
@@ -411,12 +346,8 @@ public class MultiFileUpload extends EventDispatcher {
                     "errMsg": ""
                 };
 
-                if (!checkFileSize(fileItem.size)) {
-                    fileItem.errMsg = "文件过大.";
-                }
-
                 if (!(ev.result && ev.result.length > 0)) {
-                    fileItem.errMsg = "不支持的文件.";
+                    fileItem.errMsg = "不支持发布.";
                 }
                 _files.addItem(fileItem);
             }, currentFile.name);
@@ -432,11 +363,11 @@ public class MultiFileUpload extends EventDispatcher {
     // called during the file upload of each file being uploaded | we use this to feed the progress bar its data
     private function progressHandler(event:ProgressEvent):void {
         _progressbar.setProgress(event.bytesLoaded, event.bytesTotal);
-        if (event.bytesLoaded == event.bytesTotal) {
-            _progressbar.label = "文件保存中...";
-        } else {
-            _progressbar.label = "已传送 " + Math.round(event.bytesTotal / 1024) + " kb 的 " + Math.round(event.bytesLoaded / 1024) + " kb " + (_files.length - 1) + " 个文件剩余";
-        }
+//        if (event.bytesLoaded == event.bytesTotal) {
+//            _progressbar.label = "文件保存中...";
+//        } else {
+//            _progressbar.label = "已传送 " + Math.round(event.bytesTotal / 1024) + " kb 的 " + Math.round(event.bytesLoaded / 1024) + " kb " + (_files.length - 1) + " 个文件剩余";
+//        }
     }
 
 
@@ -444,27 +375,20 @@ public class MultiFileUpload extends EventDispatcher {
     private function successHandler(event:DataEvent):void {
         if (event && event.data) { //服务器必须返回一个输出信息,否则不会继续下一个,出错可以不返回信息
             var result:Object = JSON.parse(event.data);
-            if(result.success){
+            if (result.success) {
                 var uploadedItem:Object = _files.removeItemAt(0);
-                trace(uploadedItem.servers);
-                var _servers:ArrayCollection = new ArrayCollection();
-                for each(var obj in uploadedItem.servers) {
-                    if(obj.selected){
-                        _servers.addItem(obj.label);
-                    }
-                }
-                dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE, uploadedItem["file"].name, result.key, uploadedItem["file"].size,_servers));
+                dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE));
                 if (_files.length > 0) {
                     _totalbytes = 0;
                     uploadFiles(null);//继续上传下一个文件
                 } else { // 全部上传完毕触发完成事件
                     setupCancelButton(false);
-                    _progressbar.label = "传送完毕";
+//                    _progressbar.label = "传送完毕";
                     var uploadCompleted:Event = new Event(Event.COMPLETE);
                     dispatchEvent(uploadCompleted);
                 }
-            }else{
-                Alert.show(result.data.message,"失败");
+            } else {
+                Alert.show(result.data.message, "失败");
                 setupCancelButton(true);
             }
         }
@@ -510,8 +434,8 @@ public class MultiFileUpload extends EventDispatcher {
     private function datagrid_serverCheckedHandler(event:ServerCheckEvent):void {
         var dataList:ArrayCollection = _datagrid.dataProvider as ArrayCollection;
         for each(var obj in dataList) {
-            if(obj.id == event.selItem.id){
-                dataList.itemUpdated(obj,null,null,event.selItem)
+            if (obj.id == event.selItem.id) {
+                dataList.itemUpdated(obj, null, null, event.selItem)
             }
         }
 

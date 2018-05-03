@@ -33,13 +33,10 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
-    private Logger log = Logger.getLogger(FileController.class);
-
     @ResponseBody
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public Map<String, Object> upload(
-            @RequestParam("file") MultipartFile file,
-            HttpServletRequest request) throws Exception {
+            @RequestParam("file") MultipartFile file) throws Exception {
         fileService.saveFile(file);
         Map<String, Object> result = new HashMap<>();
         result.put("success", "true");

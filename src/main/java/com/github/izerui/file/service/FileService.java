@@ -111,25 +111,9 @@ public class FileService {
         return output;
     }
 
-//    public void updateFileUrl(String fileName, List<String> servers, String fileId, Long size) throws IOException {
-//        List<FileEntity> fileEntities = fileRepository.findByServerInAndFileName(servers, fileName);
-//        for (FileEntity fileEntity : fileEntities) {
-//            fileEntity.setFileUrl(fileConfig.getUrlPrefix() + "/" + fileId);
-//            fileEntity.setSize(size);
-//            fileEntity.setUploadTime(new Date());
-//            fileRepository.save(fileEntity);
-//        }
-//    }
-
-    public List<Map<String, Object>> getServers(String fileName) {
+    public List<String> getServers(String fileName) {
         List<FileEntity> entities = fileRepository.findByFileName(fileName);
-        return entities.stream().map(fileEntity -> {
-            Map<String, Object> servers = new HashMap<>();
-            servers.put("fileId", fileEntity.getId());
-            servers.put("label", fileEntity.getServer());
-            servers.put("selected", true);
-            return servers;
-        }).collect(Collectors.toList());
+        return entities.stream().map(FileEntity::getServer).collect(Collectors.toList());
     }
 
     public void saveFile(MultipartFile file) throws IOException {

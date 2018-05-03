@@ -7,7 +7,7 @@
         creationComplete="initApp();"
         showCloseButton="true"
         close="titlewindow1_closeHandler(event)"
-        layout="absolute" paddingTop="10"
+        layout="vertical" paddingTop="10"
         keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
     <fx:Script>
         <![CDATA[
@@ -37,9 +37,6 @@
         // Place File Filters into the Array that is passed to the MultiFileUpload instance
         public var filesToFilter:Array = new Array(allTypes, imageTypes, documentTypes, zipTypes);
 
-        public static const uploadDestination:String = "upload";
-
-
         protected function titlewindow1_closeHandler(event:CloseEvent):void {
             PopUpManager.removePopUp(this);
             multiFileUpload.cancelUploadHandler();
@@ -48,8 +45,6 @@
 
         public function initApp():void {
 
-            var postVariables:URLVariables = new URLVariables;
-
             multiFileUpload = new MultiFileUpload(
                     filesDG,
                     browseBTN,
@@ -57,9 +52,6 @@
                     delButton,
                     upload_btn,
                     progressbar,
-                    uploadDestination,
-                    postVariables,
-                    Number(0),//大小无限制
                     filesToFilter
             );
             multiFileUpload.addEventListener(Event.COMPLETE, uploadsfinished);
@@ -74,11 +66,9 @@
 
         ]]>
     </fx:Script>
-    <mx:DataGrid id="filesDG" left="0" right="0" bottom="30" top="5" />
-    <mx:ProgressBar id="progressbar" labelPlacement="center" trackHeight="15" left="0" right="0" bottom="5"/>
-
+    <mx:DataGrid id="filesDG" width="100%" height="100%" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" bottom="0"/>
+    <mx:ProgressBar id="progressbar" labelPlacement="center" width="100%" height="10" paddingLeft="0" paddingRight="0" top="0" bottom="0"/>
     <mx:ControlBar>
-
         <mx:Spacer width="100%"/>
         <mx:HBox>
             <mx:Button label="浏览文件" id="browseBTN"/>

@@ -1,6 +1,7 @@
 package com.github.izerui.file.service;
 
 import com.github.izerui.file.config.FileConfig;
+import com.github.izerui.file.entity.DeployEntity;
 import com.github.izerui.file.entity.FileEntity;
 import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.repository.FileRepository;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,6 +54,27 @@ public class FileService {
     private FileConfig fileConfig;
 
     private Configuration configuration = new Configuration();
+
+
+    //修复数据
+    @PostConstruct
+    public void init() {
+        List<FileEntity> all = fileRepository.findAll();
+        for (FileEntity entity : all) {
+            File file = new File(rootPath + entity.getFileName());
+            if (file.exists()) {
+                entity.setFilePath(file.getPath());
+                entity.setUploadTime(new Date(file.lastModified()));
+            }
+            if (entity.getDeployTime() == null) {
+                DeployEntity one = deployRepository.findOne(entity.getFileName());
+                if (one != null) {
+                    entity.setDeployTime(one.getDeployTime());
+                }
+            }
+            fileRepository.save(entity);
+        }
+    }
 
 
     public Map<String, String> getUpToken() throws QiniuException {

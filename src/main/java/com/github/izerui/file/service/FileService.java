@@ -69,6 +69,7 @@ public class FileService {
             File file = new File(rootPath + entity.getFileName());
             if (file.exists()) {
                 entity.setFilePath(file.getPath());
+                entity.setSize(file.length());
                 entity.setUploadTime(new Date(file.lastModified()));
             }
             if (entity.getDeployTime() == null) {

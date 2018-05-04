@@ -49,7 +49,7 @@ public class FileController {
         File file = new File(entity.getFilePath());
         if (file.exists()) {//存在文件
             response.reset();
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(file.getName().getBytes("utf-8"),"ISO-8859-1"));
             response.addHeader("Content-Length", "" + file.length());
             response.setContentType("application/octet-stream;charset=UTF-8");
             IOUtils.copy(new FileInputStream(file), response.getOutputStream());

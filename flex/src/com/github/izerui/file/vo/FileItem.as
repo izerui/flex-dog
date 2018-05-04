@@ -11,6 +11,14 @@ public class FileItem {
     public var fileName:String;
     //服务器
     public var server:String;
+    //服务器IP地址
+    public var serverAddress:String;
+    //服务url
+    public var url:String;
+    //服务端口
+    public var port:Number;
+    //服务状态
+    public var status:String;
     //发布方式
     public var deployType:String;//发布方式
     //文件大小

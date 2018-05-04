@@ -2,11 +2,13 @@ package com.github.izerui.file.service;
 
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.config.FileConfig;
 import com.github.izerui.file.entity.DeployEntity;
 import com.github.izerui.file.entity.FileEntity;
 import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.repository.FileRepository;
+import com.netflix.appinfo.InstanceInfo;
 import com.qiniu.common.QiniuException;
 import com.qiniu.storage.Configuration;
 import com.qiniu.util.Auth;
@@ -18,11 +20,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,14 +61,25 @@ public class FileService {
     private FileConfig fileConfig;
     @Autowired
     private MchuanSmsService mchuanSmsService;
+    @Autowired
+    private DiscoveryClient discoveryClient;
+    @Autowired
+    private UcloudService ucloudService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private Configuration configuration = new Configuration();
 
 
     //修复数据
     @PostConstruct
-    public void init() {
+    public void init() throws IOException {
+        String uhostJson = ucloudService.getDescribeUHostInstance();
+        Map<String, Object> map = objectMapper.readValue(uhostJson, Map.class);
+        List<Map<String, Object>> uhostList = (List<Map<String, Object>>) map.get("UHostSet");
+
         List<FileEntity> all = fileRepository.findAll();
+
         for (FileEntity entity : all) {
             File file = new File(rootPath + entity.getFileName());
             if (file.exists()) {
@@ -78,11 +93,27 @@ public class FileService {
                     entity.setDeployTime(one.getDeployTime());
                 }
             }
+            if (uhostList != null) {
+                for (Map<String, Object> uhost : uhostList) {
+                    if (entity.getServer().equals(uhost.get("Name"))) {
+                        String ips = "";
+                        for (Map<String, Object> ip : (List<Map<String, Object>>) uhost.get("IPSet")) {
+                            if ("".equals(ips)) {
+                                ips = (String) ip.get("IP");
+                            } else {
+                                ips += "," + (String) ip.get("IP");
+                            }
+                        }
+                        entity.setServerAddress(ips);
+                    }
+
+                }
+            }
             fileRepository.save(entity);
         }
     }
 
-    public void sendCaptcha(String phone){
+    public void sendCaptcha(String phone) {
         String content = "验证码: [%s] ，请在1分钟内输入。";
         String captcha = RandomStringUtils.randomNumeric(4);
         content = String.format(content, captcha);
@@ -92,7 +123,7 @@ public class FileService {
         }
     }
 
-    public boolean validateCaptcha(String phone,String captcha){
+    public boolean validateCaptcha(String phone, String captcha) {
         return mchuanSmsService.isValidCaptcha(phone, "new-service", captcha);
     }
 
@@ -113,11 +144,37 @@ public class FileService {
     }
 
     public List<FileEntity> listFiles(String server) {
+        List<FileEntity> files = new ArrayList<>();
         if (StringUtils.isEmpty(server) || server.equals("全部")) {
-            return fileRepository.findAllOrderByUploadTimeDesc();
+            files = fileRepository.findAllOrderByUploadTimeDesc();
         } else {
-            return fileRepository.findByServerOrderByUploadTimeDesc(server);
+            files = fileRepository.findByServerOrderByUploadTimeDesc(server);
         }
+
+        List<String> services = discoveryClient.getServices();
+
+        for_each_files:
+        for (FileEntity file : files) {
+            for (String service : services) {
+                if (file.getFileName().contains(service)) {
+                    List<ServiceInstance> instances = discoveryClient.getInstances(service);
+                    for (ServiceInstance instance : instances) {
+                        InstanceInfo instanceInfo = ((EurekaDiscoveryClient.EurekaServiceInstance) instance).getInstanceInfo();
+                        if (file.getServerAddress().contains(instanceInfo.getHostName())) {
+//                        if(true){
+                            file.setUrl(instanceInfo.getHomePageUrl());
+                            file.setPort(instanceInfo.getPort());
+                            file.setStatus(instanceInfo.getStatus().name());
+                            continue for_each_files;
+                        }
+                    }
+
+
+                }
+            }
+        }
+
+        return files;
     }
 
 

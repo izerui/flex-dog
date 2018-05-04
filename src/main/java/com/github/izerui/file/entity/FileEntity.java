@@ -25,6 +25,8 @@ public class FileEntity implements Serializable{
     private String fileName;
     //服务器
     private String server;
+    //服务器IP地址
+    private String serverAddress;
     //发布方式
     private String deployType;//发布方式
     //文件大小
@@ -35,6 +37,12 @@ public class FileEntity implements Serializable{
     private String deployTimeStr;
     //文件路径
     private String filePath;
+    @Transient
+    private String status;
+    @Transient
+    private String url;
+    @Transient
+    private Integer port;
 
     public String getUploadTimeStr(){
         if(uploadTime == null){

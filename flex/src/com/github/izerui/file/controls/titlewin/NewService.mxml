@@ -30,6 +30,15 @@
             fileItem.server = server.selectedLabel;
             fileItem.deployType = deployType.selectedLabel;
             fileItem.fileName = fileName.text;
+            var _ips:String = "";
+            for each(var ipObj in server.selectedItem.IPSet) {
+                if (_ips) {
+                    _ips = _ips + "," + ipObj.IP;
+                } else {
+                    _ips = ipObj.IP;
+                }
+            }
+            fileItem.serverAddress = _ips;
 
             RemoteObjectUtils.execute("fileService", "addService", function (data:ResultEvent) {
                 close();

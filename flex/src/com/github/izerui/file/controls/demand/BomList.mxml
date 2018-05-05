@@ -9,25 +9,40 @@
                 title="业务主键: {inventory.businessKey} 的BOM信息"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:AdvancedDataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true" itemDoubleClick="view()">
-        <mx:dataProvider>
-            <mx:HierarchicalData source="{dataList}"/>
-        </mx:dataProvider>
+    <mx:TabNavigator width="100%" height="100%">
+        <mx:Box label="BOM结构" width="100%" height="100%">
+            <mx:AdvancedDataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true" itemDoubleClick="view()">
+                <mx:dataProvider>
+                    <mx:HierarchicalData source="{dataList}"/>
+                </mx:dataProvider>
 
-        <mx:columns>
-            <mx:AdvancedDataGridColumn dataField="inventoryCode" headerText="物料编码" width="250"/>
-            <mx:AdvancedDataGridColumn dataField="inventoryName" headerText="物料名称" width="250"/>
-            <mx:AdvancedDataGridColumn dataField="inventorySpec" headerText="规格型号"/>
-            <mx:AdvancedDataGridColumn dataField="attributeName" headerText="属性"/>
-            <mx:AdvancedDataGridColumn labelFunction="processFun" headerText="工序/供应商"/>
-            <mx:AdvancedDataGridColumn dataField="unitName" headerText="单位"/>
-            <mx:AdvancedDataGridColumn dataField="quantity" headerText="单位用量"/>
-            <mx:AdvancedDataGridColumn dataField="lossRate" headerText="损耗率"/>
-            <mx:AdvancedDataGridColumn labelFunction="processLoseFun" headerText="工序损耗"/>
-            <mx:AdvancedDataGridColumn dataField="productionQuantity" headerText="生产用量"/>
-            <mx:AdvancedDataGridColumn dataField="inventoryRemark" headerText="备注"/>
-        </mx:columns>
-    </mx:AdvancedDataGrid>
+                <mx:columns>
+                    <mx:AdvancedDataGridColumn dataField="inventoryCode" headerText="物料编码" width="250"/>
+                    <mx:AdvancedDataGridColumn dataField="inventoryName" headerText="物料名称" width="250"/>
+                    <mx:AdvancedDataGridColumn dataField="inventorySpec" headerText="规格型号"/>
+                    <mx:AdvancedDataGridColumn dataField="attributeName" headerText="属性"/>
+                    <mx:AdvancedDataGridColumn labelFunction="processFun" headerText="工序/供应商"/>
+                    <mx:AdvancedDataGridColumn dataField="unitName" headerText="单位"/>
+                    <mx:AdvancedDataGridColumn dataField="quantity" headerText="单位用量"/>
+                    <mx:AdvancedDataGridColumn dataField="lossRate" headerText="损耗率"/>
+                    <mx:AdvancedDataGridColumn labelFunction="processLoseFun" headerText="工序损耗"/>
+                    <mx:AdvancedDataGridColumn dataField="productionQuantity" headerText="生产用量"/>
+                    <mx:AdvancedDataGridColumn dataField="inventoryRemark" headerText="备注"/>
+                </mx:columns>
+            </mx:AdvancedDataGrid>
+        </mx:Box>
+        <mx:Box label="BOM日志" width="100%" height="100%">
+            <mx:DataGrid width="100%" height="100%" dataProvider="{logs}">
+                <mx:columns>
+                    <mx:DataGridColumn width="100" dataField="userName" headerText="操作人"/>
+                    <mx:DataGridColumn width="100" dataField="updateTime" headerText="操作时间"/>
+                    <mx:DataGridColumn width="100" dataField="content" headerText="操作内容"/>
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:Box>
+    </mx:TabNavigator>
+
+
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
@@ -85,12 +100,23 @@
             var popUp:DetailTitleWindow = new DetailTitleWindow();
             var _selItem:Object = ObjectUtil.clone(grid.selectedItem);
             _selItem.children = [];
+            _selItem.bomIds = [];
+            _selItem.materialIds = [];
+            _selItem.inventoryIds = [];
             popUp.output = JSON.stringify(_selItem,null,"  ");
             popUp.setFocus();
             PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
             PopUpManager.centerPopUp(popUp)
 //            var copyText:String = JSON.stringify(grid.selectedItem);
 //            System.setClipboard(copyText);
+        }
+
+        [Bindable]
+        private function get logs():ArrayCollection{
+            if(dataList && dataList.length == 1){
+                return dataList.getItemAt(0).logs as ArrayCollection;
+            }
+            return new ArrayCollection();
         }
         ]]>
     </fx:Script>

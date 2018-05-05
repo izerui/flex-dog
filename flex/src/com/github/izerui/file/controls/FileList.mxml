@@ -161,6 +161,9 @@
         private function newService():void {
             var ns:NewService = new NewService();
             ns.serverDataList = ArrayCollection(serverList.dataProvider);
+            ns.addEventListener("addEvent",function (event:Event):void {
+               loadFiles();
+            });
             ns.setFocus();
 
             PopUpManager.addPopUp(ns, Application.application as DisplayObject, true);

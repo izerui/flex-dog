@@ -41,11 +41,15 @@
             fileItem.serverAddress = _ips;
 
             RemoteObjectUtils.execute("fileService", "addService", function (data:ResultEvent) {
-                close();
+                close(true);
             }, fileItem);
         }
 
-        private function close():void {
+        private function close(event:Boolean = false):void {
+            if(event){
+                var ev:Event = new Event("addEvent",true,false);
+                dispatchEvent(ev);
+            }
             PopUpManager.removePopUp(this);
         }
 
@@ -71,7 +75,9 @@
     <fx:Declarations>
         <!-- 将非可视元素（例如服务、值对象）放在此处 -->
     </fx:Declarations>
-
+    <fx:Metadata>
+        [Event(name="addEvent", type="flash.events.Event")]
+    </fx:Metadata>
     <mx:Form>
         <mx:FormItem label="服务器">
             <mx:ComboBox id="server" dataProvider="{serverDataList}" labelField="Name"/>

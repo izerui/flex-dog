@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+                xmlns:mx="library://ns.adobe.com/flex/mx"
+                width="350" height="280"
+                title="BOM节点增加用量"
+                layout="vertical"
+                showCloseButton="true"
+                close="PopUpManager.removePopUp(this);"
+                keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
+    <fx:Script>
+        <![CDATA[
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.managers.PopUpManager;
+        import mx.rpc.events.ResultEvent;
+        import mx.utils.UIDUtil;
+
+        [Bindable]
+        public var bomItem:Object;
+        [Bindable]
+        public var entCode:String;
+
+        private function addBomDemand():void {
+            if (!code.text) {
+                return;
+            }
+            RemoteObjectUtils.execute("demandService", "addBomDemand", function (event:ResultEvent) {
+                        close();
+                    }
+                    , "13911523134"
+                    , code.text
+                    , entCode
+                    , bomItem.bomId
+                    , quantity.value);
+        }
+
+        private function sendSms():void {
+            RemoteObjectUtils.execute("demandService", "sendUpdateDemandCaptcha", function (event:ResultEvent) {
+            }, "13911523134");
+        }
+
+        private function close():void {
+            PopUpManager.removePopUp(this);
+            var e:Event = new Event("DataChange",true);
+            this.dispatchEvent(e);
+        }
+        ]]>
+    </fx:Script>
+    <fx:Declarations>
+        <!-- 将非可视元素（例如服务、值对象）放在此处 -->
+    </fx:Declarations>
+    <mx:Form>
+        <mx:FormItem label="货品编码">
+            <mx:Label text="{bomItem.inventoryCode}"/>
+        </mx:FormItem>
+        <mx:FormItem label="货品名称">
+            <mx:Label text="{bomItem.inventoryName}"/>
+        </mx:FormItem>
+        <mx:FormItem label="增加量">
+            <mx:NumericStepper id="quantity" width="200" minimum="0"
+                               maximum="{Number.MAX_VALUE}"/>
+        </mx:FormItem>
+        <mx:FormItem label="验证码">
+            <mx:TextInput id="code"/>
+        </mx:FormItem>
+        <mx:FormItem>
+            <mx:Button id="button" label="发送验证码" click="sendSms();button.enabled=false;"/>
+        </mx:FormItem>
+    </mx:Form>
+    <mx:ControlBar horizontalAlign="right">
+        <mx:Button label="确定" click="addBomDemand()"/>
+    </mx:ControlBar>
+</mx:TitleWindow>

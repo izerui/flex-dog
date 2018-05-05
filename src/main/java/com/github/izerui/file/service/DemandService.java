@@ -296,4 +296,14 @@ public class DemandService {
         rabbitTemplate.convertAndSend("ierp", "ierp.demand.update", msg);
     }
 
+    public void addBomDemand(String phone,
+                             String captcha,
+                             String entCode,
+                             String bomId,
+                             BigDecimal quantity){
+        boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
+        Assert.state(isValid, "验证码无效");
+        mrpClient.addBomDemand(entCode,bomId,quantity);
+    }
+
 }

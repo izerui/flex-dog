@@ -41,7 +41,9 @@
             </mx:DataGrid>
         </mx:Box>
     </mx:TabNavigator>
-
+    <mx:ControlBar>
+        <mx:LinkButton icon="@Embed('/assets/img/renameFolder.png')" label="增加MRP需求" click="addBomDemand()"/>
+    </mx:ControlBar>
 
     <fx:Script><![CDATA[
         import com.github.izerui.file.components.loading.LoaderManager;
@@ -117,6 +119,18 @@
                 return dataList.getItemAt(0).logs as ArrayCollection;
             }
             return new ArrayCollection();
+        }
+
+        private function addBomDemand():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var adw:AddDemandWindow = new AddDemandWindow();
+            adw.bomItem = grid.selectedItem;
+            adw.entCode = inventory.entCode;
+            adw.setFocus();
+            PopUpManager.addPopUp(adw,DisplayObject(FlexGlobals.topLevelApplication),true);
+            PopUpManager.centerPopUp(adw);
         }
         ]]>
     </fx:Script>

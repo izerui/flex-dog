@@ -39,7 +39,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RemotingDestination
 @Service("fileService")
@@ -208,11 +207,6 @@ public class FileService {
         entity.setDeployTime(new Date());
         fileRepository.save(entity);
         return output;
-    }
-
-    public List<String> getServers(String fileName) {
-        List<FileEntity> entities = fileRepository.findByFileName(fileName);
-        return entities.stream().map(FileEntity::getServer).collect(Collectors.toList());
     }
 
     public void saveFile(MultipartFile file) throws IOException {

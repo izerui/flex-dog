@@ -125,12 +125,16 @@
                     return;
                 }
                 case 4: {
-                    var servletUploader:ServletUploader = new ServletUploader;
-                    PopUpManager.addPopUp(servletUploader, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
-                    PopUpManager.centerPopUp(servletUploader);
-                    servletUploader.addEventListener(FileUploadEvent.UPLOAD_COMPLETE, fileUploadComplete);
-//						servletUploader.multiFileUpload.addEventListener(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE,singleFileUploadFinished);
-                    servletUploader.setFocus();
+                    RemoteObjectUtils.execute("fileService", "listFiles", function (event:Object) {
+                        var fileList:ArrayCollection = ArrayCollection(event.result);
+
+                        var servletUploader:ServletUploader = new ServletUploader;
+                        servletUploader.fileList = fileList;
+                        PopUpManager.addPopUp(servletUploader, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
+                        PopUpManager.centerPopUp(servletUploader);
+                        servletUploader.addEventListener(FileUploadEvent.UPLOAD_COMPLETE, fileUploadComplete);
+                        servletUploader.setFocus();
+                    }, "");
                     break;
                 }
                 case 7:

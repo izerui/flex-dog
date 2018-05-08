@@ -97,7 +97,9 @@ public class MultiFileUpload extends EventDispatcher {
     private var _filefilter:Array;
 
     //config vars
-    private var _url:String = "upload"; // location of the file upload handler can be a relative path or FQDM
+    private var _url:String = "upload";
+    public var fileList:ArrayCollection;
+    // location of the file upload handler can be a relative path or FQDM
 
     //Constructor
 //        private var continueUploadStatus:Boolean = true;
@@ -258,7 +260,6 @@ public class MultiFileUpload extends EventDispatcher {
     }
 
 
-
     // restores progress bar back to normal
     private function resetProgressBar():void {
 
@@ -320,21 +321,25 @@ public class MultiFileUpload extends EventDispatcher {
     //  选择文件回调
     private function selectHandler(event:Event):void {
         for each(var currentFile in event.currentTarget.fileList) {
-            RemoteObjectUtils.execute("fileService", "getServers", function (ev:ResultEvent):void {
 
-                var fileItem:Object = {
-                    "name": currentFile.name,
-                    "size": currentFile.size,
-                    "servers": ev.result as ArrayCollection,
-                    "file": currentFile,
-                    "errMsg": ""
-                };
+            var fileItem:Object = {
+                "name": currentFile.name,
+                "size": currentFile.size,
+                "servers": [],
+                "file": currentFile,
+                "errMsg": ""
+            };
 
-                if (!(ev.result && ev.result.length > 0)) {
-                    fileItem.errMsg = "不支持发布.";
+            for each(var file in fileList) {
+                if(file.fileName == fileItem.name){
+                    fileItem.servers.push(file.server);
                 }
-                _files.addItem(fileItem);
-            }, currentFile.name);
+            }
+
+            if (!(fileItem.servers.length > 0)) {
+                fileItem.errMsg = "不支持发布.";
+            }
+            _files.addItem(fileItem);
         }
     }
 

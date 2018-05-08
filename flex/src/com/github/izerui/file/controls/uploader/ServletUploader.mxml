@@ -14,11 +14,15 @@
         import com.github.izerui.file.event.FileUploadEvent;
         import com.github.izerui.file.utils.RemoteObjectUtils;
 
+        import mx.collections.ArrayCollection;
+
         import mx.core.SoundAsset;
         import mx.events.CloseEvent;
         import mx.managers.PopUpManager;
 
         public var multiFileUpload:MultiFileUpload;
+
+        public var fileList:ArrayCollection;
 
         public var responseFun:Function;
 
@@ -54,6 +58,7 @@
                     progressbar,
                     filesToFilter
             );
+            multiFileUpload.fileList = fileList;
             multiFileUpload.addEventListener(Event.COMPLETE, uploadsfinished);
 
         }

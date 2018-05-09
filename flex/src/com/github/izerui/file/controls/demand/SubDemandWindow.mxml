@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
                 xmlns:mx="library://ns.adobe.com/flex/mx"
-                width="350" height="280"
-                title="BOM节点增加需求"
+                width="350" height="300"
+                title="BOM节点减少需求"
                 layout="vertical"
                 showCloseButton="true"
                 close="PopUpManager.removePopUp(this);"
@@ -20,20 +20,21 @@
         [Bindable]
         public var entCode:String;
 
-        private function addBomDemand():void {
+        private function subBomDemand():void {
             if (!code.text) {
                 return;
             }
-            if(quantity.value == 0){
+            if(lastQuantity.value == quantity.value){
                 return;
             }
-            RemoteObjectUtils.execute("demandService", "addBomDemand", function (event:ResultEvent) {
+            RemoteObjectUtils.execute("demandService", "subBomDemand", function (event:ResultEvent) {
                         close();
                     }
                     , "13911523134"
                     , code.text
                     , entCode
                     , bomItem.bomId
+                    , lastQuantity.value
                     , quantity.value);
         }
 
@@ -59,7 +60,11 @@
         <mx:FormItem label="货品名称">
             <mx:Label text="{bomItem.inventoryName}"/>
         </mx:FormItem>
-        <mx:FormItem label="增加量">
+        <mx:FormItem label="原始需求">
+            <mx:NumericStepper id="lastQuantity" width="200" minimum="0"
+                               maximum="{Number.MAX_VALUE}"/>
+        </mx:FormItem>
+        <mx:FormItem label="新的需求">
             <mx:NumericStepper id="quantity" width="200" minimum="0"
                                maximum="{Number.MAX_VALUE}"/>
         </mx:FormItem>
@@ -71,6 +76,6 @@
         </mx:FormItem>
     </mx:Form>
     <mx:ControlBar horizontalAlign="right">
-        <mx:Button label="确定" click="addBomDemand()"/>
+        <mx:Button label="确定" click="subBomDemand()"/>
     </mx:ControlBar>
 </mx:TitleWindow>

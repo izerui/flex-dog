@@ -42,7 +42,8 @@
         </mx:Box>
     </mx:TabNavigator>
     <mx:ControlBar>
-        <mx:LinkButton icon="@Embed('/assets/img/renameFolder.png')" label="增加MRP需求" click="addBomDemand()"/>
+        <mx:LinkButton label="增加需求" click="addBomDemand()"/>
+        <mx:LinkButton label="减少需求" click="subBomDemand()"/>
     </mx:ControlBar>
 
     <fx:Script><![CDATA[
@@ -126,6 +127,18 @@
                 return;
             }
             var adw:AddDemandWindow = new AddDemandWindow();
+            adw.bomItem = grid.selectedItem;
+            adw.entCode = inventory.entCode;
+            adw.setFocus();
+            PopUpManager.addPopUp(adw,DisplayObject(FlexGlobals.topLevelApplication),true);
+            PopUpManager.centerPopUp(adw);
+        }
+
+        private function subBomDemand():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var adw:SubDemandWindow = new SubDemandWindow();
             adw.bomItem = grid.selectedItem;
             adw.entCode = inventory.entCode;
             adw.setFocus();

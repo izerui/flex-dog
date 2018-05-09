@@ -300,10 +300,22 @@ public class DemandService {
                              String captcha,
                              String entCode,
                              String bomId,
-                             BigDecimal quantity){
+                             BigDecimal quantity) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
         Assert.state(isValid, "验证码无效");
-        mrpClient.addBomDemand(entCode,bomId,quantity);
+        mrpClient.addBomDemand(entCode, bomId, quantity);
     }
+
+    public void subBomDemand(String phone,
+                             String captcha,
+                             String entCode,
+                             String bomId,
+                             BigDecimal lastQuantity,
+                             BigDecimal quantity) {
+        boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
+        Assert.state(isValid, "验证码无效");
+        mrpClient.subBomDemand(entCode, bomId, lastQuantity, quantity);
+    }
+
 
 }

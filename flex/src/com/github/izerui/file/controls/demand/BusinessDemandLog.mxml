@@ -140,9 +140,7 @@
         private var dataList:ArrayCollection;
 
         private function loadData():void {
-            LoaderManager.showLoading();
             RemoteObjectUtils.execute("demandService", "findDemandResults", function (event:ResultEvent) {
-                LoaderManager.hideLoading();
                 dataList = event.result as ArrayCollection;
                 grid.dataProvider = dataList;
                 filterResult();

@@ -30,6 +30,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.github.izerui:eureka-client:1.0.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:development-remote:3.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:development-document:3.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:esms-autoconfig:1.2.4-SNAPSHOT" level="project" />

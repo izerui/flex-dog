@@ -23,6 +23,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.izerui</groupId>
+            <artifactId>eureka-client</artifactId>
+            <version>1.0.3.RELEASE</version>
+        </dependency>
+        <dependency>
             <groupId>com.ecworking</groupId>
             <artifactId>development-remote</artifactId>
             <version>3.0.1-SNAPSHOT</version>

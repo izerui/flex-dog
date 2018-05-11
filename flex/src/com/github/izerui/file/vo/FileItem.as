@@ -26,6 +26,8 @@ public class FileItem {
     public var uploadTimeStr:String;
     public var deployTimeStr:String;
     public var filePath:String;
+    public var appId:String;
+    public var instanceId:String;
 
 }
 }

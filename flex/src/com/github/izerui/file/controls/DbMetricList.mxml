@@ -53,9 +53,7 @@
         import mx.rpc.events.ResultEvent;
 
         private function loadData():void {
-            LoaderManager.showLoading();
             RemoteObjectUtils.execute("ucloudService", "getDbMetricOverview", function (event:ResultEvent) {
-                LoaderManager.hideLoading();
                 var json:String = String(event.result);
                 var data:Object = JSON.parse(json);
                 grid.dataProvider = data.DataSet;

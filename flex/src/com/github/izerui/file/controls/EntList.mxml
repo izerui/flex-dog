@@ -58,9 +58,7 @@
 
         private function loadData():void {
             info.visible = false;
-            LoaderManager.showLoading();
             RemoteObjectUtils.execute("onlineService", "onlineUsers", function (event:ResultEvent) {
-                LoaderManager.hideLoading();
                 grid.dataProvider = event.result;
 
                 var _onlineCount:Number = 0;

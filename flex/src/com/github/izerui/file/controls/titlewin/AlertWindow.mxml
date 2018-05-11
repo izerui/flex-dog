@@ -28,8 +28,6 @@
         [Bindable]
         public var publishers:ArrayCollection;
 
-        public var selItem:FileItem;
-
         private function validateCap():void {
             if (!captcha.text || box.selectedIndex == -1) {
                 return;
@@ -39,7 +37,7 @@
                 LoaderManager.hideLoading();
                 if (Boolean(event.result)) {
                     PopUpManager.removePopUp(_win);
-                    exec();
+                    success();
                 } else {
                     Alert.show("验证码错误", "错误");
                 }
@@ -47,28 +45,9 @@
 
         }
 
-        protected function exec():void {
-
-            LoaderManager.showLoading();
-
-            RemoteObjectUtils.execute("fileService", "exec", execResult, selItem.id);
-
-            function execResult(event:ResultEvent):void {
-                LoaderManager.hideLoading();
-                var output = String(event.result);
-                selItem["deployTimeStr"] = "1秒前";
-
-                var popUp:DetailTitleWindow = new DetailTitleWindow();
-                popUp.output = output ? output : "未知";
-                popUp.setFocus();
-                PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
-                PopUpManager.centerPopUp(popUp)
-
-                var deployEvent:DeployEvent = new DeployEvent("deployEvent", true, false);
-                deployEvent.item = selItem;
-                dispatchEvent(deployEvent);
-
-            }
+        private function success(){
+            var event:Event = new Event("successEvent",true,false);
+            this.dispatchEvent(event);
         }
 
         private function sendSms():void {
@@ -93,6 +72,9 @@
     <fx:Declarations>
         <!-- 将非可视元素（例如服务、值对象）放在此处 -->
     </fx:Declarations>
+    <fx:Metadata>
+        [Event(name="successEvent", type="flash.events.Event")]
+    </fx:Metadata>
     <s:VGroup>
         <s:HGroup>
             <mx:ComboBox id="box" dataProvider="{publishers}" labelField="name"/>

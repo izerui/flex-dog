@@ -43,6 +43,10 @@ public class FileEntity implements Serializable{
     private String url;
     @Transient
     private Integer port;
+    @Transient
+    private String appId;
+    @Transient
+    private String instanceId;
 
     public String getUploadTimeStr(){
         if(uploadTime == null){
@@ -57,4 +61,5 @@ public class FileEntity implements Serializable{
         }
         return RelativeDateFormat.format(deployTime);
     }
+
 }

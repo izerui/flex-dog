@@ -6,12 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.config.FileConfig;
 import com.github.izerui.file.entity.DeployEntity;
 import com.github.izerui.file.entity.FileEntity;
+import com.github.izerui.file.entity.LogEntity;
 import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.repository.FileRepository;
+import com.github.izerui.file.repository.LogRepository;
 import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.shared.Application;
 import com.qiniu.common.QiniuException;
 import com.qiniu.storage.Configuration;
 import com.qiniu.util.Auth;
+import eureka.client.EurekaClient;
+import eureka.client.EurekaClientImpl;
+import eureka.client.EurekaInstanceStatus;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
@@ -24,9 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +55,8 @@ public class FileService {
 
     @Value("${root-path}")
     private String rootPath;
+    @Value("${eureka.client.serviceUrl.defaultZone}")
+    private String eurekaServiceUrl;
     @Autowired
     private DeployRepository deployRepository;
     @Autowired
@@ -60,12 +65,16 @@ public class FileService {
     private FileConfig fileConfig;
     @Autowired
     private MchuanSmsService mchuanSmsService;
+    //    @Autowired
+//    private DiscoveryClient discoveryClient;
     @Autowired
-    private DiscoveryClient discoveryClient;
+    private com.netflix.discovery.EurekaClient eurekaClient;
     @Autowired
     private UcloudService ucloudService;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private LogRepository logRepository;
 
     private Configuration configuration = new Configuration();
 
@@ -140,6 +149,7 @@ public class FileService {
         Assert.state(count == 0, "服务器已经存在当前服务");
         fileEntity.setId(UUID.randomUUID().toString());
         fileRepository.save(fileEntity);
+        logRepository.save(new LogEntity("service", String.format("服务器: %s 增加服务: %s", fileEntity.getServer(), fileEntity.getFileName())));
     }
 
     public List<FileEntity> listFiles(String server) {
@@ -150,20 +160,20 @@ public class FileService {
             files = fileRepository.findByServerOrderByUploadTimeDesc(server);
         }
 
-        List<String> services = discoveryClient.getServices();
+        List<Application> registeredApplications = eurekaClient.getApplications().getRegisteredApplications();
 
         for_each_files:
         for (FileEntity file : files) {
-            for (String service : services) {
-                if (file.getFileName().contains(service)) {
-                    List<ServiceInstance> instances = discoveryClient.getInstances(service);
-                    for (ServiceInstance instance : instances) {
-                        InstanceInfo instanceInfo = ((EurekaDiscoveryClient.EurekaServiceInstance) instance).getInstanceInfo();
-                        if (file.getServerAddress().contains(instanceInfo.getHostName())) {
-//                        if(true){
-                            file.setUrl(instanceInfo.getHomePageUrl());
-                            file.setPort(instanceInfo.getPort());
-                            file.setStatus(instanceInfo.getStatus().name());
+            for (Application application : registeredApplications) {
+                if (file.getFileName().toUpperCase().contains(application.getName().toUpperCase())) {
+                    for (InstanceInfo instance : application.getInstancesAsIsFromEureka()) {
+                        //rootPath.contains("dog") 表示测试环境，调试用，正式环境不要包含dog相关名字的目录
+                        if (rootPath.contains("dog") || file.getServerAddress().contains(instance.getHostName())) {
+                            file.setUrl(instance.getHomePageUrl());
+                            file.setPort(instance.getPort());
+                            file.setStatus(instance.getStatus().name());
+                            file.setAppId(instance.getAppName());
+                            file.setInstanceId(instance.getInstanceId());
                             continue for_each_files;
                         }
                     }
@@ -174,6 +184,26 @@ public class FileService {
         }
 
         return files;
+    }
+
+    public void stopService(String appId, String instanceId) {
+        for (String eurekaServiceUrl : eurekaServiceUrl.split(",")) {
+            EurekaClient eurekaClient = new EurekaClientImpl(eurekaServiceUrl);
+            //先使服务失效,再更改服务状态
+            eurekaClient.outOfService(appId, instanceId);
+            eurekaClient.backInService(appId, instanceId, EurekaInstanceStatus.DOWN);
+        }
+        logRepository.save(new LogEntity("service", String.format("停用服务: %s id: %s", appId, instanceId)));
+    }
+
+    public void startService(String appId, String instanceId) {
+        for (String eurekaServiceUrl : eurekaServiceUrl.split(",")) {
+            EurekaClient eurekaClient = new EurekaClientImpl(eurekaServiceUrl);
+            //先使服务失效,再更改服务状态
+            eurekaClient.outOfService(appId, instanceId);
+            eurekaClient.backInService(appId, instanceId, EurekaInstanceStatus.UP);
+        }
+        logRepository.save(new LogEntity("service", String.format("启用服务: %s id: %s", appId, instanceId)));
     }
 
 
@@ -206,6 +236,7 @@ public class FileService {
         //保存发布记录
         entity.setDeployTime(new Date());
         fileRepository.save(entity);
+        logRepository.save(new LogEntity("service", String.format("服务器: %s 发布服务: %s", entity.getServer(), entity.getFileName())));
         return output;
     }
 
@@ -220,6 +251,7 @@ public class FileService {
             one.setFilePath(newFile.getPath());
             fileRepository.save(one);
         }
+        logRepository.save(new LogEntity("service", String.format("上传文件: %s", file.getOriginalFilename())));
     }
 
     public FileEntity getFile(String fileId) {

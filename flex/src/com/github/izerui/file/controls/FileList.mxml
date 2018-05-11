@@ -7,12 +7,10 @@
 
     <fx:Script>
 		<![CDATA[
-        import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.AlertWindow;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.controls.titlewin.NewService;
         import com.github.izerui.file.controls.uploader.ServletUploader;
-        import com.github.izerui.file.event.DeployEvent;
         import com.github.izerui.file.event.FileUploadEvent;
         import com.github.izerui.file.event.I18nEvent;
         import com.github.izerui.file.utils.RemoteObjectUtils;
@@ -24,7 +22,6 @@
         import mx.core.FlexGlobals;
         import mx.events.ItemClickEvent;
         import mx.events.ListEvent;
-        import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
         import mx.utils.ObjectUtil;
@@ -36,7 +33,6 @@
         private var serverImg:Class;
 
         public function loadFiles():void {
-            LoaderManager.showLoading();
 
             var server:String = "";
             if (serverList.selectedIndex != -1) {
@@ -47,7 +43,6 @@
                 selFileId = myFileGrid.selectedItem.id;
             }
             RemoteObjectUtils.execute("fileService", "listFiles", function (event:Object) {
-                LoaderManager.hideLoading();
                 dataList = ArrayCollection(event.result);
                 filterResult();
                 if (selFileId) {
@@ -80,16 +75,8 @@
             myFileGrid.dataProvider = tempSearchList;
         }
 
-        private function formatDate(item:Object, column:DataGridColumn):String {
-            var df:DateFormatter = new DateFormatter();
-            df.formatString = "YYYY-MM-DD HH:NN:SS";
-            return df.format(item[column.dataField]);// df是一个DateFormatter，这里格式化item数据中的startDate字段
-        }
-
         private function loadServers():void {
-            LoaderManager.showLoading();
             RemoteObjectUtils.execute("ucloudService", "getDescribeUHostInstance", function (event:ResultEvent) {
-                LoaderManager.hideLoading();
                 var json:String = String(event.result);
                 var data:Object = JSON.parse(json);
                 serverList.dataProvider = data.UHostSet;
@@ -144,10 +131,7 @@
                             return;
                         }
                         var deployWin:AlertWindow = new AlertWindow();
-                        deployWin.selItem = FileItem(myFileGrid.selectedItem);
-                        deployWin.addEventListener("deployEvent", function (event:DeployEvent):void {
-                            ArrayCollection(myFileGrid.dataProvider).itemUpdated(event.item, "relativeDeployTime");
-                        });
+                        deployWin.addEventListener("successEvent", exec);
                         PopUpManager.addPopUp(deployWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
                         PopUpManager.centerPopUp(deployWin);
 
@@ -158,15 +142,57 @@
                         navigateToURL(new URLRequest("download?id=" + myFileGrid.selectedItem["id"]), "_blank");
                     }
                     break;
+                case 10:
+                    if (myFileGrid.selectedIndex != -1 && myFileGrid.selectedItem.appId && myFileGrid.selectedItem.instanceId) {
+                        var deployWin:AlertWindow = new AlertWindow();
+                        deployWin.addEventListener("successEvent", stopService);
+                        PopUpManager.addPopUp(deployWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
+                        PopUpManager.centerPopUp(deployWin);
+                    }
+                    break;
+                case 9:
+                    if (myFileGrid.selectedIndex != -1 && myFileGrid.selectedItem.appId && myFileGrid.selectedItem.instanceId) {
+                        var deployWin:AlertWindow = new AlertWindow();
+                        deployWin.addEventListener("successEvent", startService);
+                        PopUpManager.addPopUp(deployWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
+                        PopUpManager.centerPopUp(deployWin);
+                    }
+                    break;
             }
 
         }
 
+        protected function exec(event:Event):void {
+
+            RemoteObjectUtils.execute("fileService", "exec", execResult, myFileGrid.selectedItem.id);
+
+            function execResult(event:ResultEvent):void {
+                var output = String(event.result);
+                myFileGrid.selectedItem["deployTimeStr"] = "1秒前";
+                ArrayCollection(myFileGrid.dataProvider).itemUpdated(myFileGrid.selectedItem, "relativeDeployTime");
+
+                var popUp:DetailTitleWindow = new DetailTitleWindow();
+                popUp.output = output ? output : "未知";
+                popUp.setFocus();
+                PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+                PopUpManager.centerPopUp(popUp)
+            }
+        }
+
+        protected function startService(event:Event):void {
+            RemoteObjectUtils.execute("fileService", "startService", null, myFileGrid.selectedItem.appId, myFileGrid.selectedItem.instanceId);
+        }
+
+        protected function stopService(event:Event):void {
+            RemoteObjectUtils.execute("fileService", "stopService", null, myFileGrid.selectedItem.appId, myFileGrid.selectedItem.instanceId);
+        }
+
+
         private function newService():void {
             var ns:NewService = new NewService();
             ns.serverDataList = ArrayCollection(serverList.dataProvider);
-            ns.addEventListener("addEvent",function (event:Event):void {
-               loadFiles();
+            ns.addEventListener("addEvent", function (event:Event):void {
+                loadFiles();
             });
             ns.setFocus();
 
@@ -180,18 +206,6 @@
             loadFiles();
         }
 
-        protected function filesize_labelFun(item:Object, column:DataGridColumn):String {
-            if (!(item as FileItem).size) {
-                return "0 Kb";
-            }
-            var kbNum:Number = (item as FileItem).size / 1024;
-            var mbNum:Number = (item as FileItem).size / 1024 / 1024;
-            if (new Number(mbNum.toFixed(0)) > 0) {
-                return mbNum.toFixed(0) + " Mb";
-            } else {
-                return kbNum.toFixed(0) + " Kb";
-            }
-        }
 
         protected function _icon(item:Object):Class {
             return serverImg;
@@ -231,46 +245,19 @@
                     <mx:dataProvider>
                         <s:ArrayCollection>
                             <fx:Object label="新建" itemData="1" icon="@Embed('/assets/img/add.png')"/>
-                            <fx:Object label="刷新" itemData="100" icon="@Embed('/assets/img/qingkong.png')"/>
                             <fx:Object label="上传" itemData="4" icon="@Embed('/assets/img/filebrowser.gif')"/>
-                            <fx:Object label="下载" itemData="8" icon="@Embed('/assets/img/bar_img/world.png')"/>
+                            <fx:Object label="下线" itemData="10" icon="@Embed('/assets/img/disable.png')"/>
+                            <fx:Object label="上线" itemData="9" icon="@Embed('/assets/img/enable.png')"/>
                             <fx:Object label="发布" itemData="7" icon="@Embed('/assets/img/exec.png')"/>
+                            <fx:Object label="刷新" itemData="100" icon="@Embed('/assets/img/qingkong.png')"/>
                         </s:ArrayCollection>
                     </mx:dataProvider>
                 </mx:LinkBar>
                 <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
             </mx:HBox>
-            <mx:DataGrid id="myFileGrid" width="100%" height="100%" itemDoubleClick="view()"
-                         doubleClickEnabled="true">
-                <mx:columns>
-                    <mx:DataGridColumn width="60" dataField="server"
-                                       headerText="服务器"/>
-                    <mx:DataGridColumn width="150" dataField="serverAddress"
-                                       headerText="IP地址"/>
-                    <mx:DataGridColumn dataField="fileName"
-                                       itemRenderer="com.github.izerui.file.controls.itemRender.FolderIconRender"
-                                       headerText="服务文件"/>
-                    <mx:DataGridColumn width="100" dataField="size"
-                                       headerText="文件大小"
-                                       labelFunction="filesize_labelFun"/>
-                    <mx:DataGridColumn width="60" dataField="port"
-                                       headerText="端口"/>
-                    <mx:DataGridColumn width="200" dataField="url"
-                                       headerText="服务地址"/>
-                    <mx:DataGridColumn width="100" dataField="uploadTimeStr"
-                                       headerText="上传时间"/>
-                    <mx:DataGridColumn width="100" dataField="deployTimeStr"
-                                       headerText="最后发布时间"/>
-                    <mx:DataGridColumn width="60" dataField="status" textAlign="center"
-                                       headerText="状态">
-                        <mx:itemRenderer>
-                            <fx:Component>
-                                <mx:Label horizontalCenter="0" fontWeight="bold" text="{data.status}" color="0x008000"/>
-                            </fx:Component>
-                        </mx:itemRenderer>
-                    </mx:DataGridColumn>
-                </mx:columns>
-            </mx:DataGrid>
+            <components:FileDataGrid id="myFileGrid" width="100%" height="100%" itemDoubleClick="view()"
+                                     doubleClickEnabled="true">
+            </components:FileDataGrid>
         </mx:Box>
     </mx:HDividedBox>
 </mx:VBox>

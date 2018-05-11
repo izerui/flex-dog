@@ -65,9 +65,7 @@
         protected var dataList:ArrayCollection;
 
         private function loadData():void {
-            LoaderManager.showLoading();
             RemoteObjectUtils.execute("demandService", "getBom", function (event:ResultEvent) {
-                LoaderManager.hideLoading();
                 dataList = ArrayCollection(event.result);
                 grid.expandAll();
             }, inventory.entCode, inventory.bomId)

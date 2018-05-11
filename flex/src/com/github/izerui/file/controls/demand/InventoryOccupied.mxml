@@ -77,9 +77,7 @@
         public var inventory:Object;
 
         private function loadData():void {
-            LoaderManager.showLoading();
             RemoteObjectUtils.execute("demandService", "occupiedDetail", function (event:ResultEvent) {
-                LoaderManager.hideLoading();
                 grid.dataProvider = event.result;
             }, inventory.entCode, inventory.inventoryId)
 

@@ -173,9 +173,7 @@
         protected var page:PageVo = new PageVo();
 
         private function loadData():void {
-            LoaderManager.showLoading();
             RemoteObjectUtils.execute("demandService", "inventoryBusinessDemands", function (event:ResultEvent) {
-                LoaderManager.hideLoading();
                 page = PageVo(event.result);
                 filterResult();
             }, inventory.entCode, page.number, page.size, inventory.inventoryId)

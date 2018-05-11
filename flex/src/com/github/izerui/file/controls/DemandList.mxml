@@ -196,18 +196,14 @@
         protected var page:PageVo = new PageVo();
 
         private function loadEnts():void {
-            LoaderManager.showLoading();
             RemoteObjectUtils.execute("demandService", "getEntList", function (event:ResultEvent) {
                 box.dataProvider = event.result;
-                LoaderManager.hideLoading();
             });
 
         }
 
         private function loadData():void {
-            LoaderManager.showLoading();
             RemoteObjectUtils.execute("demandService", "inventoryDemands", function (event:ResultEvent) {
-                LoaderManager.hideLoading();
                 page = PageVo(event.result);
             }, box.selectedItem.code, page.number, page.size, input.text)
 

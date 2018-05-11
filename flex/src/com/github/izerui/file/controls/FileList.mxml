@@ -38,23 +38,9 @@
             if (serverList.selectedIndex != -1) {
                 server = serverList.selectedItem.Name;
             }
-            var selFileId:String = null;
-            if (myFileGrid.selectedIndex != -1) {
-                selFileId = myFileGrid.selectedItem.id;
-            }
             RemoteObjectUtils.execute("fileService", "listFiles", function (event:Object) {
                 dataList = ArrayCollection(event.result);
                 filterResult();
-                if (selFileId) {
-                    for (var i = 0; i < dataList.length; i++) {
-                        var item:FileItem = dataList[i];
-                        if (item.id == selFileId) {
-                            myFileGrid.selectedIndex = i;
-                            myFileGrid.scrollToIndex(i);
-                            break;
-                        }
-                    }
-                }
             }, server);
 
         }

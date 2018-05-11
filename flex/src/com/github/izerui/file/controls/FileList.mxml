@@ -246,8 +246,8 @@
                         <s:ArrayCollection>
                             <fx:Object label="新建" itemData="1" icon="@Embed('/assets/img/add.png')"/>
                             <fx:Object label="上传" itemData="4" icon="@Embed('/assets/img/filebrowser.gif')"/>
-                            <fx:Object label="下线" itemData="10" icon="@Embed('/assets/img/disable.png')"/>
                             <fx:Object label="上线" itemData="9" icon="@Embed('/assets/img/enable.png')"/>
+                            <fx:Object label="下线" itemData="10" icon="@Embed('/assets/img/disable.png')"/>
                             <fx:Object label="发布" itemData="7" icon="@Embed('/assets/img/exec.png')"/>
                             <fx:Object label="刷新" itemData="100" icon="@Embed('/assets/img/qingkong.png')"/>
                         </s:ArrayCollection>

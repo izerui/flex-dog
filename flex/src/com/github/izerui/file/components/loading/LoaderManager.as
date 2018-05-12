@@ -34,7 +34,7 @@ import mx.core.FlexGlobals;
 			if(timer){
                 timer.stop();
 			}else{
-                timer = new Timer(2000, 1);
+                timer = new Timer(1000, 1);
 			}
             timer.addEventListener(TimerEvent.TIMER, function deferredMethod(event:TimerEvent):void {
                 var loading:ExtendsImage = getLoadingInstance();

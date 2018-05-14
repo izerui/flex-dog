@@ -35,7 +35,7 @@
 			RemoteObjectUtils.executeQuiet("fileService", "getLogLength", function result(ev:ResultEvent):void {
 				var length:Number = ev.result as Number;
 				if (!begin) {
-					begin = length - 512000;
+					begin = length - 30000;
 					if (begin < 0) {
 						begin = 0;
 					}

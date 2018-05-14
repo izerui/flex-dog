@@ -15,6 +15,7 @@
         import com.github.izerui.file.vo.FileItem;
 
         import mx.events.FlexEvent;
+        import mx.events.ScrollEvent;
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
 
@@ -54,13 +55,21 @@
             }
             PopUpManager.removePopUp(this);
         }
+
+        private function area_scrollHandler(event:ScrollEvent):void {
+            if(area.text){
+                gundong.selected = false;
+            }else{
+                gundong.selected = true;
+            }
+        }
         ]]>
     </fx:Script>
     <fx:Declarations>
         <!-- 将非可视元素（例如服务、值对象）放在此处 -->
     </fx:Declarations>
     <mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载日志文件...&#13;" backgroundColor="black"
-                 color="#06b71b"/>
+                 color="#06b71b" scroll="area_scrollHandler(event)"/>
     <mx:ControlBar horizontalAlign="right">
         <mx:CheckBox id="gundong" label="自动滚动" selected="true"/>
         <mx:Button label="清空" click="area.text = '';"/>

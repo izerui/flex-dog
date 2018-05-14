@@ -9,6 +9,7 @@
 		<![CDATA[
         import com.github.izerui.file.controls.titlewin.AlertWindow;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
+        import com.github.izerui.file.controls.titlewin.LogWindow;
         import com.github.izerui.file.controls.titlewin.NewService;
         import com.github.izerui.file.controls.uploader.ServletUploader;
         import com.github.izerui.file.event.FileUploadEvent;
@@ -140,8 +141,20 @@
                     if (myFileGrid.selectedIndex != -1 && myFileGrid.selectedItem.appId && myFileGrid.selectedItem.instanceId) {
                         var deployWin:AlertWindow = new AlertWindow();
                         deployWin.addEventListener("successEvent", startService);
+                        deployWin.setFocus();
                         PopUpManager.addPopUp(deployWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
                         PopUpManager.centerPopUp(deployWin);
+                    }
+                    break;
+                case 11:
+                    if (myFileGrid.selectedIndex != -1 && myFileGrid.selectedItem.url) {
+                        var logWin:LogWindow = new LogWindow();
+                        logWin.selItem = myFileGrid.selectedItem as FileItem;
+                        logWin.width = Application.application.width - 100;
+                        logWin.height = Application.application.height - 100;
+                        logWin.setFocus();
+                        PopUpManager.addPopUp(logWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
+                        PopUpManager.centerPopUp(logWin);
                     }
                     break;
             }
@@ -235,6 +248,7 @@
                             <fx:Object label="下线" itemData="10" icon="@Embed('/assets/img/disable.png')"/>
                             <fx:Object label="上线" itemData="9" icon="@Embed('/assets/img/enable.png')"/>
                             <fx:Object label="发布" itemData="7" icon="@Embed('/assets/img/exec.png')"/>
+                            <fx:Object label="日志" itemData="11" icon="@Embed('/assets/img/exec.png')"/>
                             <fx:Object label="刷新" itemData="100" icon="@Embed('/assets/img/qingkong.png')"/>
                         </s:ArrayCollection>
                     </mx:dataProvider>

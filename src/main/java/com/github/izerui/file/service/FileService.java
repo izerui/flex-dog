@@ -10,6 +10,7 @@ import com.github.izerui.file.entity.LogEntity;
 import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.repository.FileRepository;
 import com.github.izerui.file.repository.LogRepository;
+import com.google.common.collect.Lists;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.shared.Application;
 import com.qiniu.common.QiniuException;
@@ -31,9 +32,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
@@ -41,6 +47,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.*;
 
 @RemotingDestination
@@ -76,8 +85,13 @@ public class FileService {
     @Autowired
     private LogRepository logRepository;
 
+    private static RestTemplate REST_TEMPLATE;
     private Configuration configuration = new Configuration();
 
+    static {
+        REST_TEMPLATE = new RestTemplate();
+        REST_TEMPLATE.setMessageConverters(Lists.newArrayList(new StringHttpMessageConverter(Charset.forName("UTF-8"))));
+    }
 
     //修复数据
     @PostConstruct
@@ -256,5 +270,30 @@ public class FileService {
 
     public FileEntity getFile(String fileId) {
         return fileRepository.findOne(fileId);
+    }
+
+    public long getLogLength(String homePageUrl) {
+        try {
+            HttpHeaders httpHeaders = REST_TEMPLATE.headForHeaders(new URI(homePageUrl + "logfile"));
+            return httpHeaders.getContentLength();
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    public String getLogContent(String homePageUrl, Long beginRange) {
+        try {
+            String rangeHeader = "bytes=" + (beginRange != null ? beginRange.toString() : "") + "-";
+            RequestEntity.HeadersBuilder<?> builder = RequestEntity.get(new URI(homePageUrl + "logfile"));
+            builder.header(HttpHeaders.RANGE, rangeHeader);
+//            builder.header(HttpHeaders.CONTENT_TYPE, "text/plain;charset=UTF-8");
+//            builder.header(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
+            builder.header(HttpHeaders.ACCEPT_LANGUAGE, "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+            ResponseEntity<String> exchange = REST_TEMPLATE.exchange(builder.build(), String.class);
+            return exchange.getBody()!=null?exchange.getBody():"";
+        }catch (Exception e){
+            return "";
+        }
+
     }
 }

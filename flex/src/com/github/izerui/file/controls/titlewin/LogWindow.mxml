@@ -64,5 +64,6 @@
 	<mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载日志文件...&#13;" backgroundColor="black" color="#06b71b" scroll="this.gundong = false"/>
 	<mx:ControlBar horizontalAlign="right">
 		<mx:CheckBox label="自动滚动" data="{gundong}" change="this.gundong = !gundong"/>
+		<mx:Button label="清空" click="area.text = ''"/>
 	</mx:ControlBar>
 </mx:TitleWindow>

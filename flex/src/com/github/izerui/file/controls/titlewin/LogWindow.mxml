@@ -1,69 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
-				xmlns:s="library://ns.adobe.com/flex/spark"
-				xmlns:mx="library://ns.adobe.com/flex/mx"
-				width="1024" height="600"
-				title="日志查看器"
-				layout="vertical"
-				showCloseButton="true"
-				close="close()"
-				creationComplete="creationCompleteHandler(event)"
-				keyDown="if(event.charCode == Keyboard.ESCAPE) close();">
-	<fx:Script>
+                xmlns:s="library://ns.adobe.com/flex/spark"
+                xmlns:mx="library://ns.adobe.com/flex/mx"
+                width="1024" height="600"
+                title="日志查看器"
+                layout="vertical"
+                showCloseButton="true"
+                close="close()"
+                creationComplete="creationCompleteHandler(event)"
+                keyDown="if(event.charCode == Keyboard.ESCAPE) close();">
+    <fx:Script>
         <![CDATA[
-		import com.github.izerui.file.utils.RemoteObjectUtils;
-		import com.github.izerui.file.vo.FileItem;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+        import com.github.izerui.file.vo.FileItem;
 
-		import mx.events.FlexEvent;
-		import mx.managers.PopUpManager;
-		import mx.rpc.events.ResultEvent;
+        import mx.events.FlexEvent;
+        import mx.managers.PopUpManager;
+        import mx.rpc.events.ResultEvent;
 
-		[Bindable]
-		public var selItem:FileItem;
-		[Bindable]
-		private var gundong:Boolean = true;
+        [Bindable]
+        public var selItem:FileItem;
+        [Bindable]
+        private var gundong:Boolean = true;
 
-		private var begin:Number;
-		private var timer:Timer = new Timer(1000, 0);
+        private var begin:Number;
+        private var timer:Timer = new Timer(1000, 0);
 
-		private function creationCompleteHandler(event:FlexEvent):void {
-			timer.addEventListener(TimerEvent.TIMER, log);
-			timer.start();
-		}
+        private function creationCompleteHandler(event:FlexEvent):void {
+            timer.addEventListener(TimerEvent.TIMER, log);
+            timer.start();
+        }
 
-		private function log(event:TimerEvent):void {
-			RemoteObjectUtils.executeQuiet("fileService", "getLogLength", function result(ev:ResultEvent):void {
-				var length:Number = ev.result as Number;
-				if (!begin) {
-					begin = length - 30000;
-					if (begin < 0) {
-						begin = 0;
-					}
-				}
-				RemoteObjectUtils.executeQuiet("fileService", "getLogContent", function (event:ResultEvent):void {
-					area.text += event.result as String;
-					if (gundong) {
-						area.verticalScrollPosition = area.maxVerticalScrollPosition;
-					}
-					begin = length;
-				}, selItem.url, begin);
-			}, selItem.url);
-		}
+        private function log(event:TimerEvent):void {
+            RemoteObjectUtils.executeQuiet("fileService", "getLogLength", function result(ev:ResultEvent):void {
+                var length:Number = ev.result as Number;
+                if (!begin) {
+                    begin = length - 30000;
+                    if (begin < 0) {
+                        begin = 0;
+                    }
+                }
+                RemoteObjectUtils.executeQuiet("fileService", "getLogContent", function (event:ResultEvent):void {
+                    area.text += event.result as String;
+                    if (gundong) {
+                        area.verticalScrollPosition = area.maxVerticalScrollPosition;
+                    }
+                    begin = length;
+                }, selItem.url, begin);
+            }, selItem.url);
+        }
 
-		private function close():void{
-			if(timer){
-				timer.stop();
-			}
-			PopUpManager.removePopUp(this);
-		}
-		]]>
+        private function close():void {
+            if (timer) {
+                timer.stop();
+            }
+            PopUpManager.removePopUp(this);
+        }
+        ]]>
     </fx:Script>
-	<fx:Declarations>
-		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
-	</fx:Declarations>
-	<mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载日志文件...&#13;" backgroundColor="black" color="#06b71b" scroll="this.gundong = false"/>
-	<mx:ControlBar horizontalAlign="right">
-		<mx:CheckBox label="自动滚动" data="{gundong}" change="this.gundong = !gundong"/>
-		<mx:Button label="清空" click="area.text = ''"/>
-	</mx:ControlBar>
+    <fx:Declarations>
+        <!-- 将非可视元素（例如服务、值对象）放在此处 -->
+    </fx:Declarations>
+    <mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载日志文件...&#13;" backgroundColor="black"
+                 color="#06b71b" scroll="this.gundong = false"/>
+    <mx:ControlBar horizontalAlign="right">
+        <mx:CheckBox label="自动滚动" data="{gundong}" change="this.gundong = !gundong"/>
+        <mx:Button label="清空" click="area.text = '';this.gundong=true"/>
+    </mx:ControlBar>
 </mx:TitleWindow>

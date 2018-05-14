@@ -41,9 +41,6 @@
 					}
 				}
 				RemoteObjectUtils.executeQuiet("fileService", "getLogContent", function (event:ResultEvent):void {
-					if(area.text.length>100000){
-						area.text = area.text.substring(area.text.length-10000,area.text.length);
-					}
 					area.text += event.result as String;
 					if (gundong) {
 						area.verticalScrollPosition = area.maxVerticalScrollPosition;

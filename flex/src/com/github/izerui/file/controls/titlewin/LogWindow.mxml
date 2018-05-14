@@ -20,8 +20,6 @@
 
         [Bindable]
         public var selItem:FileItem;
-        [Bindable]
-        private var gundong:Boolean = true;
 
         private var begin:Number;
         private var timer:Timer = new Timer(1000, 0);
@@ -42,7 +40,7 @@
                 }
                 RemoteObjectUtils.executeQuiet("fileService", "getLogContent", function (event:ResultEvent):void {
                     area.text += event.result as String;
-                    if (gundong) {
+                    if (gundong.selected) {
                         area.verticalScrollPosition = area.maxVerticalScrollPosition;
                     }
                     begin = length;
@@ -62,9 +60,9 @@
         <!-- 将非可视元素（例如服务、值对象）放在此处 -->
     </fx:Declarations>
     <mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载日志文件...&#13;" backgroundColor="black"
-                 color="#06b71b" scroll="this.gundong = false"/>
+                 color="#06b71b"/>
     <mx:ControlBar horizontalAlign="right">
-        <mx:CheckBox label="自动滚动" data="{gundong}" change="this.gundong = !gundong"/>
-        <mx:Button label="清空" click="area.text = '';this.gundong=true"/>
+        <mx:CheckBox id="gundong" label="自动滚动" selected="true"/>
+        <mx:Button label="清空" click="area.text = '';"/>
     </mx:ControlBar>
 </mx:TitleWindow>

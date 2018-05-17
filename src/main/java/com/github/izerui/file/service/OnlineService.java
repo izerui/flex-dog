@@ -3,7 +3,10 @@ package com.github.izerui.file.service;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
 import com.ecworking.rbac.enums.EnterpriseModelType;
+import com.ecworking.rbac.remote.vo.RoleVo;
+import com.ecworking.rbac.remote.vo.UserVo;
 import com.github.izerui.file.client.EnterpriseClient;
+import com.github.izerui.file.client.RoleClient;
 import com.github.izerui.file.client.UserClient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +30,20 @@ public class OnlineService {
     private EnterpriseClient enterpriseClient;
     @Autowired
     private UserClient userClient;
-
+    @Autowired
+    private RoleClient roleClient;
     @Autowired
     private RestTemplate restTemplate;
+
+
+    public List<RoleVo> findRoles(String entCode){
+        List<RoleVo> roles = roleClient.findRoles(entCode);
+        return roles;
+    }
+
+    public List<UserVo> findByRoleCode(String entCode,String roleCode){
+        return userClient.findByRoleCode(entCode,roleCode);
+    }
 
     public List<Map<String, Object>> onlineUsers() throws Exception {
         List<Map<String, Object>> results = new ArrayList<>();

@@ -276,6 +276,7 @@ public class DemandService {
     public void updateDemand(String phone,
                              String captcha,
                              String entCode,
+                             String userCode,
                              String businessKey,
                              String sourceId,
                              String remark,
@@ -287,6 +288,7 @@ public class DemandService {
 
         Map<String, Object> msg = new HashMap<>();
         msg.put("entCode", entCode);
+        msg.put("userCode", userCode);
         msg.put("businessKey", businessKey);
         msg.put("sourceId", sourceId);
         msg.put("remark", remark);
@@ -299,22 +301,24 @@ public class DemandService {
     public void addBomDemand(String phone,
                              String captcha,
                              String entCode,
+                             String userCode,
                              String bomId,
                              BigDecimal quantity) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
         Assert.state(isValid, "验证码无效");
-        mrpClient.addBomDemand(entCode,null, bomId, quantity);
+        mrpClient.addBomDemand(entCode,userCode, bomId, quantity);
     }
 
     public void subBomDemand(String phone,
                              String captcha,
                              String entCode,
+                             String userCode,
                              String bomId,
                              BigDecimal lastQuantity,
                              BigDecimal quantity) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
         Assert.state(isValid, "验证码无效");
-        mrpClient.subBomDemand(entCode,null, bomId, lastQuantity, quantity);
+        mrpClient.subBomDemand(entCode,userCode, bomId, lastQuantity, quantity);
     }
 
 

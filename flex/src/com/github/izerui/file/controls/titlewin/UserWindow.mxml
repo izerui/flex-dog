@@ -59,7 +59,7 @@
         [Event(name="selUserEvent", type="com.github.izerui.file.event.SelUserEvent")]
     </fx:Metadata>
 
-    <mx:HBox width="100%" height="100%">
+    <mx:HDividedBox width="100%" height="100%">
         <mx:List id="roles" labelField="name" width="100" height="100%" itemClick="roles_itemClickHandler(event)"></mx:List>
         <mx:DataGrid id="users" width="100%" height="100%">
             <mx:columns>
@@ -69,7 +69,7 @@
                 <mx:DataGridColumn headerText="删除状态" dataField="isDeleted"/>
             </mx:columns>
         </mx:DataGrid>
-    </mx:HBox>
+    </mx:HDividedBox>
 
     <mx:ControlBar horizontalAlign="right">
         <mx:Button id="queding" label="确定" click="queding_clickHandler(event)"/>

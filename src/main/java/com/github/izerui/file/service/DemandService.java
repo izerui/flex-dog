@@ -188,13 +188,14 @@ public class DemandService {
      * @param businessKey
      * @return
      */
-    public List<DemandResultVo> findDemandResults(String entCode,
-                                                  String businessKey) {
+    public List findDemandResults(String entCode, String businessKey) {
+        MultiValueMap<String, Object> header = new LinkedMultiValueMap<String, Object>();
+        header.set("entCode", entCode);
         MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
-        valueMap.set("entCode", entCode);
         valueMap.set("businessKey", businessKey);
-        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
-        return restTemplate.postForObject("http://mrp-api/v3/demand/list", httpEntity, List.class);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity(valueMap, header);
+        Map map = restTemplate.postForObject("http://process-pc/v1/order/inventory/info", httpEntity, Map.class);
+        return (List) map.get("data");
     }
 
 
@@ -306,7 +307,7 @@ public class DemandService {
                              BigDecimal quantity) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
         Assert.state(isValid, "验证码无效");
-        mrpClient.addBomDemand(entCode,userCode, bomId, quantity);
+        mrpClient.addBomDemand(entCode, userCode, bomId, quantity);
     }
 
     public void subBomDemand(String phone,
@@ -318,7 +319,7 @@ public class DemandService {
                              BigDecimal quantity) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
         Assert.state(isValid, "验证码无效");
-        mrpClient.subBomDemand(entCode,userCode, bomId, lastQuantity, quantity);
+        mrpClient.subBomDemand(entCode, userCode, bomId, lastQuantity, quantity);
     }
 
 

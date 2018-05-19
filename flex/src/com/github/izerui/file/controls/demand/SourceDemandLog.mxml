@@ -102,53 +102,30 @@
             <mx:DataGridColumn dataField="attributeName" textAlign="center"
                                headerText="货品属性"/>
             <mx:DataGridColumn dataField="changeDemandQty" textAlign="center" color="#026c6e"
+                               labelFunction="demandChangeLabelFun"
                                headerText="需求改变量"/>
-            <mx:DataGridColumn dataField="demandQty" textAlign="center"
-                               headerText="改变后单需"/>
-            <mx:DataGridColumn dataField="totalDemandQty" textAlign="center"
-                               headerText="改变后总需">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                       label="{data.totalDemandQty}"
-                                       click="viewLog()">
-                            <fx:Script>
-                                <![CDATA[
-                                import mx.core.Application;
-                                import mx.managers.PopUpManager;
-
-                                private function viewLog():void {
-                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
-                                    demandLog.inventory = data;
-                                    demandLog.setFocus();
-
-                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
-                                    PopUpManager.centerPopUp(demandLog);
-                                }
-                                ]]>
-                            </fx:Script>
-                        </mx:LinkButton>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="changePurgeQty" textAlign="center" color="#b77219"
+            <mx:DataGridColumn dataField="demandQty" textAlign="center" labelFunction="demandLabelFun"
+                               headerText="单需/总需"/>
+            <mx:DataGridColumn dataField="changePurgeQty" textAlign="center" color="#b77219" labelFunction="purgeChangeLabelFun"
                                headerText="净需改变量"/>
-            <mx:DataGridColumn dataField="purgeQty" textAlign="center"
-                               headerText="改变后单净需"/>
-            <mx:DataGridColumn dataField="totalPurgeQty" textAlign="center"
-                               headerText="改变后总净需">
+            <mx:DataGridColumn dataField="purgeQty" textAlign="center" labelFunction="purgeLabelFun"
+                               headerText="单净需/总净需"/>
+            <mx:DataGridColumn dataField="stockQty" textAlign="center"
+                               headerText="库存量">
                 <mx:itemRenderer>
                     <fx:Component>
                         <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                       label="{data.totalPurgeQty}"
-                                       click="viewLog()">
+                                       label="{data.stockQty}"
+                                       click="viewStock()">
                             <fx:Script>
                                 <![CDATA[
+                                import com.github.izerui.file.controls.demand.InventoryStockLog;
+
                                 import mx.core.Application;
                                 import mx.managers.PopUpManager;
 
-                                private function viewLog():void {
-                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                private function viewStock():void {
+                                    var demandLog:InventoryStockLog = new InventoryStockLog();
                                     demandLog.inventory = data;
                                     demandLog.setFocus();
 
@@ -161,8 +138,6 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="stockQty" textAlign="center"
-                               headerText="库存量"/>
             <mx:DataGridColumn dataField="usableQty" textAlign="center"
                                headerText="可用量"/>
             <mx:DataGridColumn dataField="createTime" width="120" textAlign="center"
@@ -246,6 +221,34 @@
                 page.number = 0;
             }
             loadData();
+        }
+
+        private function demandChangeLabelFun(item:Object, column:DataGridColumn):String {
+            if (item.changeDemandQty > 0) {
+                return "+" + item.changeDemandQty;
+            }else if(item.changeDemandQty == 0){
+                return "";
+            } else {
+                return "" + item.changeDemandQty;
+            }
+        }
+
+        private function demandLabelFun(item:Object, column:DataGridColumn):String {
+            return item.demandQty + " / " + item.totalDemandQty;
+        }
+
+        private function purgeChangeLabelFun(item:Object, column:DataGridColumn):String {
+            if (item.changePurgeQty > 0) {
+                return "+" + item.changePurgeQty;
+            }else if(item.changePurgeQty == 0){
+                return "";
+            } else {
+                return "" + item.changePurgeQty;
+            }
+        }
+
+        private function purgeLabelFun(item:Object, column:DataGridColumn):String {
+            return item.purgeQty + " / " + item.totalPurgeQty;
         }
 
         private function view():void {

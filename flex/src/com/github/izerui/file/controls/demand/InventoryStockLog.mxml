@@ -9,7 +9,8 @@
                 title="{inventory.inventoryCode} {inventory.inventoryName} 出入库记录"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}" doubleClickEnabled="true" itemDoubleClick="view()">
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"
+                 doubleClickEnabled="true" itemDoubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
@@ -46,13 +47,10 @@
         <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查看" click="view()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
-        import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
-        import com.github.izerui.file.vo.PageVo;
 
         import mx.core.FlexGlobals;
-
         import mx.events.ItemClickEvent;
         import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
@@ -62,11 +60,17 @@
         public var inventory:Object;
 
         [Bindable]
-        protected var page:PageVo = new PageVo();
+        protected var page:Object = {
+            number: 0,
+            size: 50,
+            totalPages: 0,
+            totalElements: 0,
+            content: []
+        };
 
         private function loadData():void {
             RemoteObjectUtils.execute("demandService", "inventoryStockHistory", function (event:ResultEvent) {
-                page = PageVo(event.result);
+                page = event.result;
             }, inventory.entCode, inventory.inventoryId, page.number, page.size)
 
         }
@@ -110,7 +114,7 @@
                 return;
             }
             var popUp:DetailTitleWindow = new DetailTitleWindow();
-            popUp.output = JSON.stringify(grid.selectedItem,null,"  ");
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
             popUp.setFocus();
             PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
             PopUpManager.centerPopUp(popUp)

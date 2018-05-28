@@ -10,7 +10,8 @@
                 title="货品: {inventory.inventoryCode} {inventory.inventoryName} 的需求"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}" doubleClickEnabled="true" itemDoubleClick="view()">
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"
+                 doubleClickEnabled="true" itemDoubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
@@ -28,7 +29,7 @@
                                 import mx.managers.PopUpManager;
 
                                 private function viewBom():void {
-                                    if(!data.bomId){
+                                    if (!data.bomId) {
                                         return;
                                     }
                                     var bomList:BomList = new BomList();
@@ -153,13 +154,10 @@
         <mx:LinkButton icon="@Embed('/assets/img/renameFolder.png')" label="手动修改" click="update()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
-        import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
-        import com.github.izerui.file.vo.PageVo;
 
         import mx.core.FlexGlobals;
-
         import mx.events.ItemClickEvent;
         import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
@@ -170,11 +168,17 @@
         public var inventory:Object;
 
         [Bindable]
-        protected var page:PageVo = new PageVo();
+        protected var page:Object = {
+            number: 0,
+            size: 50,
+            totalPages: 0,
+            totalElements: 0,
+            content: []
+        };
 
         private function loadData():void {
             RemoteObjectUtils.execute("demandService", "inventoryBusinessDemands", function (event:ResultEvent) {
-                page = PageVo(event.result);
+                page = event.result;
                 filterResult();
             }, inventory.entCode, page.number, page.size, inventory.inventoryId)
 
@@ -226,7 +230,7 @@
                 return;
             }
             var popUp:DetailTitleWindow = new DetailTitleWindow();
-            popUp.output = JSON.stringify(grid.selectedItem,null,"  ");
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
             popUp.setFocus();
             PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
             PopUpManager.centerPopUp(popUp)
@@ -246,10 +250,10 @@
             var udw:UpdateDemandWindow = new UpdateDemandWindow();
             udw.demandItem = grid.selectedItem;
             udw.setFocus();
-            udw.addEventListener("DataChange",function (event:Event) {
+            udw.addEventListener("DataChange", function (event:Event) {
                 loadData();
             });
-            PopUpManager.addPopUp(udw,DisplayObject(FlexGlobals.topLevelApplication),true);
+            PopUpManager.addPopUp(udw, DisplayObject(FlexGlobals.topLevelApplication), true);
             PopUpManager.centerPopUp(udw);
         }
 
@@ -267,7 +271,6 @@
             }
             grid.dataProvider = tempSearchList;
         }
-
         ]]>
     </fx:Script>
 </mx:TitleWindow>

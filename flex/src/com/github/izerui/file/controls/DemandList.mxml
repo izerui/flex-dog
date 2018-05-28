@@ -10,7 +10,8 @@
         <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查询" click="page.number = 0; loadData()"/>
     </mx:HBox>
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"
-                 itemRollOver="itemRollOver(event)" itemRollOut="itemRollOut(event)" doubleClickEnabled="true" doubleClick="view()">
+                 itemRollOver="itemRollOver(event)" itemRollOut="itemRollOut(event)" doubleClickEnabled="true"
+                 doubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
@@ -179,13 +180,10 @@
         <mx:Label text="共 {page.totalElements} 条记录"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
-        import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
-        import com.github.izerui.file.vo.PageVo;
 
         import mx.core.FlexGlobals;
-
         import mx.events.ItemClickEvent;
         import mx.events.ListEvent;
         import mx.formatters.DateFormatter;
@@ -193,7 +191,13 @@
         import mx.rpc.events.ResultEvent;
 
         [Bindable]
-        protected var page:PageVo = new PageVo();
+        protected var page:Object = {
+            number: 0,
+            size: 50,
+            totalPages: 0,
+            totalElements: 0,
+            content: []
+        };
 
         private function loadEnts():void {
             RemoteObjectUtils.execute("demandService", "getEntList", function (event:ResultEvent) {
@@ -204,7 +208,7 @@
 
         private function loadData():void {
             RemoteObjectUtils.execute("demandService", "inventoryDemands", function (event:ResultEvent) {
-                page = PageVo(event.result);
+                page = event.result;
             }, box.selectedItem.code, page.number, page.size, input.text)
 
         }
@@ -248,7 +252,7 @@
                 return;
             }
             var popUp:DetailTitleWindow = new DetailTitleWindow();
-            popUp.output = JSON.stringify(grid.selectedItem,null,"  ");
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
             popUp.setFocus();
             PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
             PopUpManager.centerPopUp(popUp)

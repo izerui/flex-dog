@@ -9,7 +9,8 @@
                 title="货品: {inventory.inventoryCode} {inventory.inventoryName} 占用情况"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true" itemDoubleClick="view()">
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true"
+                 itemDoubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
@@ -61,14 +62,10 @@
         <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查看" click="view()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
-        import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
-        import com.github.izerui.file.vo.PageVo;
 
         import mx.core.FlexGlobals;
-
-        import mx.events.ItemClickEvent;
         import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
@@ -94,7 +91,7 @@
                 return;
             }
             var popUp:DetailTitleWindow = new DetailTitleWindow();
-            popUp.output = JSON.stringify(grid.selectedItem,null,"  ");
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
             popUp.setFocus();
             PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
             PopUpManager.centerPopUp(popUp)

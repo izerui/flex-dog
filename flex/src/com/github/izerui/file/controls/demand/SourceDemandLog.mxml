@@ -10,7 +10,8 @@
                 title="本次 {selItem.remark} 影响的物料需求情况"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true" itemDoubleClick="view()">
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true"
+                 itemDoubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
                                headerText="序号"
@@ -28,7 +29,7 @@
                                 import mx.managers.PopUpManager;
 
                                 private function viewBom():void {
-                                    if(!data.bomId){
+                                    if (!data.bomId) {
                                         return;
                                     }
                                     var bomList:BomList = new BomList();
@@ -106,7 +107,8 @@
                                headerText="需求改变量"/>
             <mx:DataGridColumn dataField="demandQty" textAlign="center" labelFunction="demandLabelFun"
                                headerText="单需/总需"/>
-            <mx:DataGridColumn dataField="changePurgeQty" textAlign="center" color="#b77219" labelFunction="purgeChangeLabelFun"
+            <mx:DataGridColumn dataField="changePurgeQty" textAlign="center" color="#b77219"
+                               labelFunction="purgeChangeLabelFun"
                                headerText="净需改变量"/>
             <mx:DataGridColumn dataField="purgeQty" textAlign="center" labelFunction="purgeLabelFun"
                                headerText="单净需/总净需"/>
@@ -119,8 +121,6 @@
                                        click="viewStock()">
                             <fx:Script>
                                 <![CDATA[
-                                import com.github.izerui.file.controls.demand.InventoryStockLog;
-
                                 import mx.core.Application;
                                 import mx.managers.PopUpManager;
 
@@ -162,13 +162,10 @@
         <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
-        import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
-        import com.github.izerui.file.vo.PageVo;
 
         import mx.core.FlexGlobals;
-
         import mx.events.ItemClickEvent;
         import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
@@ -179,11 +176,17 @@
         public var selItem:Object;
 
         [Bindable]
-        protected var page:PageVo = new PageVo();
+        protected var page:Object = {
+            number: 0,
+            size: 50,
+            totalPages: 0,
+            totalElements: 0,
+            content: []
+        };
 
         private function loadData():void {
             RemoteObjectUtils.execute("demandService", "inventoryDemandsHistory", function (event:ResultEvent) {
-                page = PageVo(event.result);
+                page = event.result;
                 filterResult();
             }, selItem.entCode, null, selItem.sourceId, page.number, page.size)
 
@@ -226,7 +229,7 @@
         private function demandChangeLabelFun(item:Object, column:DataGridColumn):String {
             if (item.changeDemandQty > 0) {
                 return "+" + item.changeDemandQty;
-            }else if(item.changeDemandQty == 0){
+            } else if (item.changeDemandQty == 0) {
                 return "";
             } else {
                 return "" + item.changeDemandQty;
@@ -240,7 +243,7 @@
         private function purgeChangeLabelFun(item:Object, column:DataGridColumn):String {
             if (item.changePurgeQty > 0) {
                 return "+" + item.changePurgeQty;
-            }else if(item.changePurgeQty == 0){
+            } else if (item.changePurgeQty == 0) {
                 return "";
             } else {
                 return "" + item.changePurgeQty;
@@ -256,7 +259,7 @@
                 return;
             }
             var popUp:DetailTitleWindow = new DetailTitleWindow();
-            popUp.output = JSON.stringify(grid.selectedItem,null,"  ");
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
             popUp.setFocus();
             PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
             PopUpManager.centerPopUp(popUp)
@@ -283,7 +286,6 @@
             }
             grid.dataProvider = tempSearchList;
         }
-
         ]]>
     </fx:Script>
 </mx:TitleWindow>

@@ -43,7 +43,7 @@
     <orderEntry type="library" name="Maven: com.ecworking:esms-sender:1.2.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.taobao:taobao-sdk:20160106" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:esms-global:1.2.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:business-commons:1.2.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:business-commons:1.4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: ma.glasnost.orika:orika-core:1.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.20.0-GA" level="project" />
     <orderEntry type="library" name="Maven: com.thoughtworks.paranamer:paranamer:2.8" level="project" />

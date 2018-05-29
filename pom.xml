@@ -21,7 +21,7 @@
         <development.version>3.0.2-SNAPSHOT</development.version>
         <purchase-remote.version>3.5.0-SNAPSHOT</purchase-remote.version>
         <manufacture.version>3.5.0-SNAPSHOT</manufacture.version>
-        <warehouse.version>3.2.3-SNAPSHOT</warehouse.version>
+        <warehouse.version>3.2.5-SNAPSHOT</warehouse.version>
     </properties>
 
 

@@ -67,8 +67,8 @@
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:1.12.11.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:manufacture-commons:3.5.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:warehouse-remote:3.2.3-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:warehouse-global:3.2.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:warehouse-remote:3.2.5-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:warehouse-global:3.2.5-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:purchase-remote:3.5.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:purchase-global:3.5.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:5.1.42" level="project" />

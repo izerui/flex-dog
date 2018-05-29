@@ -444,7 +444,7 @@ public class DemandService {
             } else if (attributeCode.equals("4")) { //客供
                 CustomerSupplyVo csi = customerSupplyClient.getCustomerSupplyInfo(entCode, (String) businessKey, (String) map.get("inventoryId"));
                 if (csi != null) {
-                    realPurgeQty = csi.getRecQty().subtract(csi.getInQty());
+                    realPurgeQty = csi.getDemandQty().subtract(csi.getInQty());
                 }
             }
 

@@ -30,19 +30,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.github.izerui:eureka-client:1.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:development-remote:3.0.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:development-document:3.0.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:esms-autoconfig:1.2.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-redis:1.4.7.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-redis:1.7.11.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-keyvalue:1.1.11.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-oxm:4.3.9.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: redis.clients:jedis:2.8.2" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.4.2" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:esms-sender:1.2.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.taobao:taobao-sdk:20160106" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:esms-global:1.2.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:business-commons:1.4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: ma.glasnost.orika:orika-core:1.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.20.0-GA" level="project" />
@@ -76,6 +63,28 @@
     <orderEntry type="library" name="Maven: org.mapstruct:mapstruct:1.0.0.Final" level="project" />
     <orderEntry type="library" name="Maven: io.springfox:springfox-swagger-ui:2.6.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:rest-exception-autoconfigure:1.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:manufacture-remote:3.5.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:1.12.11.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:manufacture-commons:3.5.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:warehouse-remote:3.2.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:warehouse-global:3.2.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-remote:3.5.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-global:3.5.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:5.1.42" level="project" />
+    <orderEntry type="library" name="Maven: com.github.izerui:eureka-client:1.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:development-remote:3.0.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:development-document:3.0.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:esms-autoconfig:1.2.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-redis:1.4.7.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-redis:1.7.11.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-keyvalue:1.1.11.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-oxm:4.3.9.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: redis.clients:jedis:2.8.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.4.2" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:esms-sender:1.2.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.taobao:taobao-sdk:20160106" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:esms-global:1.2.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:mrp-remote:3.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:rbac-remote:3.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:rbac-global:3.2.0-SNAPSHOT" level="project" />
@@ -117,7 +126,6 @@
     <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.13.0" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okhttp3:logging-interceptor:3.9.0" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:5.1.42" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-data-jpa:1.4.7.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:1.4.7.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:1.4.7.RELEASE" level="project" />
@@ -142,10 +150,8 @@
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-entitymanager:5.0.12.Final" level="project" />
     <orderEntry type="library" name="Maven: javax.transaction:javax.transaction-api:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-jpa:1.10.11.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:1.12.11.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-orm:4.3.9.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:4.3.9.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aspects:4.3.9.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.h2database:h2:1.4.195" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-amqp:1.4.7.RELEASE" level="project" />

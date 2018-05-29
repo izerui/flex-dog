@@ -19,10 +19,36 @@
         <rbac.version>3.2.0-SNAPSHOT</rbac.version>
         <mrp-remote.version>3.0.0-SNAPSHOT</mrp-remote.version>
         <development.version>3.0.2-SNAPSHOT</development.version>
+        <purchase-remote.version>3.5.0-SNAPSHOT</purchase-remote.version>
+        <manufacture.version>3.5.0-SNAPSHOT</manufacture.version>
+        <warehouse.version>3.2.3-SNAPSHOT</warehouse.version>
     </properties>
 
 
     <dependencies>
+        <dependency>
+            <groupId>com.ecworking</groupId>
+            <artifactId>business-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ecworking</groupId>
+            <artifactId>manufacture-remote</artifactId>
+            <version>${manufacture.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecworking</groupId>
+            <artifactId>warehouse-remote</artifactId>
+            <version>${warehouse.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecworking</groupId>
+            <artifactId>purchase-remote</artifactId>
+            <version>${purchase-remote.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.github.izerui</groupId>
             <artifactId>eureka-client</artifactId>

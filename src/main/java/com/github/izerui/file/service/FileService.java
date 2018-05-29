@@ -93,47 +93,47 @@ public class FileService {
         REST_TEMPLATE.setMessageConverters(Lists.newArrayList(new StringHttpMessageConverter(Charset.forName("UTF-8"))));
     }
 
-    //修复数据
-    @PostConstruct
-    public void init() throws IOException {
-        String uhostJson = ucloudService.getDescribeUHostInstance();
-        Map<String, Object> map = objectMapper.readValue(uhostJson, Map.class);
-        List<Map<String, Object>> uhostList = (List<Map<String, Object>>) map.get("UHostSet");
-
-        List<FileEntity> all = fileRepository.findAll();
-
-        for (FileEntity entity : all) {
-            File file = new File(rootPath + entity.getFileName());
-            if (file.exists()) {
-                entity.setFilePath(file.getPath());
-                entity.setSize(file.length());
-                entity.setUploadTime(new Date(file.lastModified()));
-            }
-            if (entity.getDeployTime() == null) {
-                DeployEntity one = deployRepository.findOne(entity.getFileName());
-                if (one != null) {
-                    entity.setDeployTime(one.getDeployTime());
-                }
-            }
-            if (uhostList != null) {
-                for (Map<String, Object> uhost : uhostList) {
-                    if (entity.getServer().equals(uhost.get("Name"))) {
-                        String ips = "";
-                        for (Map<String, Object> ip : (List<Map<String, Object>>) uhost.get("IPSet")) {
-                            if ("".equals(ips)) {
-                                ips = (String) ip.get("IP");
-                            } else {
-                                ips += "," + (String) ip.get("IP");
-                            }
-                        }
-                        entity.setServerAddress(ips);
-                    }
-
-                }
-            }
-            fileRepository.save(entity);
-        }
-    }
+//    //修复数据
+//    @PostConstruct
+//    public void init() throws IOException {
+//        String uhostJson = ucloudService.getDescribeUHostInstance();
+//        Map<String, Object> map = objectMapper.readValue(uhostJson, Map.class);
+//        List<Map<String, Object>> uhostList = (List<Map<String, Object>>) map.get("UHostSet");
+//
+//        List<FileEntity> all = fileRepository.findAll();
+//
+//        for (FileEntity entity : all) {
+//            File file = new File(rootPath + entity.getFileName());
+//            if (file.exists()) {
+//                entity.setFilePath(file.getPath());
+//                entity.setSize(file.length());
+//                entity.setUploadTime(new Date(file.lastModified()));
+//            }
+//            if (entity.getDeployTime() == null) {
+//                DeployEntity one = deployRepository.findOne(entity.getFileName());
+//                if (one != null) {
+//                    entity.setDeployTime(one.getDeployTime());
+//                }
+//            }
+//            if (uhostList != null) {
+//                for (Map<String, Object> uhost : uhostList) {
+//                    if (entity.getServer().equals(uhost.get("Name"))) {
+//                        String ips = "";
+//                        for (Map<String, Object> ip : (List<Map<String, Object>>) uhost.get("IPSet")) {
+//                            if ("".equals(ips)) {
+//                                ips = (String) ip.get("IP");
+//                            } else {
+//                                ips += "," + (String) ip.get("IP");
+//                            }
+//                        }
+//                        entity.setServerAddress(ips);
+//                    }
+//
+//                }
+//            }
+//            fileRepository.save(entity);
+//        }
+//    }
 
     public void sendCaptcha(String phone) {
         String content = "验证码: [%s] ，请在1分钟内输入。";

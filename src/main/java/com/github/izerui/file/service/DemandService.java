@@ -1,27 +1,34 @@
 package com.github.izerui.file.service;
 
+import com.ecworking.commons.em.UnitEnum;
+import com.ecworking.commons.util.ArithmeticUtils;
 import com.ecworking.commons.vo.PageVo;
 import com.ecworking.development.vo.BusinessInventoryVo;
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
+import com.ecworking.manufacture.res.HomeMadeProgressVo;
 import com.ecworking.mrp.vo.OccupiedStockVo;
 import com.ecworking.mrp.vo.PurgeResultVo;
+import com.ecworking.purchase.vo.PurchaseInventoryInfoRemoteVo;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
+import com.ecworking.warehouse.vo.resp.CustomerSupplyVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.izerui.file.client.BomClient;
-import com.github.izerui.file.client.BusinessClient;
-import com.github.izerui.file.client.EnterpriseClient;
-import com.github.izerui.file.client.MrpClient;
+import com.github.izerui.file.client.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.tomcat.jdbc.pool.DataSource;
+import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
@@ -30,10 +37,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RemotingDestination
 @Service("demandService")
@@ -63,6 +67,36 @@ public class DemandService {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private BusinessClient businessClient;
+
+    private static JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private PurchaseInventoryInfoClient purchaseInventoryInfoClient;
+    @Autowired
+    private ManufactureInventoryClient manufactureInventoryClient;
+    @Autowired
+    private CustomerSupplyClient customerSupplyClient;
+
+
+//    //test
+//    static {
+//        PoolProperties properties = new PoolProperties();
+//        properties.setUrl("jdbc:mysql://192.168.1.187:3306/mrp?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true");
+//        properties.setUsername("yunji");
+//        properties.setPassword("123456");
+//        properties.setDriverClassName("com.mysql.jdbc.Driver");
+//        jdbcTemplate = new JdbcTemplate(new DataSource(properties));
+//    }
+
+    //master
+    static {
+        PoolProperties properties = new PoolProperties();
+        properties.setUrl("jdbc:mysql://10.13.20.144:3306/mrp?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true");
+        properties.setUsername("mrp");
+        properties.setPassword("J1i3z0FdDLDLe0Wb");
+        properties.setDriverClassName("com.mysql.jdbc.Driver");
+        jdbcTemplate = new JdbcTemplate(new DataSource(properties));
+    }
 
     /**
      * 获取账套列表
@@ -348,6 +382,113 @@ public class DemandService {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
         Assert.state(isValid, "验证码无效");
         mrpClient.subBomDemand(entCode, userCode, bomId, lastQuantity, quantity);
+    }
+
+
+    public PageVo findErrorDemandInventories(String entCode,
+                                             Integer page,
+                                             Integer pageSize,
+                                             String keyword) {
+        Map<String, List<PurchaseInventoryInfoRemoteVo>> purchase = new HashMap<>();
+        Map<String, List<HomeMadeProgressVo>> manufacture = new HashMap<>();
+        int start = page * pageSize;
+        int end = (page + 1) * pageSize;
+        List<Map<String, Object>> mapList = jdbcTemplate.queryForList(
+                "select inventory_code as inventoryCode" +
+                        ",inventory_name as inventoryName" +
+                        ",unit_name as unitName" +
+                        ",demand_qty as demandQty" +
+                        ",purge_qty as purgeQty" +
+                        ",attribute_code as attributeCode" +
+                        ",business_key as businessKey" +
+                        ",inventory_id as inventoryId" +
+                        ",business_doc_no as businessDocNo" +
+                        " from demand_result where ent_code = ? and (demand_qty >0 or purge_qty >0)  order by business_key limit ?,?", entCode, start, end
+        );
+        for (Map<String, Object> map : mapList) {
+
+            String attributeCode = (String) map.get("attributeCode");
+            String businessKey = (String) map.get("businessKey");
+            String unitName = (String) map.get("unitName");
+            UnitEnum unitEnum = UnitEnum.instanceOf(unitName);
+            BigDecimal realPurgeQty = BigDecimal.ZERO;
+
+            if (attributeCode.equals("0")) { //采购
+                if (!purchase.containsKey(businessKey)) {
+                    purchase.put((String) businessKey, purchaseInventoryInfoClient.findPurchaseInventoryInfo(entCode, (String) businessKey));
+                }
+                Optional<PurchaseInventoryInfoRemoteVo> first = purchase.get((String) businessKey).stream().filter(vo -> vo.getInventoryId().equals(map.get("inventoryId"))).findFirst();
+                if (first.isPresent()) {
+                    PurchaseInventoryInfoRemoteVo vo = first.get();
+                    realPurgeQty = vo.getPurchaseNotIssued().add(vo.getPurchaseIssued()).subtract(vo.getPurchaseCloseQty()).subtract(vo.getPurchaseInboundQty());
+                }
+            } else if (attributeCode.equals("1")) {//自制
+                if (!manufacture.containsKey(businessKey)) {
+                    manufacture.put((String) businessKey, manufactureInventoryClient.getProgressByBusinessKey(entCode, (String) businessKey));
+                }
+                Optional<HomeMadeProgressVo> first = manufacture.get((String) businessKey).stream().filter(vo -> vo.getInventoryId().equals(map.get("inventoryId"))).findFirst();
+                if (first.isPresent()) {
+                    realPurgeQty = unitEnum.format(first.get().getProductQuantity().subtract(first.get().getInboundQuantity()).subtract(first.get().getRedirectQuantity()));
+                }
+
+            } else if (attributeCode.equals("2")) { //委外
+                if (!purchase.containsKey(businessKey)) {
+                    purchase.put((String) businessKey, purchaseInventoryInfoClient.findPurchaseInventoryInfo(entCode, (String) businessKey));
+                }
+                Optional<PurchaseInventoryInfoRemoteVo> first = purchase.get((String) businessKey).stream().filter(vo -> vo.getInventoryId().equals(map.get("inventoryId"))).findFirst();
+                if (first.isPresent()) {
+                    PurchaseInventoryInfoRemoteVo vo = first.get();
+                    realPurgeQty = vo.getOutsourceNotIssued().add(vo.getOutsourceIssued()).subtract(vo.getOutsourceInboundQty()).subtract(vo.getOutsourceCloseQty());
+                }
+
+            } else if (attributeCode.equals("4")) { //客供
+                CustomerSupplyVo csi = customerSupplyClient.getCustomerSupplyInfo(entCode, (String) businessKey, (String) map.get("inventoryId"));
+                if (csi != null) {
+                    realPurgeQty = csi.getRecQty().subtract(csi.getInQty());
+                }
+            }
+
+            realPurgeQty = unitEnum.format(realPurgeQty);
+            map.put("realPurgeQty", unitEnum.format(realPurgeQty));
+
+            if (!ArithmeticUtils.isEquals((BigDecimal) map.get("purgeQty"), realPurgeQty)) {
+//                map.put("checked", map.get("checked") + "/" + "净需未减");
+                map.put("checked", "净需未减完");
+
+                List<Map<String, Object>> forList = jdbcTemplate.queryForList(
+                        "SELECT " +
+                                "inventory_id as inventoryId" +
+                                ",inventory_code as inventoryCode" +
+                                ",inventory_name as inventoryName" +
+                                ",attribute_code as attributeCode" +
+                                ",unit_name as unitName" +
+                                ",remark as remark" +
+                                ",change_demand_qty as changeDemandQty" +
+                                ",demand_qty as demandQty" +
+                                ",change_purge_qty as changePurgeQty" +
+                                ",purge_qty as purgeQty" +
+                                ",stock_qty as stockQty" +
+                                ",create_time as createTime" +
+                                ",business_doc_no as businessDocNo" +
+                                " from demand_log where ent_code = ? and business_key = ? and inventory_id = ?", entCode, businessKey, map.get("inventoryId")
+                );
+
+                for (Map<String, Object> stringObjectMap : forList) {
+                    stringObjectMap.put("changeDemandQty", unitEnum.format((BigDecimal) stringObjectMap.get("changeDemandQty")));
+                    stringObjectMap.put("changePurgeQty", unitEnum.format((BigDecimal) stringObjectMap.get("changePurgeQty")));
+                    stringObjectMap.put("demandQty", unitEnum.format((BigDecimal) stringObjectMap.get("demandQty")));
+                    stringObjectMap.put("purgeQty", unitEnum.format((BigDecimal) stringObjectMap.get("purgeQty")));
+                }
+                map.put("children", forList);
+
+            }
+            map.put("demandQty", unitEnum.format((BigDecimal) map.get("demandQty")));
+            map.put("purgeQty", unitEnum.format((BigDecimal) map.get("purgeQty")));
+        }
+        long total = jdbcTemplate.queryForObject("select count(*) from demand_result where ent_code = ? and (demand_qty >0 or purge_qty >0)", Long.class, entCode);
+        PageImpl<Map<String, Object>> maps = new PageImpl<>(mapList, new PageRequest(page, pageSize), total);
+
+        return PageVo.map(maps);
     }
 
 

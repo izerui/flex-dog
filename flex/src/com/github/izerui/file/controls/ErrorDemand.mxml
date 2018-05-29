@@ -28,6 +28,7 @@
             <mx:AdvancedDataGridColumn dataField="changePurgeQty" headerText="净需改变"/>
             <mx:AdvancedDataGridColumn dataField="purgeQty" headerText="净需量"/>
             <mx:AdvancedDataGridColumn dataField="realPurgeQty" headerText="在途在制量"/>
+            <mx:AdvancedDataGridColumn dataField="createTime" headerText="时间"/>
             <mx:AdvancedDataGridColumn dataField="checked" headerText="注意"/>
         </mx:columns>
 

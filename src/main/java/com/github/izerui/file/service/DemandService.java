@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
+import org.joda.time.DateTime;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -470,7 +471,7 @@ public class DemandService {
                                 ",stock_qty as stockQty" +
                                 ",create_time as createTime" +
                                 ",business_doc_no as businessDocNo" +
-                                " from demand_log where ent_code = ? and business_key = ? and inventory_id = ?", entCode, businessKey, map.get("inventoryId")
+                                " from demand_log where ent_code = ? and business_key = ? and inventory_id = ? order by create_time desc", entCode, businessKey, map.get("inventoryId")
                 );
 
                 for (Map<String, Object> stringObjectMap : forList) {
@@ -478,6 +479,7 @@ public class DemandService {
                     stringObjectMap.put("changePurgeQty", unitEnum.format((BigDecimal) stringObjectMap.get("changePurgeQty")));
                     stringObjectMap.put("demandQty", unitEnum.format((BigDecimal) stringObjectMap.get("demandQty")));
                     stringObjectMap.put("purgeQty", unitEnum.format((BigDecimal) stringObjectMap.get("purgeQty")));
+                    stringObjectMap.put("time",new DateTime(((Date)stringObjectMap.get("createTime")).getTime()).toString("yyyy-MM-dd HH:mm:ss"));
                 }
                 map.put("children", forList);
 

@@ -188,7 +188,7 @@
             RemoteObjectUtils.execute("demandService", "inventoryDemandsHistory", function (event:ResultEvent) {
                 page = event.result;
                 filterResult();
-            }, inventory.entCode, inventory.inventoryId, null, page.number, page.size)
+            }, inventory.entCode, inventory.inventoryId, inventory.businessKey, null, page.number, page.size)
 
         }
 

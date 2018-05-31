@@ -1,30 +1,27 @@
 package com.github.izerui.file.service;
 
 import com.ecworking.commons.em.UnitEnum;
-import com.ecworking.commons.util.ArithmeticUtils;
+import com.ecworking.commons.jackson.Decimal2StringUtils;
 import com.ecworking.commons.vo.PageVo;
 import com.ecworking.development.vo.BusinessInventoryVo;
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
-import com.ecworking.manufacture.res.HomeMadeProgressVo;
 import com.ecworking.mrp.vo.OccupiedStockVo;
 import com.ecworking.mrp.vo.PurgeResultVo;
-import com.ecworking.purchase.vo.PurchaseInventoryInfoRemoteVo;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
-import com.ecworking.warehouse.vo.resp.CustomerSupplyVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.client.*;
 import com.google.common.collect.Lists;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
-import org.joda.time.DateTime;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,9 +33,16 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.ecworking.commons.jackson.Decimal2StringUtils.*;
 
 @RemotingDestination
 @Service("demandService")
@@ -69,6 +73,15 @@ public class DemandService {
     @Autowired
     private BusinessClient businessClient;
 
+    @Value("${db.url}")
+    private String dbUrl;
+
+    @Value("${db.username}")
+    private String dbUsername;
+
+    @Value("${db.password}")
+    private String dbPassword;
+
     private static JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -78,23 +91,12 @@ public class DemandService {
     @Autowired
     private CustomerSupplyClient customerSupplyClient;
 
-
-//    //test
-//    static {
-//        PoolProperties properties = new PoolProperties();
-//        properties.setUrl("jdbc:mysql://192.168.1.187:3306/mrp?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true");
-//        properties.setUsername("yunji");
-//        properties.setPassword("123456");
-//        properties.setDriverClassName("com.mysql.jdbc.Driver");
-//        jdbcTemplate = new JdbcTemplate(new DataSource(properties));
-//    }
-
-    //master
-    static {
+    @PostConstruct
+    public void initJdbcTemplate() {
         PoolProperties properties = new PoolProperties();
-        properties.setUrl("jdbc:mysql://10.13.20.144:3306/mrp?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true");
-        properties.setUsername("mrp");
-        properties.setPassword("J1i3z0FdDLDLe0Wb");
+        properties.setUrl(dbUrl);
+        properties.setUsername(dbUsername);
+        properties.setPassword(dbPassword);
         properties.setDriverClassName("com.mysql.jdbc.Driver");
         jdbcTemplate = new JdbcTemplate(new DataSource(properties));
     }
@@ -170,6 +172,7 @@ public class DemandService {
      *
      * @param entCode
      * @param inventoryId
+     * @param businessKey
      * @param sourceId
      * @param page
      * @param pageSize
@@ -177,6 +180,7 @@ public class DemandService {
      */
     public Map inventoryDemandsHistory(String entCode,
                                        String inventoryId,
+                                       String businessKey,
                                        String sourceId,
                                        Integer page,
                                        Integer pageSize) {
@@ -184,6 +188,7 @@ public class DemandService {
         valueMap.set("entCode", entCode);
         valueMap.set("inventoryId", inventoryId);
         valueMap.set("sourceId", sourceId);
+        valueMap.set("businessKey", businessKey);
         valueMap.set("page", page);
         valueMap.set("pageSize", pageSize);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
@@ -386,111 +391,35 @@ public class DemandService {
     }
 
 
-    public PageVo findErrorDemandInventories(String entCode,
-                                             Integer page,
-                                             Integer pageSize,
-                                             String keyword) {
-        Map<String, List<PurchaseInventoryInfoRemoteVo>> purchase = new HashMap<>();
-        Map<String, List<HomeMadeProgressVo>> manufacture = new HashMap<>();
-        int start = page * pageSize;
-        int end = (page + 1) * pageSize;
-        List<Map<String, Object>> mapList = jdbcTemplate.queryForList(
-                "select inventory_code as inventoryCode" +
-                        ",inventory_name as inventoryName" +
-                        ",unit_name as unitName" +
-                        ",demand_qty as demandQty" +
-                        ",purge_qty as purgeQty" +
-                        ",attribute_code as attributeCode" +
-                        ",business_key as businessKey" +
-                        ",inventory_id as inventoryId" +
-                        ",business_doc_no as businessDocNo" +
-                        " from demand_result where ent_code = ? and (demand_qty >0 or purge_qty >0)  order by business_key limit ?,?", entCode, start, end
-        );
-        for (Map<String, Object> map : mapList) {
-
-            String attributeCode = (String) map.get("attributeCode");
-            String businessKey = (String) map.get("businessKey");
-            String unitName = (String) map.get("unitName");
-            UnitEnum unitEnum = UnitEnum.instanceOf(unitName);
-            BigDecimal realPurgeQty = BigDecimal.ZERO;
-
-            if (attributeCode.equals("0")) { //采购
-                if (!purchase.containsKey(businessKey)) {
-                    purchase.put((String) businessKey, purchaseInventoryInfoClient.findPurchaseInventoryInfo(entCode, (String) businessKey));
-                }
-                Optional<PurchaseInventoryInfoRemoteVo> first = purchase.get((String) businessKey).stream().filter(vo -> vo.getInventoryId().equals(map.get("inventoryId"))).findFirst();
-                if (first.isPresent()) {
-                    PurchaseInventoryInfoRemoteVo vo = first.get();
-                    realPurgeQty = vo.getPurchaseNotIssued().add(vo.getPurchaseIssued()).subtract(vo.getPurchaseCloseQty()).subtract(vo.getPurchaseInboundQty());
-                }
-            } else if (attributeCode.equals("1")) {//自制
-                if (!manufacture.containsKey(businessKey)) {
-                    manufacture.put((String) businessKey, manufactureInventoryClient.getProgressByBusinessKey(entCode, (String) businessKey));
-                }
-                Optional<HomeMadeProgressVo> first = manufacture.get((String) businessKey).stream().filter(vo -> vo.getInventoryId().equals(map.get("inventoryId"))).findFirst();
-                if (first.isPresent()) {
-                    realPurgeQty = unitEnum.format(first.get().getProductQuantity().subtract(first.get().getInboundQuantity()).subtract(first.get().getRedirectQuantity()));
-                }
-
-            } else if (attributeCode.equals("2")) { //委外
-                if (!purchase.containsKey(businessKey)) {
-                    purchase.put((String) businessKey, purchaseInventoryInfoClient.findPurchaseInventoryInfo(entCode, (String) businessKey));
-                }
-                Optional<PurchaseInventoryInfoRemoteVo> first = purchase.get((String) businessKey).stream().filter(vo -> vo.getInventoryId().equals(map.get("inventoryId"))).findFirst();
-                if (first.isPresent()) {
-                    PurchaseInventoryInfoRemoteVo vo = first.get();
-                    realPurgeQty = vo.getOutsourceNotIssued().add(vo.getOutsourceIssued()).subtract(vo.getOutsourceInboundQty()).subtract(vo.getOutsourceCloseQty());
-                }
-
-            } else if (attributeCode.equals("4")) { //客供
-                CustomerSupplyVo csi = customerSupplyClient.getCustomerSupplyInfo(entCode, (String) businessKey, (String) map.get("inventoryId"));
-                if (csi != null) {
-                    realPurgeQty = csi.getDemandQty().subtract(csi.getInQty());
-                }
-            }
-
-            realPurgeQty = unitEnum.format(realPurgeQty);
-            map.put("realPurgeQty", unitEnum.format(realPurgeQty));
-
-            if (!ArithmeticUtils.isEquals((BigDecimal) map.get("purgeQty"), realPurgeQty)) {
-//                map.put("checked", map.get("checked") + "/" + "净需未减");
-                map.put("checked", "净需未减完");
-
-                List<Map<String, Object>> forList = jdbcTemplate.queryForList(
-                        "SELECT " +
-                                "inventory_id as inventoryId" +
-                                ",inventory_code as inventoryCode" +
-                                ",inventory_name as inventoryName" +
-                                ",attribute_code as attributeCode" +
-                                ",unit_name as unitName" +
-                                ",remark as remark" +
-                                ",change_demand_qty as changeDemandQty" +
-                                ",demand_qty as demandQty" +
-                                ",change_purge_qty as changePurgeQty" +
-                                ",purge_qty as purgeQty" +
-                                ",stock_qty as stockQty" +
-                                ",create_time as createTime" +
-                                ",business_doc_no as businessDocNo" +
-                                " from demand_log where ent_code = ? and business_key = ? and inventory_id = ? order by create_time desc", entCode, businessKey, map.get("inventoryId")
-                );
-
-                for (Map<String, Object> stringObjectMap : forList) {
-                    stringObjectMap.put("changeDemandQty", unitEnum.format((BigDecimal) stringObjectMap.get("changeDemandQty")));
-                    stringObjectMap.put("changePurgeQty", unitEnum.format((BigDecimal) stringObjectMap.get("changePurgeQty")));
-                    stringObjectMap.put("demandQty", unitEnum.format((BigDecimal) stringObjectMap.get("demandQty")));
-                    stringObjectMap.put("purgeQty", unitEnum.format((BigDecimal) stringObjectMap.get("purgeQty")));
-                    stringObjectMap.put("time",new DateTime(((Date)stringObjectMap.get("createTime")).getTime()).toString("yyyy-MM-dd HH:mm:ss"));
-                }
-                map.put("children", forList);
-
-            }
-            map.put("demandQty", unitEnum.format((BigDecimal) map.get("demandQty")));
-            map.put("purgeQty", unitEnum.format((BigDecimal) map.get("purgeQty")));
+    public List<Map<String, Object>> findErrorDemandInventories(String entCode,
+                                                                String type) throws IOException {
+        //采购
+        String sql = IOUtils.toString(new ClassPathResource("sql-" + type + ".sql").getInputStream(), Charset.forName("utf-8"));
+        String attributeCode = "0";
+        if(type.equals("采购")){
+            attributeCode = "0";
+        }else if(type.equals("自制")){
+            attributeCode = "1";
+        }else if(type.equals("委外")){
+            attributeCode = "2";
+        }else if(type.equals("客供")){
+            attributeCode = "4";
         }
-        long total = jdbcTemplate.queryForObject("select count(*) from demand_result where ent_code = ? and (demand_qty >0 or purge_qty >0)", Long.class, entCode);
-        PageImpl<Map<String, Object>> maps = new PageImpl<>(mapList, new PageRequest(page, pageSize), total);
-
-        return PageVo.map(maps);
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql,attributeCode,attributeCode,entCode);
+        for (Map<String, Object> map : maps) {
+            map.put("entCode",map.get("ent_code"));
+            map.put("businessDocNo",map.get("business_doc_no"));
+            map.put("businessKey",map.get("business_key"));
+            map.put("inventoryId",map.get("inventory_id"));
+            map.put("inventoryCode",map.get("inventory_code"));
+            map.put("inventoryName",map.get("inventory_name"));
+            map.put("attributeCode",map.get("attribute_code"));
+            map.put("unitName",map.get("unit_name"));
+            map.put("demandQty",toPlainString((BigDecimal) map.get("demand_qty")));
+            map.put("purgeQty",toPlainString((BigDecimal) map.get("purge_qty")));
+            map.put("realPurgeQty", toPlainString((BigDecimal) map.get("c_purge_qty")));
+        }
+        return maps;
     }
 
 

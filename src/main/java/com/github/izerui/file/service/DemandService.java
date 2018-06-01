@@ -82,7 +82,8 @@ public class DemandService {
     @Value("${db.password}")
     private String dbPassword;
 
-    private static JdbcTemplate jdbcTemplate;
+    private DataSource dataSource;
+
 
     @Autowired
     private PurchaseInventoryInfoClient purchaseInventoryInfoClient;
@@ -98,7 +99,7 @@ public class DemandService {
         properties.setUsername(dbUsername);
         properties.setPassword(dbPassword);
         properties.setDriverClassName("com.mysql.jdbc.Driver");
-        jdbcTemplate = new JdbcTemplate(new DataSource(properties));
+        dataSource = new DataSource(properties);
     }
 
     /**
@@ -405,7 +406,7 @@ public class DemandService {
         }else if(type.equals("客供")){
             attributeCode = "4";
         }
-        List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql,attributeCode,attributeCode,entCode);
+        List<Map<String, Object>> maps = new JdbcTemplate(dataSource).queryForList(sql,attributeCode,attributeCode,entCode);
         for (Map<String, Object> map : maps) {
             map.put("entCode",map.get("ent_code"));
             map.put("businessDocNo",map.get("business_doc_no"));

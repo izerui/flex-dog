@@ -28,17 +28,22 @@ LEFT JOIN(
 				SELECT
 					*
 				FROM
-					purchase.demand_ww
+					purchase.demand_hh
 				UNION
 					SELECT
 						*
 					FROM
-						manufacture.demand
+						purchase.demand_ww
 					UNION
 						SELECT
 							*
 						FROM
-							warehouse.demand
+							manufacture.demand
+						UNION
+							SELECT
+								*
+							FROM
+								warehouse.demand
 		) AS dm
 	GROUP BY
 		ent_code ,

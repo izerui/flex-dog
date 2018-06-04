@@ -1,7 +1,7 @@
 package com.github.izerui.file.service;
 
-import com.ecworking.commons.em.UnitEnum;
-import com.ecworking.commons.jackson.Decimal2StringUtils;
+import com.alibaba.druid.pool.DruidDataSource;
+import com.ecworking.commons.em.InventoryAttributeEnum;
 import com.ecworking.commons.vo.PageVo;
 import com.ecworking.development.vo.BusinessInventoryVo;
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
@@ -11,12 +11,13 @@ import com.ecworking.mrp.vo.PurgeResultVo;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.izerui.file.client.*;
+import com.github.izerui.file.client.BomClient;
+import com.github.izerui.file.client.BusinessClient;
+import com.github.izerui.file.client.EnterpriseClient;
+import com.github.izerui.file.client.MrpClient;
 import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.tomcat.jdbc.pool.DataSource;
-import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.ecworking.commons.jackson.Decimal2StringUtils.*;
+import static com.ecworking.commons.jackson.Decimal2StringUtils.toPlainString;
 
 @RemotingDestination
 @Service("demandService")
@@ -82,24 +83,15 @@ public class DemandService {
     @Value("${db.password}")
     private String dbPassword;
 
-    private DataSource dataSource;
-
-
-    @Autowired
-    private PurchaseInventoryInfoClient purchaseInventoryInfoClient;
-    @Autowired
-    private ManufactureInventoryClient manufactureInventoryClient;
-    @Autowired
-    private CustomerSupplyClient customerSupplyClient;
+    private DruidDataSource dataSource;
 
     @PostConstruct
     public void initJdbcTemplate() {
-        PoolProperties properties = new PoolProperties();
-        properties.setUrl(dbUrl);
-        properties.setUsername(dbUsername);
-        properties.setPassword(dbPassword);
-        properties.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource = new DataSource(properties);
+        dataSource = new DruidDataSource();
+        dataSource.setUrl(dbUrl);
+        dataSource.setUsername(dbUsername);
+        dataSource.setPassword(dbPassword);
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
     }
 
     /**
@@ -392,32 +384,22 @@ public class DemandService {
     }
 
 
-    public List<Map<String, Object>> findErrorDemandInventories(String entCode,
-                                                                String type) throws IOException {
+    public List<Map<String, Object>> findErrorDemandInventories(String entCode) throws IOException {
         //采购
-        String sql = IOUtils.toString(new ClassPathResource("sql-" + type + ".sql").getInputStream(), Charset.forName("utf-8"));
-        String attributeCode = "0";
-        if(type.equals("采购")){
-            attributeCode = "0";
-        }else if(type.equals("自制")){
-            attributeCode = "1";
-        }else if(type.equals("委外")){
-            attributeCode = "2";
-        }else if(type.equals("客供")){
-            attributeCode = "4";
-        }
-        List<Map<String, Object>> maps = new JdbcTemplate(dataSource).queryForList(sql,attributeCode,attributeCode,entCode);
+        String sql = IOUtils.toString(new ClassPathResource("err_purge_qty.sql").getInputStream(), Charset.forName("utf-8"));
+        List<Map<String, Object>> maps = new JdbcTemplate(dataSource).queryForList(sql, entCode);
         for (Map<String, Object> map : maps) {
-            map.put("entCode",map.get("ent_code"));
-            map.put("businessDocNo",map.get("business_doc_no"));
-            map.put("businessKey",map.get("business_key"));
-            map.put("inventoryId",map.get("inventory_id"));
-            map.put("inventoryCode",map.get("inventory_code"));
-            map.put("inventoryName",map.get("inventory_name"));
-            map.put("attributeCode",map.get("attribute_code"));
-            map.put("unitName",map.get("unit_name"));
-            map.put("demandQty",toPlainString((BigDecimal) map.get("demand_qty")));
-            map.put("purgeQty",toPlainString((BigDecimal) map.get("purge_qty")));
+            map.put("entCode", map.get("ent_code"));
+            map.put("businessDocNo", map.get("business_doc_no"));
+            map.put("businessKey", map.get("business_key"));
+            map.put("inventoryId", map.get("inventory_id"));
+            map.put("inventoryCode", map.get("inventory_code"));
+            map.put("inventoryName", map.get("inventory_name"));
+            map.put("attributeCode", map.get("attribute_code"));
+            map.put("attributeName", InventoryAttributeEnum.getAttributeName((String) map.get("attribute_code")));
+            map.put("unitName", map.get("unit_name"));
+            map.put("demandQty", toPlainString((BigDecimal) map.get("demand_qty")));
+            map.put("purgeQty", toPlainString((BigDecimal) map.get("purge_qty")));
             map.put("realPurgeQty", toPlainString((BigDecimal) map.get("c_purge_qty")));
         }
         return maps;

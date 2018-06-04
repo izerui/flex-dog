@@ -27,6 +27,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.ecworking</groupId>
             <artifactId>business-commons</artifactId>
         </dependency>

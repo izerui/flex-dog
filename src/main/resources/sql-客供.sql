@@ -15,6 +15,7 @@ LEFT JOIN(
 		attribute_code = ? and
 		doc_type = '4'
 	GROUP BY
+	  ent_code,
 		business_key ,
 		inventory_id
 ) AS c USING(

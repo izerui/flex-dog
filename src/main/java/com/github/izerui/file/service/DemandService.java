@@ -152,6 +152,9 @@ public class DemandService {
         List<Map> contents = (List<Map>) map.get("content");
         for (Map content : contents) {
             BusinessInventoryVo business = businessClient.getBusiness(entCode, (String) content.get("businessKey"));
+            if (business == null) {
+                continue;
+            }
             if (business.isMade() || business.isOutsourcing()) {
                 content.put("bomId", business.getBomId());
             }

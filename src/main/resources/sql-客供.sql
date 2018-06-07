@@ -13,7 +13,7 @@ LEFT JOIN(
 		warehouse.wait_receive
 	WHERE
 		attribute_code = ? and
-		doc_type = '4'
+		doc_type = '4' and record_status = 1
 	GROUP BY
 	  ent_code,
 		business_key ,

@@ -133,34 +133,6 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="occupiedStockQty" textAlign="center"
-                               headerText="库存占用量">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                       label="{data.occupiedStockQty}"
-                                       click="viewOccupied()">
-                            <fx:Script>
-                                <![CDATA[
-                                import com.github.izerui.file.controls.demand.InventoryOccupied;
-
-                                import mx.core.Application;
-                                import mx.managers.PopUpManager;
-
-                                private function viewOccupied():void {
-                                    var demandLog:InventoryOccupied = new InventoryOccupied();
-                                    demandLog.inventory = data;
-                                    demandLog.setFocus();
-
-                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
-                                    PopUpManager.centerPopUp(demandLog);
-                                }
-                                ]]>
-                            </fx:Script>
-                        </mx:LinkButton>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="usableQty" textAlign="center"
                                headerText="可用量"/>
         </mx:columns>

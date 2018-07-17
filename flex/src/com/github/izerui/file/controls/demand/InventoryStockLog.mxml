@@ -16,19 +16,41 @@
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
                                width="40"/>
-            <mx:DataGridColumn dataField="warehouseName" textAlign="center"
-                               headerText="仓库"/>
             <mx:DataGridColumn dataField="batchNo" textAlign="center"
                                headerText="批次"/>
-            <mx:DataGridColumn dataField="docDate" textAlign="center"
-                               labelFunction="dateLabelFun"
-                               headerText="日期"/>
-            <mx:DataGridColumn dataField="typeName" textAlign="center"
-                               headerText="类型"/>
+            <mx:DataGridColumn dataField="storageName" textAlign="center"
+                               headerText="储位"/>
+            <mx:DataGridColumn dataField="businessSourceType" textAlign="center"
+                               headerText="业务信息">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:VBox>
+                            <mx:Label text="业务类型: {data.businessSourceType}"/>
+                            <mx:Label text="业务单号: {data.businessSourceDocNo}"/>
+                        </mx:VBox>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
+            <!--<mx:DataGridColumn dataField="docDate" textAlign="center"-->
+                               <!--labelFunction="dateLabelFun"-->
+                               <!--headerText="日期"/>-->
+            <mx:DataGridColumn dataField="useGroupType" textAlign="center"
+                               headerText="出入库信息">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:VBox>
+                            <mx:Label text="类型: {data.useGroupType}"/>
+                            <mx:Label text="单号: {data.useDocNo}"/>
+                        </mx:VBox>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="srcDocNo" textAlign="center"
-                               headerText="单号"/>
-            <mx:DataGridColumn dataField="quantity" textAlign="center"
-                               headerText="数量"/>
+                               headerText="出入库数量" labelFunction="qtyLabelFun"/>
+            <mx:DataGridColumn dataField="useTime" textAlign="center"
+                               headerText="出入库时间"/>
+            <mx:DataGridColumn dataField="batchQuantity" textAlign="center"
+                               headerText="届时库存量"/>
         </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar>
@@ -79,6 +101,14 @@
             var df:DateFormatter = new DateFormatter();
             df.formatString = "YYYY-MM-DD JJ:NN:SS";
             return df.format(item.docDate);
+        }
+        private function qtyLabelFun(item:Object, column:DataGridColumn):String {
+            if(item.operateType == "add" && item.quantity > 0){
+                return "+"+item.quantity;
+            }else if(item.operateType == "substract" && item.quantity > 0){
+                return "-"+item.quantity;
+            }
+            return "";
         }
 
         private function pageClick(event:ItemClickEvent):void {

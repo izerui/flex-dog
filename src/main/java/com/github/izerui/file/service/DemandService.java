@@ -6,7 +6,6 @@ import com.ecworking.commons.vo.PageVo;
 import com.ecworking.development.vo.BusinessInventoryVo;
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
-import com.ecworking.mrp.vo.OccupiedStockVo;
 import com.ecworking.mrp.vo.PurgeResultVo;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
@@ -229,19 +228,6 @@ public class DemandService {
         String data = objectMapper.writeValueAsString(map.get("data"));
 
         return objectMapper.readValue(data, PageVo.class);
-    }
-
-
-    /**
-     * 获取货品的占用情况
-     *
-     * @param entCode
-     * @param inventoryId
-     * @return
-     */
-    public List<OccupiedStockVo> occupiedDetail(String entCode,
-                                                String inventoryId) {
-        return mrpClient.occupiedDetail(entCode, inventoryId);
     }
 
 

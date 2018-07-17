@@ -45,12 +45,12 @@
                     </fx:Component>
                 </mx:itemRenderer>
             </mx:DataGridColumn>
+            <mx:DataGridColumn dataField="batchQuantity" textAlign="center"
+                               headerText="届时库存量"/>
             <mx:DataGridColumn dataField="srcDocNo" textAlign="center"
                                headerText="出入库数量" labelFunction="qtyLabelFun"/>
             <mx:DataGridColumn dataField="useTime" textAlign="center"
                                headerText="出入库时间"/>
-            <mx:DataGridColumn dataField="batchQuantity" textAlign="center"
-                               headerText="届时库存量"/>
         </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar>

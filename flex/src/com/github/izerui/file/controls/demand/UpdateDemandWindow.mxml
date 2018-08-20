@@ -28,10 +28,10 @@
             if (!code.text) {
                 return;
             }
-            if(attributeBox.selectedIndex == -1){
-                Alert.show("请选择属性");
-                return;
-            }
+//            if(attributeBox.selectedIndex == -1){
+//                Alert.show("请选择属性");
+//                return;
+//            }
             RemoteObjectUtils.execute("demandService", "updateDemand", function (event:ResultEvent) {
                         close();
                     }
@@ -43,7 +43,7 @@
                     , UIDUtil.createUID()
                     , "手动调整前:【单需:" + demandItem.demandQty + " 单净需:" + demandItem.purgeQty + "】"
                     , demandItem.inventoryId
-                    , attributeBox.selectedItem.code
+                    , demandItem.attributeCode
                     , demand.value - demandItem.demandQty
                     , purge.value - demandItem.purgeQty);
         }
@@ -89,18 +89,18 @@
             <mx:NumericStepper id="purge" width="200" value="{demandItem.purgeQty}" minimum="0"
                                maximum="{Number.MAX_VALUE}"/>
         </mx:FormItem>
-        <mx:FormItem label="货品属性">
-            <mx:ComboBox id="attributeBox" labelField="name">
-                <mx:dataProvider>
-                    <mx:ArrayCollection>
-                        <fx:Object code="0" name="采购件"/>
-                        <fx:Object code="1" name="自制件"/>
-                        <fx:Object code="2" name="委外件"/>
-                        <fx:Object code="4" name="客供件"/>
-                    </mx:ArrayCollection>
-                </mx:dataProvider>
-            </mx:ComboBox>
-        </mx:FormItem>
+        <!--<mx:FormItem label="货品属性">-->
+            <!--<mx:ComboBox id="attributeBox" labelField="name">-->
+                <!--<mx:dataProvider>-->
+                    <!--<mx:ArrayCollection>-->
+                        <!--<fx:Object code="0" name="采购件"/>-->
+                        <!--<fx:Object code="1" name="自制件"/>-->
+                        <!--<fx:Object code="2" name="委外件"/>-->
+                        <!--<fx:Object code="4" name="客供件"/>-->
+                    <!--</mx:ArrayCollection>-->
+                <!--</mx:dataProvider>-->
+            <!--</mx:ComboBox>-->
+        <!--</mx:FormItem>-->
         <mx:FormItem label="操作人">
             <mx:TextInput id="userName" editable="false" click="userCode_clickHandler(event)"/>
         </mx:FormItem>

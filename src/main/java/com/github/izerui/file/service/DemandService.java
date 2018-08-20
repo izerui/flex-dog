@@ -332,6 +332,7 @@ public class DemandService {
                              String sourceId,
                              String remark,
                              String inventoryId,
+                             String attributeCode,
                              BigDecimal changeDemandQty,
                              BigDecimal changePurgeQty) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
@@ -346,6 +347,7 @@ public class DemandService {
         msg.put("inventoryId", inventoryId);
         msg.put("changeDemandQty", changeDemandQty);
         msg.put("changePurgeQty", changePurgeQty);
+        msg.put("attributeCode",attributeCode);
         rabbitTemplate.convertAndSend("ierp", "ierp.demand.update", msg);
     }
 

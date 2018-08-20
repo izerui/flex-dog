@@ -297,10 +297,10 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-context:4.3.9.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:4.3.9.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:4.3.9.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-core:4.0.0.14931" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-common:4.0.0.14931" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-proxy:4.0.0.14931" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-remoting:4.0.0.14931" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-core:4.6.0.23207" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-common:4.6.0.23207" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-proxy:4.6.0.23207" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-remoting:4.6.0.23207" level="project" />
     <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.2" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.5" level="project" />

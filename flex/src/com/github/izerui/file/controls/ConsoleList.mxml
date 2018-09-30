@@ -17,7 +17,7 @@
             <mx:DataGridColumn dataField="url" headerText="请求地址" wordWrap="true"/>
             <mx:DataGridColumn dataField="ip" headerText="ip地址" wordWrap="true"/>
             <!--<mx:DataGridColumn dataField="endTime" headerText="结束时间" wordWrap="true" labelFunction="endDateLabelFun"/>-->
-            <mx:DataGridColumn dataField="success" headerText="状态" wordWrap="true"/>
+            <mx:DataGridColumn dataField="success" headerText="成功状态" wordWrap="true"/>
             <!--<mx:DataGridColumn dataField="accountName" headerText="手机号" wordWrap="true"/>-->
         </mx:columns>
     </mx:DataGrid>

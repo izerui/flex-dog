@@ -4,28 +4,31 @@
          creationComplete="init()">
 
 
-    <mx:DataGrid id="grid" dataProvider="{dataList}" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true"
-                 doubleClick="view()">
-        <mx:columns>
-            <mx:DataGridColumn dataField="entName" headerText="企业" wordWrap="true"/>
-            <mx:DataGridColumn dataField="userName" headerText="用户名" wordWrap="true"/>
-            <mx:DataGridColumn dataField="application" headerText="应用名" wordWrap="true"/>
-            <mx:DataGridColumn dataField="type" headerText="类型" wordWrap="true"/>
-            <mx:DataGridColumn dataField="name" headerText="动作" wordWrap="true"/>
-            <mx:DataGridColumn dataField="url" headerText="请求地址" wordWrap="true"/>
-            <mx:DataGridColumn dataField="begin" headerText="请求时间" wordWrap="true" labelFunction="beginDateLabelFun"/>
-            <mx:DataGridColumn dataField="time" headerText="耗时" wordWrap="true"/>
-            <!--<mx:DataGridColumn dataField="ip" headerText="ip地址" wordWrap="true"/>-->
-            <!--<mx:DataGridColumn dataField="endTime" headerText="结束时间" wordWrap="true" labelFunction="endDateLabelFun"/>-->
-            <mx:DataGridColumn dataField="success" headerText="是否成功" wordWrap="true"/>
-            <!--<mx:DataGridColumn dataField="accountName" headerText="手机号" wordWrap="true"/>-->
-        </mx:columns>
-    </mx:DataGrid>
+    <!--<mx:DataGrid id="grid" dataProvider="{dataList}" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true"-->
+                 <!--doubleClick="view()">-->
+        <!--<mx:columns>-->
+            <!--<mx:DataGridColumn dataField="entName" headerText="企业" wordWrap="true"/>-->
+            <!--<mx:DataGridColumn dataField="userName" headerText="用户名" wordWrap="true"/>-->
+            <!--<mx:DataGridColumn dataField="application" headerText="应用名" wordWrap="true"/>-->
+            <!--<mx:DataGridColumn dataField="type" headerText="类型" wordWrap="true"/>-->
+            <!--<mx:DataGridColumn dataField="name" headerText="动作" wordWrap="true"/>-->
+            <!--<mx:DataGridColumn dataField="url" headerText="请求地址" wordWrap="true"/>-->
+            <!--<mx:DataGridColumn dataField="begin" headerText="请求时间" wordWrap="true" labelFunction="beginDateLabelFun"/>-->
+            <!--<mx:DataGridColumn dataField="time" headerText="耗时" wordWrap="true"/>-->
+            <!--&lt;!&ndash;<mx:DataGridColumn dataField="ip" headerText="ip地址" wordWrap="true"/>&ndash;&gt;-->
+            <!--&lt;!&ndash;<mx:DataGridColumn dataField="endTime" headerText="结束时间" wordWrap="true" labelFunction="endDateLabelFun"/>&ndash;&gt;-->
+            <!--<mx:DataGridColumn dataField="success" headerText="是否成功" wordWrap="true"/>-->
+            <!--&lt;!&ndash;<mx:DataGridColumn dataField="accountName" headerText="手机号" wordWrap="true"/>&ndash;&gt;-->
+        <!--</mx:columns>-->
+    <!--</mx:DataGrid>-->
+    <mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载...&#13;" backgroundColor="black"
+                 color="#06b71b"/>
     <fx:Script><![CDATA[
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
 
         import mx.collections.ArrayCollection;
+        import mx.controls.dataGridClasses.DataGridColumn;
 
         import mx.core.FlexGlobals;
         import mx.formatters.DateFormatter;
@@ -43,8 +46,15 @@
         }
 
         private function loadData(event:TimerEvent):void {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "MM/DD JJ:NN:SS";
             RemoteObjectUtils.execute("onlineService", "getUserRecordListLimit100", function (event:ResultEvent) {
                 dataList = event.result as ArrayCollection;
+                var _str = "";
+                for each(var item:Object in dataList){
+                    _str += item.entName + "    -   "+ item.userName + "    ("+df.format(item.begin)+"):    "+ item.name + "    耗时:"+ item.time + " " + (item.success?"成功":"失败") + "\n";
+                }
+                area.text = _str;
             })
         }
 
@@ -61,16 +71,16 @@
             return df.format(item.end);
         }
 
-        private function view():void {
-            if (grid.selectedIndex == -1) {
-                return;
-            }
-            var popUp:DetailTitleWindow = new DetailTitleWindow();
-            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
-            popUp.setFocus();
-            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
-            PopUpManager.centerPopUp(popUp)
-        }
+//        private function view():void {
+//            if (grid.selectedIndex == -1) {
+//                return;
+//            }
+//            var popUp:DetailTitleWindow = new DetailTitleWindow();
+//            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
+//            popUp.setFocus();
+//            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+//            PopUpManager.centerPopUp(popUp)
+//        }
         ]]>
     </fx:Script>
 </mx:VBox>

@@ -52,7 +52,7 @@
                 dataList = event.result as ArrayCollection;
                 var _str = "";
                 for each(var item:Object in dataList){
-                    _str += item.entName + "    -   "+ item.userName + "    "+df.format(item.begin)+":    "+ item.name + " / "+ item.type + "    耗时: "+ item.time + " " + (item.success?"成功":"失败") + "\n";
+                    _str += item.entName + "    -   "+ item.userName + "    "+df.format(item.begin)+":    "+ item.name + " / "+ item.type + " / "+ item.application + "    耗时: "+ item.time + " " + (item.success?"成功":"失败") + "\n";
                 }
                 area.text = _str;
             })

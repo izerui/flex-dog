@@ -12,12 +12,12 @@
             <mx:DataGridColumn dataField="application" headerText="应用名" wordWrap="true"/>
             <mx:DataGridColumn dataField="type" headerText="类型" wordWrap="true"/>
             <mx:DataGridColumn dataField="name" headerText="动作" wordWrap="true"/>
-            <mx:DataGridColumn dataField="begin" headerText="操作时间" wordWrap="true" labelFunction="beginDateLabelFun"/>
-            <mx:DataGridColumn dataField="time" headerText="耗时" wordWrap="true"/>
             <mx:DataGridColumn dataField="url" headerText="请求地址" wordWrap="true"/>
-            <mx:DataGridColumn dataField="ip" headerText="ip地址" wordWrap="true"/>
+            <mx:DataGridColumn dataField="begin" headerText="请求时间" wordWrap="true" labelFunction="beginDateLabelFun"/>
+            <mx:DataGridColumn dataField="time" headerText="耗时" wordWrap="true"/>
+            <!--<mx:DataGridColumn dataField="ip" headerText="ip地址" wordWrap="true"/>-->
             <!--<mx:DataGridColumn dataField="endTime" headerText="结束时间" wordWrap="true" labelFunction="endDateLabelFun"/>-->
-            <mx:DataGridColumn dataField="success" headerText="成功状态" wordWrap="true"/>
+            <mx:DataGridColumn dataField="success" headerText="是否成功" wordWrap="true"/>
             <!--<mx:DataGridColumn dataField="accountName" headerText="手机号" wordWrap="true"/>-->
         </mx:columns>
     </mx:DataGrid>

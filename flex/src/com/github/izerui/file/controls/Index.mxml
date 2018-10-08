@@ -28,6 +28,9 @@
         <s:HGroup width="100%" height="100%">
 
             <mx:TabNavigator width="100%" height="100%">
+                <controls:ConsoleList label="线上日志" width="100%" height="100%">
+
+                </controls:ConsoleList>
                 <controls:FileList label="服务列表" id="filegrid" width="100%" height="100%">
 
                 </controls:FileList>
@@ -46,9 +49,6 @@
                 <controls:EntList label="在线用户" width="100%" height="100%">
 
                 </controls:EntList>
-                <controls:ConsoleList label="活跃情况" width="100%" height="100%">
-
-                </controls:ConsoleList>
                 <controls:DemandList label="物料情况" width="100%" height="100%">
 
                 </controls:DemandList>

@@ -21,6 +21,7 @@
             <!--&lt;!&ndash;<mx:DataGridColumn dataField="accountName" headerText="手机号" wordWrap="true"/>&ndash;&gt;-->
         <!--</mx:columns>-->
     <!--</mx:DataGrid>-->
+    <mx:CheckBox id="box" label="滚动日志" paddingLeft="20" selected="true"></mx:CheckBox>
     <mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载...&#13;" backgroundColor="black"
                  color="#06b71b"/>
     <fx:Script><![CDATA[
@@ -46,16 +47,18 @@
         }
 
         private function loadData(event:TimerEvent):void {
-            var df:DateFormatter = new DateFormatter();
-            df.formatString = "JJ:NN:SS";
-            RemoteObjectUtils.execute("onlineService", "getUserRecordListLimit100", function (event:ResultEvent) {
-                dataList = event.result as ArrayCollection;
-                var _str = "";
-                for each(var item:Object in dataList){
-                    _str += item.entName + "    -   "+ item.userName + "    "+df.format(item.begin)+":    "+ item.name + " / "+ item.type + " / "+ item.application + "    耗时: "+ item.time + " " + (item.success?"成功":"失败") + "\n";
-                }
-                area.text = _str;
-            })
+            if(box.selected){
+                var df:DateFormatter = new DateFormatter();
+                df.formatString = "JJ:NN:SS";
+                RemoteObjectUtils.execute("onlineService", "getUserRecordListLimit100", function (event:ResultEvent) {
+                    dataList = event.result as ArrayCollection;
+                    var _str = "";
+                    for each(var item:Object in dataList){
+                        _str += item.entName + "    -   "+ item.userName + "    "+df.format(item.begin)+":    "+ item.name + " / "+ item.type + " / "+ item.application + "    耗时: "+ item.time + " " + (item.success?"成功":"失败") + "\n";
+                    }
+                    area.text = _str;
+                })
+            }
         }
 
 

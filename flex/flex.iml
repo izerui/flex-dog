@@ -2,7 +2,7 @@
 <module type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="flex">
     <configurations>
-      <configuration name="flex" main-class="com.github.izerui.file.controls.Index" output-file="index.swf" output-folder="$MODULE_DIR$/../src/main/resources/public" wrapper-template-path="$MODULE_DIR$/html-template">
+      <configuration name="flex" main-class="com.github.izerui.file.controls.Index" output-file="index.swf" output-folder="$MODULE_DIR$/../src/main/resources/public" use-html-wrapper="true" wrapper-template-path="$MODULE_DIR$/html-template">
         <dependencies target-player="29.0">
           <entries>
             <entry library-id="66a84f79-857f-4dbe-9c79-82cfc8ca999b">

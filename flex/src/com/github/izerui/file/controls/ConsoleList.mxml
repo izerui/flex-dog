@@ -39,7 +39,7 @@
         [Bindable]
         private var dataList:ArrayCollection;
 
-        private var timer:Timer = new Timer(1000, 0);
+        private var timer:Timer = new Timer(500, 0);
 
         private function init():void {
             timer.addEventListener(TimerEvent.TIMER, loadData);

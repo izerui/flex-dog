@@ -244,7 +244,7 @@ public class DemandService {
         MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
         valueMap.set("businessKey", businessKey);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity(valueMap, header);
-        Map map = restTemplate.postForObject("http://process-pc/v1/order/inventory/info", httpEntity, Map.class);
+        Map map = restTemplate.postForObject("http://process-pc/v3/order/inventory-info", httpEntity, Map.class);
         return (List) map.get("data");
     }
 

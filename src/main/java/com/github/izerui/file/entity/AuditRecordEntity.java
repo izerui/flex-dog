@@ -78,10 +78,6 @@ public class AuditRecordEntity {
      * 耗时
      */
     private long time;
-    /**
-     * token
-     */
-    private String token;
 
     /**
      * 操作年份

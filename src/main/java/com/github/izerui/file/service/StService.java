@@ -43,7 +43,6 @@ public class StService {
         recordEntity.setSuccess(record.isSuccess());
         recordEntity.setEnd(record.getEnd());
         recordEntity.setTime(record.getTime());
-        recordEntity.setAppId(record.getAppId());
         recordEntity.setToken(record.getToken());
         auditRecordRepository.save(recordEntity);
     }

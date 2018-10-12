@@ -79,10 +79,6 @@ public class AuditRecordEntity {
      */
     private long time;
     /**
-     * 来源ip
-     */
-    private String appId;
-    /**
      * token
      */
     private String token;

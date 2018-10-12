@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.RoleClient;
 import com.github.izerui.file.client.UserClient;
+import com.github.izerui.file.entity.UserStatistical;
+import com.github.izerui.file.repository.StIgnoreTypeRepository;
+import com.github.izerui.file.repository.UserStatisticalRepository;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -26,6 +30,7 @@ import java.util.stream.Collectors;
 @RemotingDestination
 @Service("onlineService")
 @ConfigurationProperties
+@Transactional
 public class OnlineService {
 
     @Autowired
@@ -38,6 +43,10 @@ public class OnlineService {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private UserStatisticalRepository userStatisticalRepository;
+    @Autowired
+    private StIgnoreTypeRepository stIgnoreTypeRepository;
 
     private List<Record> userRecordListLimit100 = new ArrayList<>();
 
@@ -94,6 +103,37 @@ public class OnlineService {
             userRecordListLimit100.remove(0);
         }
         userRecordListLimit100.add(record);
+
+        //如果在排除列表就删除同类型数据，不再记录
+        if (stIgnoreTypeRepository.count(record.getApplication(), record.getType(), record.getName()) > 0L) {
+            userStatisticalRepository.delete(record.getApplication(), record.getType(), record.getName());
+            return;
+        }
+
+        UserStatistical st;
+        long count = userStatisticalRepository.count(record.getUserCode(), record.getApplication(), record.getType(), record.getName());
+        if (count > 0L) {
+            st = userStatisticalRepository.get(record.getUserCode(), record.getApplication(), record.getType(), record.getName());
+        } else {
+            st = new UserStatistical();
+        }
+        st.setApplication(record.getApplication());
+        st.setType(record.getType());
+        st.setSignature(record.getSignature());
+        st.setName(record.getName());
+        st.setUrl(record.getUrl());
+        st.setAccountCode(record.getAccountCode());
+        st.setAccountName(record.getAccountName());
+        st.setUserCode(record.getUserCode());
+        st.setUserName(record.getUserName());
+        st.setEntCode(record.getEntCode());
+        st.setEntName(record.getEntName());
+        if (record.getName() != null && record.getName().equals("登录系统")) {
+            st.setLastLoginTime(record.getBegin());
+        }
+        st.setLastOptTime(record.getBegin());
+        st.setCount(st.getCount() + 1);
+        userStatisticalRepository.save(st);
     }
 
     public List<Record> getUserRecordListLimit100() {

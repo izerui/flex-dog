@@ -4,10 +4,8 @@ import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.config.FileConfig;
-import com.github.izerui.file.entity.DeployEntity;
 import com.github.izerui.file.entity.FileEntity;
 import com.github.izerui.file.entity.LogEntity;
-import com.github.izerui.file.repository.DeployRepository;
 import com.github.izerui.file.repository.FileRepository;
 import com.github.izerui.file.repository.LogRepository;
 import com.google.common.collect.Lists;
@@ -42,13 +40,11 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -66,8 +62,6 @@ public class FileService {
     private String rootPath;
     @Value("${eureka.client.serviceUrl.defaultZone}")
     private String eurekaServiceUrl;
-    @Autowired
-    private DeployRepository deployRepository;
     @Autowired
     private FileRepository fileRepository;
     @Autowired
@@ -276,7 +270,7 @@ public class FileService {
         try {
             HttpHeaders httpHeaders = REST_TEMPLATE.headForHeaders(new URI(homePageUrl + "logfile"));
             return httpHeaders.getContentLength();
-        }catch (Exception e){
+        } catch (Exception e) {
             return 0;
         }
     }
@@ -290,8 +284,8 @@ public class FileService {
 //            builder.header(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
             builder.header(HttpHeaders.ACCEPT_LANGUAGE, "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
             ResponseEntity<String> exchange = REST_TEMPLATE.exchange(builder.build(), String.class);
-            return exchange.getBody()!=null?exchange.getBody():"";
-        }catch (Exception e){
+            return exchange.getBody() != null ? exchange.getBody() : "";
+        } catch (Exception e) {
             return "";
         }
 

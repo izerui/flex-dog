@@ -1,14 +1,14 @@
 package com.github.izerui.file.repository;
 
+import com.ecworking.jpa.PlatformJpaRepository;
 import com.github.izerui.file.entity.FileEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface FileRepository extends JpaRepository<FileEntity, String> {
+public interface FileRepository extends PlatformJpaRepository<FileEntity, String> {
 
-    long countByFileNameAndServer(String fileName,String server);
+    long countByFileNameAndServer(String fileName, String server);
 
     List<FileEntity> findByServerOrderByUploadTimeDesc(String server);
 
@@ -17,5 +17,5 @@ public interface FileRepository extends JpaRepository<FileEntity, String> {
 
     List<FileEntity> findByFileName(String fileName);
 
-    List<FileEntity> findByServerInAndFileName(List<String> servers,String fileName);
+    List<FileEntity> findByServerInAndFileName(List<String> servers, String fileName);
 }

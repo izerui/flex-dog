@@ -11,7 +11,9 @@ import java.util.Date;
         @Index(name = "application", columnList = "application"),
         @Index(name = "type", columnList = "type"),
         @Index(name = "name", columnList = "name"),
-        @Index(name = "userCode", columnList = "userCode")
+        @Index(name = "userCode", columnList = "userCode"),
+        @Index(name = "count", columnList = "count"),
+        @Index(name = "lastOptTime", columnList = "lastOptTime")
 })
 public class UserStatistical {
     @Id

@@ -10,9 +10,9 @@ public interface AuditRecordRepository extends PlatformJpaRepository<AuditRecord
     long count(int year, int monthOfYear, int dayOfMonth);
 
 
-    @Query("select count(x) from AuditRecordEntity x where x.bYear = ?1 and x.bMonth = ?2 and x.bDay = ?3 group by x.userCode")
+    @Query("select count(distinct x.userCode) from AuditRecordEntity x where x.bYear = ?1 and x.bMonth = ?2 and x.bDay = ?3")
     long countGroupByUsers(int year, int monthOfYear, int dayOfMonth);
 
-    @Query("select count(x) from AuditRecordEntity x where x.bYear = ?1 and x.bMonth = ?2 and x.bDay = ?3 group by x.entCode")
+    @Query("select count(distinct x.entCode) from AuditRecordEntity x where x.bYear = ?1 and x.bMonth = ?2 and x.bDay = ?3")
     long countGroupByEnts(int year, int monthOfYear, int dayOfMonth);
 }

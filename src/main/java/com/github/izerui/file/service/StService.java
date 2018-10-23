@@ -74,10 +74,4 @@ public class StService {
         }};
     }
 
-
-    public static void main(String[] args) {
-        System.out.println(DateTime.now().getYear());
-    }
-
-
 }

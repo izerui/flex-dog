@@ -22,11 +22,11 @@
     <!--</mx:columns>-->
     <!--</mx:DataGrid>-->
     <mx:HBox>
+        <mx:CheckBox id="box" label="滚动日志" paddingLeft="20" selected="true"></mx:CheckBox>
         <mx:Label text="今日访问量: {countMap.logCount}"/>
         <mx:Label text="今日访问用户数: {countMap.userCount}"/>
         <mx:Label text="今日访问企业数: {countMap.entCount}"/>
     </mx:HBox>
-    <mx:CheckBox id="box" label="滚动日志" paddingLeft="20" selected="true"></mx:CheckBox>
     <mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载...&#13;" backgroundColor="black"
                  color="#06b71b"/>
     <fx:Script><![CDATA[

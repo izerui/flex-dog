@@ -10,7 +10,7 @@
                 title="货品: {inventory.inventoryCode} {inventory.inventoryName} 的需求"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{results}"
                  doubleClickEnabled="true" itemDoubleClick="view()">
         <mx:columns>
             <mx:DataGridColumn dataField="index" textAlign="center"
@@ -18,10 +18,10 @@
                                labelFunction="indexNumLabelFun"
                                width="40"/>
             <mx:DataGridColumn dataField="bomId" width="80" textAlign="center"
-                               headerText="BOM">
+                               headerText="BOM编号">
                 <mx:itemRenderer>
                     <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7" label="{data.bomId}"
+                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7" label="{data.bomCode}"
                                        click="viewBom()">
                             <fx:Script>
                                 <![CDATA[
@@ -29,9 +29,6 @@
                                 import mx.managers.PopUpManager;
 
                                 private function viewBom():void {
-                                    if (!data.bomId) {
-                                        return;
-                                    }
                                     var bomList:BomList = new BomList();
                                     bomList.inventory = data;
                                     bomList.setFocus();
@@ -137,18 +134,6 @@
         </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar>
-        <mx:LinkBar id="linkButtonBar" iconField="ico" horizontalAlign="right" itemClick="pageClick(event)">
-            <mx:dataProvider>
-                <mx:ArrayCollection>
-                    <fx:Object label="首页" itemData="0" ico="@Embed('/assets/img/bar_img/resultset_first.png')"/>
-                    <fx:Object label="上一页" itemData="1" ico="@Embed('/assets/img/bar_img/resultset_previous.png')"/>
-                    <fx:Object label="下一页" itemData="2" ico="@Embed('/assets/img/bar_img/resultset_next.png')"/>
-                    <fx:Object label="末页" itemData="3" ico="@Embed('/assets/img/bar_img/resultset_last.png')"/>
-                </mx:ArrayCollection>
-            </mx:dataProvider>
-        </mx:LinkBar>
-        <mx:Label text="{page.number + 1} / {page.totalPages} 页"/>
-        <mx:Label text="共 {page.totalElements} 条记录"/>
         <mx:Label text="按订单搜索:"/>
         <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
         <mx:LinkButton icon="@Embed('/assets/img/renameFolder.png')" label="手动修改" click="update()"/>
@@ -157,8 +142,8 @@
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
 
+        import mx.collections.ArrayCollection;
         import mx.core.FlexGlobals;
-        import mx.events.ItemClickEvent;
         import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
@@ -168,19 +153,13 @@
         public var inventory:Object;
 
         [Bindable]
-        protected var page:Object = {
-            number: 0,
-            size: 50,
-            totalPages: 0,
-            totalElements: 0,
-            content: []
-        };
+        protected var results:ArrayCollection;
 
         private function loadData():void {
             RemoteObjectUtils.execute("demandService", "inventoryBusinessDemands", function (event:ResultEvent) {
-                page = event.result;
+                results = event.result as ArrayCollection;
                 filterResult();
-            }, inventory.entCode, page.number, page.size, inventory.inventoryId)
+            }, inventory.entCode, inventory.inventoryId)
 
         }
 
@@ -194,35 +173,6 @@
             var df:DateFormatter = new DateFormatter();
             df.formatString = "YYYY-MM-DD JJ:NN:SS";
             return df.format(item.updateTime);
-        }
-
-
-        private function pageClick(event:ItemClickEvent):void {
-            switch (event.item["itemData"]) {
-                case 0: {
-                    page.number = 0;
-                    break;
-                }
-                case 1: {
-                    page.number--;
-                    break;
-                }
-                case 2: {
-                    page.number++;
-                    break;
-                }
-                case 3: {
-                    page.number = page.totalPages - 1;
-                    break;
-                }
-            }
-            if (page.number == page.totalPages) {
-                page.number = page.totalPages - 1;
-            }
-            if (page.number < 0) {
-                page.number = 0;
-            }
-            loadData();
         }
 
         private function view():void {
@@ -239,7 +189,7 @@
         }
 
         private function indexNumLabelFun(item:Object, column:DataGridColumn):String {
-            var indexNum:int = (page.content.getItemIndex(item) + 1);
+            var indexNum:int = (results.getItemIndex(item) + 1);
             return indexNum.toString();
         }
 
@@ -259,12 +209,12 @@
 
         private function filterResult():void {
             if (!searchKey.text) {
-                grid.dataProvider = page.content;
+                grid.dataProvider = results;
                 return;
             }
             var tempSearchList:ArrayCollection = new ArrayCollection;
 
-            for each (var fi:Object in page.content) {
+            for each (var fi:Object in results) {
                 if (fi.businessKey.indexOf(searchKey.text) != -1 || fi.businessDocNo.indexOf(searchKey.text) != -1) {
                     tempSearchList.addItem(ObjectUtil.clone(fi));
                 }

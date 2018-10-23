@@ -9,6 +9,7 @@ import com.ecworking.esms.mchuan.MchuanSmsService;
 import com.ecworking.mrp.vo.PurgeResultVo;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.client.BomClient;
 import com.github.izerui.file.client.BusinessClient;
@@ -26,6 +27,7 @@ import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -132,33 +134,19 @@ public class DemandService {
      * 货品的订单需求
      *
      * @param entCode
-     * @param page
-     * @param pageSize
      * @param inventoryId
      * @return
      */
-    public Map inventoryBusinessDemands(String entCode,
-                                        Integer page,
-                                        Integer pageSize,
-                                        String inventoryId) {
+    public List<Map> inventoryBusinessDemands(String entCode,
+                                              String inventoryId) throws IOException {
         MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
         valueMap.set("entCode", entCode);
         valueMap.set("inventoryId", inventoryId);
-        valueMap.set("page", page);
-        valueMap.set("pageSize", pageSize);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
-        Map map = restTemplate.postForObject("http://mrp-api/v3/inventory/business/demands", httpEntity, Map.class);
-        List<Map> contents = (List<Map>) map.get("content");
-        for (Map content : contents) {
-            BusinessInventoryVo business = businessClient.getBusiness(entCode, (String) content.get("businessKey"));
-            if (business == null) {
-                continue;
-            }
-            if (business.isMade() || business.isOutsourcing()) {
-                content.put("bomId", business.getBomId());
-            }
-        }
-        return map;
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity("http://mrp-api/v3/inventory/business/demands", httpEntity, String.class);
+        JavaType javaType = objectMapper.getTypeFactory().constructParametricType(List.class, Map.class);
+        List<Map> contents = objectMapper.readValue(responseEntity.getBody(), javaType);
+        return contents;
     }
 
 
@@ -300,15 +288,15 @@ public class DemandService {
      * 根据bomId获取bom
      *
      * @param entCode
-     * @param bomId
+     * @param businessKey
      * @return
      */
-    public List<Map> getBom(String entCode, String bomId) {
+    public List<Map> getBom(String entCode, String businessKey) {
         MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
         valueMap.set("entCode", entCode);
-        valueMap.set("bomId", bomId);
+        valueMap.set("businessKey", businessKey);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
-        Map bom = restTemplate.postForObject("http://development-api/v3/bom/get", httpEntity, Map.class);
+        Map bom = restTemplate.postForObject("http://development-api/v3/bom/businessKey", httpEntity, Map.class);
         return Lists.newArrayList(bom);
     }
 
@@ -347,7 +335,7 @@ public class DemandService {
         msg.put("inventoryId", inventoryId);
         msg.put("changeDemandQty", changeDemandQty);
         msg.put("changePurgeQty", changePurgeQty);
-        msg.put("attributeCode",attributeCode);
+        msg.put("attributeCode", attributeCode);
         rabbitTemplate.convertAndSend("ierp", "ierp.demand.update", msg);
     }
 

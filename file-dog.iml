@@ -106,7 +106,7 @@
     <orderEntry type="library" name="Maven: com.ecworking:esms-sender:1.2.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.taobao:taobao-sdk:20160106" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:esms-global:1.2.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:mrp-remote:3.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:mrp-remote:3.1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:rbac-remote:3.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:rbac-global:3.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:audit-core:1.1.0-SNAPSHOT" level="project" />

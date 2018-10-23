@@ -50,6 +50,8 @@
                                headerText="货品名称"/>
             <mx:DataGridColumn dataField="attributeName" textAlign="center"
                                headerText="货品属性"/>
+            <mx:DataGridColumn dataField="unitName" textAlign="center"
+                               headerText="单位"/>
             <mx:DataGridColumn dataField="businessTypeName" textAlign="center"
                                headerText="订单类型"/>
             <mx:DataGridColumn dataField="demandQty" textAlign="center"

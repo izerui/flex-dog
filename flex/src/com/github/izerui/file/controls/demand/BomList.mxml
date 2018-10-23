@@ -68,7 +68,7 @@
             RemoteObjectUtils.execute("demandService", "getBom", function (event:ResultEvent) {
                 dataList = ArrayCollection(event.result);
                 grid.expandAll();
-            }, inventory.entCode, inventory.bomId)
+            }, inventory.entCode, inventory.businessKey)
 
         }
 

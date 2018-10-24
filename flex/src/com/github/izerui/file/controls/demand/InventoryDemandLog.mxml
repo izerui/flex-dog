@@ -18,7 +18,7 @@
                                labelFunction="indexNumLabelFun"
                                textAlign="center"
                                width="40"/>
-            <mx:DataGridColumn dataField="bomId" width="80" textAlign="center"
+            <mx:DataGridColumn dataField="bomCode" width="80" textAlign="center"
                                headerText="BOM">
                 <mx:itemRenderer>
                     <fx:Component>

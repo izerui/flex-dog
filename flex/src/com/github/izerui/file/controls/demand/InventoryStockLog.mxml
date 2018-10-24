@@ -16,41 +16,20 @@
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
                                width="40"/>
-            <mx:DataGridColumn dataField="batchNo" textAlign="center"
-                               headerText="批次"/>
-            <mx:DataGridColumn dataField="storageName" textAlign="center"
-                               headerText="储位"/>
+            <mx:DataGridColumn dataField="businessSourceDocNo" textAlign="center"
+                               headerText="业务单号"/>
             <mx:DataGridColumn dataField="businessSourceType" textAlign="center"
-                               headerText="业务信息">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:VBox>
-                            <mx:Label text="业务类型: {data.businessSourceType}"/>
-                            <mx:Label text="业务单号: {data.businessSourceDocNo}"/>
-                        </mx:VBox>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
-            <!--<mx:DataGridColumn dataField="docDate" textAlign="center"-->
-                               <!--labelFunction="dateLabelFun"-->
-                               <!--headerText="日期"/>-->
+                               headerText="业务动作"/>
+            <mx:DataGridColumn dataField="useDocNo" textAlign="center"
+                               headerText="单号"/>
             <mx:DataGridColumn dataField="useGroupType" textAlign="center"
-                               headerText="出入库信息">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:VBox>
-                            <mx:Label text="类型: {data.useGroupType}"/>
-                            <mx:Label text="单号: {data.useDocNo}"/>
-                        </mx:VBox>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="batchQuantity" textAlign="center"
-                               headerText="届时库存量"/>
-            <mx:DataGridColumn dataField="srcDocNo" textAlign="center"
-                               headerText="出入库数量" labelFunction="qtyLabelFun"/>
+                               headerText="出入库类型"/>
+            <mx:DataGridColumn textAlign="center"
+                               headerText="数量" labelFunction="qtyLabelFun"/>
+            <mx:DataGridColumn dataField="stockQuantity" textAlign="center"
+                               headerText="改变后库存量"/>
             <mx:DataGridColumn dataField="useTime" textAlign="center"
-                               headerText="出入库时间"/>
+                               headerText="操作时间"/>
         </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar>

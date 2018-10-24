@@ -17,7 +17,7 @@
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
                                width="40"/>
-            <mx:DataGridColumn dataField="bomId" textAlign="center"
+            <mx:DataGridColumn dataField="bomCode" textAlign="center"
                                headerText="BOM编号">
                 <mx:itemRenderer>
                     <fx:Component>

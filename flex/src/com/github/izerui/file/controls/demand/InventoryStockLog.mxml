@@ -18,16 +18,14 @@
                                width="40"/>
             <mx:DataGridColumn dataField="businessSourceDocNo" textAlign="center"
                                headerText="业务单号"/>
-            <mx:DataGridColumn dataField="businessSourceType" textAlign="center"
-                               headerText="业务动作"/>
             <mx:DataGridColumn dataField="useDocNo" textAlign="center"
                                headerText="单号"/>
-            <mx:DataGridColumn dataField="useGroupType" textAlign="center"
-                               headerText="出入库类型"/>
+            <mx:DataGridColumn dataField="businessSourceType" textAlign="center"
+                               headerText="动作"/>
             <mx:DataGridColumn textAlign="center"
-                               headerText="数量" labelFunction="qtyLabelFun"/>
+                               headerText="改变量" labelFunction="qtyLabelFun"/>
             <mx:DataGridColumn dataField="stockQuantity" textAlign="center"
-                               headerText="改变后库存量"/>
+                               headerText="改变后总库存"/>
             <mx:DataGridColumn dataField="useTime" textAlign="center"
                                headerText="操作时间"/>
         </mx:columns>

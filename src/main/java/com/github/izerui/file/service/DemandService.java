@@ -320,7 +320,7 @@ public class DemandService {
                              String sourceId,
                              String remark,
                              String inventoryId,
-                             String attributeCode,
+                             Integer attributeCode,
                              BigDecimal changeDemandQty,
                              BigDecimal changePurgeQty) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);

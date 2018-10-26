@@ -73,7 +73,7 @@
         }
 
         private function initAttributeCode():void {
-            for (var data in attributeBox.dataProvider) {
+            for each(var data in attributeBox.dataProvider) {
                 if(demandItem.attributeCode == data.code){
                     attributeBox.selectedItem = data;
                     return;

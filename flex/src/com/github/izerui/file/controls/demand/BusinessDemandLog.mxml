@@ -1,162 +1,458 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx"
                 xmlns:components="com.github.izerui.file.components.*"
+                xmlns:demand="com.github.izerui.file.controls.demand.*"
                 layout="vertical"
                 creationComplete="loadData()"
                 showCloseButton="true"
                 width="{this.parentApplication.width - 100}"
                 height="{this.parentApplication.height - 100}"
                 close="PopUpManager.removePopUp(this);"
-                title="订单: {selItem.businessKey} 现在的物料需求情况"
+                title="订单: {selItem.businessKey} 现在的物料进程"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
-    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true" itemDoubleClick="view()">
-        <mx:columns>
-            <mx:DataGridColumn dataField="index" textAlign="center"
-                               headerText="序号"
-                               labelFunction="indexNumLabelFun"
-                               width="40"/>
-            <mx:DataGridColumn dataField="businessDocNo" width="120" textAlign="center"
-                               headerText="订单号"/>
-            <mx:DataGridColumn dataField="businessTypeName" textAlign="center"
-                               headerText="订单类型"/>
-            <mx:DataGridColumn dataField="inventoryCode" textAlign="center"
-                               headerText="货品编码">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                       label="{data.inventoryCode}"
-                                       click="viewDemand()">
-                            <fx:Script>
+    <mx:TabNavigator id="tabNavigator" width="100%" height="100%" selectedIndex="1">
+        <mx:Box label="BOM" width="100%" height="100%">
+            <demand:Bom id="bom" width="100%" height="100%" inventory="{selItem}"></demand:Bom>
+        </mx:Box>
+        <!-- 采购 -->
+        <mx:VBox label="采购({purDataList.length})" width="100%" height="100%">
+            <mx:DataGrid id="purGrid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true"
+                         dataProvider="{purDataList}"
+                         itemDoubleClick="view()">
+                <mx:columns>
+                    <mx:DataGridColumn dataField="inventoryCode" textAlign="center"
+                                       headerText="货品编码"/>
+                    <mx:DataGridColumn dataField="inventoryName" textAlign="center"
+                                       headerText="货品名称"/>
+                    <mx:DataGridColumn dataField="unitName" textAlign="center"
+                                       headerText="单位"/>
+                    <mx:DataGridColumn dataField="bomProductionQty" textAlign="center"
+                                       headerText="BOM用量"/>
+                    <mx:DataGridColumn dataField="purchaseQty" textAlign="center"
+                                       headerText="采购量">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.purchaseQty}"
+                                               click="viewLog()">
+                                    <fx:Script>
                                 <![CDATA[
-                                import mx.core.Application;
-                                import mx.managers.PopUpManager;
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
 
-                                private function viewDemand():void {
-                                    var orderDemand:InventoryOrderDemand = new InventoryOrderDemand();
-                                    orderDemand.inventory = data;
-                                    orderDemand.setFocus();
+                                        private function viewLog():void {
+                                            var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                            demandLog.inventory = data;
+                                            demandLog.setFocus();
 
-                                    PopUpManager.addPopUp(orderDemand, Application.application as DisplayObject, true);
-                                    PopUpManager.centerPopUp(orderDemand);
-                                }
-                                ]]>
+                                            PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(demandLog);
+                                        }
+                                        ]]>
                             </fx:Script>
-                        </mx:LinkButton>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="inventoryName" textAlign="center"
-                               headerText="货品名称"/>
-            <mx:DataGridColumn dataField="attributeName" textAlign="center"
-                               headerText="货品属性"/>
-            <mx:DataGridColumn dataField="unitName" textAlign="center"
-                               headerText="单位"/>
-            <mx:DataGridColumn dataField="businessTypeName" textAlign="center"
-                               headerText="订单类型"/>
-            <mx:DataGridColumn dataField="demandQty" textAlign="center"
-                               headerText="需求量">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                       label="{data.demandQty}"
-                                       click="viewLog()">
-                            <fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                    <mx:DataGridColumn dataField="purchaseIssued" textAlign="center"
+                                       headerText="已下达"/>
+                    <mx:DataGridColumn dataField="purchaseReceiveQty" textAlign="center"
+                                       headerText="已点收"/>
+                    <mx:DataGridColumn dataField="purchaseCheckPassQty" textAlign="center"
+                                       headerText="品检合格"/>
+                    <mx:DataGridColumn dataField="purchaseInboundQty" textAlign="center"
+                                       headerText="已入库"/>
+                    <mx:DataGridColumn dataField="purchaseReturnQty" textAlign="center"
+                                       headerText="已退货"/>
+                    <mx:DataGridColumn dataField="purchaseLatestDeliveryDate" textAlign="center"
+                                       headerText="最晚交期"/>
+
+                    <mx:DataGridColumn dataField="stockQty" textAlign="center"
+                                       headerText="即时库存">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.stockQty}"
+                                               click="viewStock()">
+                                    <fx:Script>
                                 <![CDATA[
-                                import mx.core.Application;
-                                import mx.managers.PopUpManager;
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
 
-                                private function viewLog():void {
-                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
-                                    demandLog.inventory = data;
-                                    demandLog.setFocus();
+                                        private function viewStock():void {
+                                            var demandLog:InventoryStockLog = new InventoryStockLog();
+                                            demandLog.inventory = data;
+                                            demandLog.setFocus();
 
-                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
-                                    PopUpManager.centerPopUp(demandLog);
-                                }
-                                ]]>
+                                            PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(demandLog);
+                                        }
+                                        ]]>
                             </fx:Script>
-                        </mx:LinkButton>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="purgeQty" textAlign="center"
-                               headerText="在途在制量">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                       label="{data.purgeQty}"
-                                       click="viewLog()">
-                            <fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                    <mx:DataGridColumn dataField="usableQty" textAlign="center"
+                                       headerText="可用量">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.usableQty}"
+                                               click="viewDemand()">
+                                    <fx:Script>
                                 <![CDATA[
-                                import mx.core.Application;
-                                import mx.managers.PopUpManager;
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
 
-                                private function viewLog():void {
-                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
-                                    demandLog.inventory = data;
-                                    demandLog.setFocus();
+                                        private function viewDemand():void {
+                                            var orderDemand:InventoryOrderDemand = new InventoryOrderDemand();
+                                            orderDemand.inventory = data;
+                                            orderDemand.setFocus();
 
-                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
-                                    PopUpManager.centerPopUp(demandLog);
-                                }
-                                ]]>
+                                            PopUpManager.addPopUp(orderDemand, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(orderDemand);
+                                        }
+                                        ]]>
                             </fx:Script>
-                        </mx:LinkButton>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="stockQty" textAlign="center"
-                               headerText="库存量">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                       label="{data.stockQty}"
-                                       click="viewStock()">
-                            <fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:VBox>
+        <mx:VBox label="生产({manDataList.length})" width="100%" height="100%">
+            <mx:DataGrid id="manGrid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true"
+                         dataProvider="{manDataList}"
+                         itemDoubleClick="view()">
+                <mx:columns>
+                    <mx:DataGridColumn dataField="inventoryCode" textAlign="center"
+                                       headerText="货品编码"/>
+                    <mx:DataGridColumn dataField="inventoryName" textAlign="center"
+                                       headerText="货品名称"/>
+                    <mx:DataGridColumn dataField="unitName" textAlign="center"
+                                       headerText="单位"/>
+                    <mx:DataGridColumn dataField="bomProductionQty" textAlign="center"
+                                       headerText="BOM用量"/>
+                    <mx:DataGridColumn dataField="productQuantity" textAlign="center"
+                                       headerText="生产数量">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.purchaseQty}"
+                                               click="viewLog()">
+                                    <fx:Script>
                                 <![CDATA[
-                                import com.github.izerui.file.controls.demand.InventoryStockLog;
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
 
-                                import mx.core.Application;
-                                import mx.managers.PopUpManager;
+                                        private function viewLog():void {
+                                            var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                            demandLog.inventory = data;
+                                            demandLog.setFocus();
 
-                                private function viewStock():void {
-                                    var demandLog:InventoryStockLog = new InventoryStockLog();
-                                    demandLog.inventory = data;
-                                    demandLog.setFocus();
-
-                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
-                                    PopUpManager.centerPopUp(demandLog);
-                                }
-                                ]]>
+                                            PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(demandLog);
+                                        }
+                                        ]]>
                             </fx:Script>
-                        </mx:LinkButton>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
-            <mx:DataGridColumn dataField="usableQty" textAlign="center"
-                               headerText="可用量"/>
-            <mx:DataGridColumn dataField="createTime" width="120" textAlign="center"
-                               labelFunction="dateLabelFun"
-                               headerText="创建时间"/>
-            <mx:DataGridColumn dataField="updateTime" width="120" textAlign="center"
-                               labelFunction="dateLabelFun2"
-                               headerText="更新时间"/>
-        </mx:columns>
-    </mx:DataGrid>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                    <mx:DataGridColumn dataField="issuedQuantity" textAlign="center"
+                                       headerText="已排产"/>
+                    <mx:DataGridColumn dataField="onlineQuantity" textAlign="center"
+                                       headerText="已上线"/>
+                    <mx:DataGridColumn dataField="registerQuantity" textAlign="center"
+                                       headerText="已登数"/>
+                    <mx:DataGridColumn dataField="checkQuantity" textAlign="center"
+                                       headerText="品检合格"/>
+                    <mx:DataGridColumn dataField="redirectQuantity" textAlign="center"
+                                       headerText="已流转"/>
+                    <mx:DataGridColumn dataField="inboundQuantity" textAlign="center"
+                                       headerText="已入库"/>
+                    <mx:DataGridColumn dataField="deliveryDate" textAlign="center"
+                                       headerText="最晚交期"/>
+
+                    <mx:DataGridColumn dataField="stockQty" textAlign="center"
+                                       headerText="即时库存">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.stockQty}"
+                                               click="viewStock()">
+                                    <fx:Script>
+                                <![CDATA[
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
+
+                                        private function viewStock():void {
+                                            var demandLog:InventoryStockLog = new InventoryStockLog();
+                                            demandLog.inventory = data;
+                                            demandLog.setFocus();
+
+                                            PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(demandLog);
+                                        }
+                                        ]]>
+                            </fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                    <mx:DataGridColumn dataField="usableQty" textAlign="center"
+                                       headerText="可用量">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.usableQty}"
+                                               click="viewDemand()">
+                                    <fx:Script>
+                                <![CDATA[
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
+
+                                        private function viewDemand():void {
+                                            var orderDemand:InventoryOrderDemand = new InventoryOrderDemand();
+                                            orderDemand.inventory = data;
+                                            orderDemand.setFocus();
+
+                                            PopUpManager.addPopUp(orderDemand, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(orderDemand);
+                                        }
+                                        ]]>
+                            </fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:VBox>
+        <mx:VBox label="委外({outDataList.length})" width="100%" height="100%">
+            <mx:DataGrid id="outGrid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true"
+                         dataProvider="{outDataList}"
+                         itemDoubleClick="view()">
+                <mx:columns>
+                    <mx:DataGridColumn dataField="inventoryCode" textAlign="center"
+                                       headerText="货品编码"/>
+                    <mx:DataGridColumn dataField="inventoryName" textAlign="center"
+                                       headerText="货品名称"/>
+                    <mx:DataGridColumn dataField="unitName" textAlign="center"
+                                       headerText="单位"/>
+                    <mx:DataGridColumn dataField="bomProductionQty" textAlign="center"
+                                       headerText="BOM用量"/>
+                    <mx:DataGridColumn dataField="outsourceQty" textAlign="center"
+                                       headerText="委外数量">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.purchaseQty}"
+                                               click="viewLog()">
+                                    <fx:Script>
+                                <![CDATA[
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
+
+                                        private function viewLog():void {
+                                            var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                            demandLog.inventory = data;
+                                            demandLog.setFocus();
+
+                                            PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(demandLog);
+                                        }
+                                        ]]>
+                            </fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                    <mx:DataGridColumn dataField="outsourceIssued" textAlign="center"
+                                       headerText="下单数量"/>
+                    <mx:DataGridColumn dataField="outsourceReceiveQty" textAlign="center"
+                                       headerText="已点收"/>
+                    <mx:DataGridColumn dataField="outsourceCheckPassQty" textAlign="center"
+                                       headerText="品检合格"/>
+                    <mx:DataGridColumn dataField="outsourceInboundQty" textAlign="center"
+                                       headerText="已入库"/>
+                    <mx:DataGridColumn dataField="outsourceLatestDeliveryDate" textAlign="center"
+                                       headerText="最晚交期"/>
+                    <mx:DataGridColumn dataField="stockQty" textAlign="center"
+                                       headerText="即时库存">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.stockQty}"
+                                               click="viewStock()">
+                                    <fx:Script>
+                                <![CDATA[
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
+
+                                        private function viewStock():void {
+                                            var demandLog:InventoryStockLog = new InventoryStockLog();
+                                            demandLog.inventory = data;
+                                            demandLog.setFocus();
+
+                                            PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(demandLog);
+                                        }
+                                        ]]>
+                            </fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                    <mx:DataGridColumn dataField="usableQty" textAlign="center"
+                                       headerText="可用量">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.usableQty}"
+                                               click="viewDemand()">
+                                    <fx:Script>
+                                <![CDATA[
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
+
+                                        private function viewDemand():void {
+                                            var orderDemand:InventoryOrderDemand = new InventoryOrderDemand();
+                                            orderDemand.inventory = data;
+                                            orderDemand.setFocus();
+
+                                            PopUpManager.addPopUp(orderDemand, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(orderDemand);
+                                        }
+                                        ]]>
+                            </fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:VBox>
+        <mx:VBox label="客供({cusDataList.length})" width="100%" height="100%">
+            <mx:DataGrid id="cusGrid" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true"
+                         dataProvider="{cusDataList}"
+                         itemDoubleClick="view()">
+                <mx:columns>
+                    <mx:DataGridColumn dataField="inventoryCode" textAlign="center"
+                                       headerText="货品编码"/>
+                    <mx:DataGridColumn dataField="inventoryName" textAlign="center"
+                                       headerText="货品名称"/>
+                    <mx:DataGridColumn dataField="unitName" textAlign="center"
+                                       headerText="单位"/>
+                    <mx:DataGridColumn dataField="bomProductionQty" textAlign="center"
+                                       headerText="BOM用量"/>
+                    <mx:DataGridColumn dataField="customerQty" textAlign="center"
+                                       headerText="客供数量">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.purchaseQty}"
+                                               click="viewLog()">
+                                    <fx:Script>
+                                <![CDATA[
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
+
+                                        private function viewLog():void {
+                                            var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                            demandLog.inventory = data;
+                                            demandLog.setFocus();
+
+                                            PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(demandLog);
+                                        }
+                                        ]]>
+                            </fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                    <mx:DataGridColumn dataField="recQty" textAlign="center"
+                                       headerText="已收货"/>
+                    <mx:DataGridColumn dataField="qcGoodQty" textAlign="center"
+                                       headerText="品检合格"/>
+                    <mx:DataGridColumn dataField="inQty" textAlign="center"
+                                       headerText="已入库"/>
+                    <mx:DataGridColumn dataField="returnQty" textAlign="center"
+                                       headerText="已退货"/>
+                    <mx:DataGridColumn dataField="lastDeliveryDate" textAlign="center"
+                                       headerText="最晚交期"/>
+                    <mx:DataGridColumn dataField="stockQty" textAlign="center"
+                                       headerText="即时库存">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.stockQty}"
+                                               click="viewStock()">
+                                    <fx:Script>
+                                <![CDATA[
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
+
+                                        private function viewStock():void {
+                                            var demandLog:InventoryStockLog = new InventoryStockLog();
+                                            demandLog.inventory = data;
+                                            demandLog.setFocus();
+
+                                            PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(demandLog);
+                                        }
+                                        ]]>
+                            </fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                    <mx:DataGridColumn dataField="usableQty" textAlign="center"
+                                       headerText="可用量">
+                        <mx:itemRenderer>
+                            <fx:Component>
+                                <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                               label="{data.usableQty}"
+                                               click="viewDemand()">
+                                    <fx:Script>
+                                <![CDATA[
+                                        import mx.core.Application;
+                                        import mx.managers.PopUpManager;
+
+                                        private function viewDemand():void {
+                                            var orderDemand:InventoryOrderDemand = new InventoryOrderDemand();
+                                            orderDemand.inventory = data;
+                                            orderDemand.setFocus();
+
+                                            PopUpManager.addPopUp(orderDemand, Application.application as DisplayObject, true);
+                                            PopUpManager.centerPopUp(orderDemand);
+                                        }
+                                        ]]>
+                            </fx:Script>
+                                </mx:LinkButton>
+                            </fx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGridColumn>
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:VBox>
+    </mx:TabNavigator>
     <mx:ControlBar>
         <mx:Label text="按货品搜索:"/>
         <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
+        <mx:LinkButton label="增加需求" click="addBomDemand()"/>
+        <mx:LinkButton label="减少需求" click="subBomDemand()"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
-        import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
 
         import mx.collections.ArrayCollection;
-
         import mx.core.FlexGlobals;
-        import mx.formatters.DateFormatter;
         import mx.managers.PopUpManager;
         import mx.rpc.events.ResultEvent;
         import mx.utils.ObjectUtil;
@@ -167,30 +463,50 @@
         [Bindable]
         private var dataList:ArrayCollection;
 
+        [Bindable]
+        private var purDataList:ArrayCollection;
+
+        [Bindable]
+        private var manDataList:ArrayCollection;
+
+        [Bindable]
+        private var outDataList:ArrayCollection;
+
+        [Bindable]
+        private var cusDataList:ArrayCollection;
+
+        private function getListByAttributeCode(attributeCode:String):ArrayCollection {
+            var list:ArrayCollection = new ArrayCollection();
+            for each(var data in dataList) {
+                if (data.attributeCode == attributeCode) {
+                    list.addItem(data);
+                }
+            }
+            return list;
+        }
+
         private function loadData():void {
             RemoteObjectUtils.execute("demandService", "findDemandResults", function (event:ResultEvent) {
                 dataList = event.result as ArrayCollection;
-                grid.dataProvider = dataList;
-                filterResult();
+                purDataList = getListByAttributeCode('0');
+                manDataList = getListByAttributeCode('1');
+                outDataList = getListByAttributeCode('2');
+                cusDataList = getListByAttributeCode('4');
             }, selItem.entCode, selItem.businessKey)
 
         }
 
-        private function dateLabelFun(item:Object, column:DataGridColumn):String {
-            var df:DateFormatter = new DateFormatter();
-            df.formatString = "YYYY-MM-DD JJ:NN:SS";
-            return df.format(item.createTime);
-        }
-
-        private function dateLabelFun2(item:Object, column:DataGridColumn):String {
-            var df:DateFormatter = new DateFormatter();
-            df.formatString = "YYYY-MM-DD JJ:NN:SS";
-            return df.format(item.updateTime);
-        }
-
-        private function indexNumLabelFun(item:Object, column:DataGridColumn):String {
-            var indexNum:int = (grid.dataProvider.getItemIndex(item) + 1);
-            return indexNum.toString();
+        private function get grid():DataGrid {
+            if (tabNavigator.selectedIndex == 1) {
+                return purGrid;
+            } else if (tabNavigator.selectedIndex == 2) {
+                return manGrid;
+            } else if (tabNavigator.selectedIndex == 3) {
+                return outGrid;
+            } else if (tabNavigator.selectedIndex == 4) {
+                return cusGrid;
+            }
+            return null;
         }
 
         private function view():void {
@@ -198,7 +514,7 @@
                 return;
             }
             var popUp:DetailTitleWindow = new DetailTitleWindow();
-            popUp.output = JSON.stringify(grid.selectedItem,null,"  ");
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
             popUp.setFocus();
             PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
             PopUpManager.centerPopUp(popUp)
@@ -208,18 +524,60 @@
 
         private function filterResult():void {
             if (!searchKey.text) {
-                grid.dataProvider = dataList;
+                purGrid.dataProvider = purDataList;
+                manGrid.dataProvider = manDataList;
+                outGrid.dataProvider = outDataList;
+                cusGrid.dataProvider = cusDataList;
                 return;
             }
-            var tempSearchList:ArrayCollection = new ArrayCollection;
+            var tempPurSearchList:ArrayCollection = new ArrayCollection;
+            var tempManSearchList:ArrayCollection = new ArrayCollection;
+            var tempOutSearchList:ArrayCollection = new ArrayCollection;
+            var tempCusSearchList:ArrayCollection = new ArrayCollection;
 
             for each (var fi:Object in dataList) {
                 if (fi.inventoryCode.indexOf(searchKey.text) != -1 || fi.inventoryName.indexOf(searchKey.text) != -1) {
-                    tempSearchList.addItem(ObjectUtil.clone(fi));
+                    if (fi.attributeCode == '0') {
+                        tempPurSearchList.addItem(ObjectUtil.clone(fi));
+                    } else if (fi.attributeCode == '1') {
+                        tempManSearchList.addItem(ObjectUtil.clone(fi));
+                    } else if (fi.attributeCode == '2') {
+                        tempOutSearchList.addItem(ObjectUtil.clone(fi));
+                    } else if (fi.attributeCode == '4') {
+                        tempCusSearchList.addItem(ObjectUtil.clone(fi));
+                    }
                 }
             }
-            grid.dataProvider = tempSearchList;
+            purGrid.dataProvider = tempPurSearchList;
+            manGrid.dataProvider = tempManSearchList;
+            outGrid.dataProvider = tempOutSearchList;
+            cusGrid.dataProvider = tempCusSearchList;
         }
+
+        private function addBomDemand():void {
+            if (bom.grid.selectedIndex == -1) {
+                return;
+            }
+            var adw:AddDemandWindow = new AddDemandWindow();
+            adw.bomItem = bom.grid.selectedItem;
+            adw.entCode = bom.inventory.entCode;
+            adw.setFocus();
+            PopUpManager.addPopUp(adw, DisplayObject(FlexGlobals.topLevelApplication), true);
+            PopUpManager.centerPopUp(adw);
+        }
+
+        private function subBomDemand():void {
+            if (bom.grid.selectedIndex == -1) {
+                return;
+            }
+            var adw:SubDemandWindow = new SubDemandWindow();
+            adw.bomItem = bom.grid.selectedItem;
+            adw.entCode = bom.inventory.entCode;
+            adw.setFocus();
+            PopUpManager.addPopUp(adw, DisplayObject(FlexGlobals.topLevelApplication), true);
+            PopUpManager.centerPopUp(adw);
+        }
+
         ]]>
     </fx:Script>
 </mx:TitleWindow>

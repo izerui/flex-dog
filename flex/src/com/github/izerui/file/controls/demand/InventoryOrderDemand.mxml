@@ -17,33 +17,8 @@
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
                                width="40"/>
-            <mx:DataGridColumn dataField="bomCode" textAlign="center"
-                               headerText="BOM编号">
-                <mx:itemRenderer>
-                    <fx:Component>
-                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7" label="{data.bomCode}"
-                                       click="viewBom()">
-                            <fx:Script>
-                                <![CDATA[
-                                import mx.core.Application;
-                                import mx.managers.PopUpManager;
-
-                                private function viewBom():void {
-                                    var bomList:BomList = new BomList();
-                                    bomList.inventory = data;
-                                    bomList.setFocus();
-
-                                    PopUpManager.addPopUp(bomList, Application.application as DisplayObject, true);
-                                    PopUpManager.centerPopUp(bomList);
-                                }
-                                ]]>
-                            </fx:Script>
-                        </mx:LinkButton>
-                    </fx:Component>
-                </mx:itemRenderer>
-            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="businessKey" width="260" textAlign="center"
-                               headerText="业务主键">
+                               headerText="进程">
                 <mx:itemRenderer>
                     <fx:Component>
                         <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7" label="{data.businessKey}"
@@ -73,6 +48,8 @@
                                headerText="订单类型"/>
             <mx:DataGridColumn dataField="attributeName" textAlign="center"
                                headerText="货品属性"/>
+            <mx:DataGridColumn dataField="unitName" textAlign="center"
+                               headerText="单位"/>
             <mx:DataGridColumn dataField="demandQty" textAlign="center"
                                headerText="需求量">
                 <mx:itemRenderer>
@@ -126,7 +103,7 @@
                 </mx:itemRenderer>
             </mx:DataGridColumn>
             <mx:DataGridColumn dataField="createTime" textAlign="center"
-                               labelFunction="dateLabelFun"
+                               labelFunction="dateLabelFun" width="130"
                                headerText="创建时间"/>
             <mx:DataGridColumn dataField="updateTime" textAlign="center"
                                labelFunction="dateLabelFun2"

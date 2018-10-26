@@ -176,13 +176,6 @@ public class DemandService {
         valueMap.set("pageSize", pageSize);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
         Map map = restTemplate.postForObject("http://mrp-api/v3/inventory/demands/history", httpEntity, Map.class);
-        List<Map> contents = (List<Map>) map.get("content");
-        for (Map content : contents) {
-            BusinessInventoryVo business = businessClient.getBusiness(entCode, (String) content.get("businessKey"));
-            if (business.isMade() || business.isOutsourcing()) {
-                content.put("bomId", business.getBomId());
-            }
-        }
         return map;
     }
 

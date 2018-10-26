@@ -17,7 +17,7 @@
                                labelFunction="indexNumLabelFun"
                                width="40"/>
             <mx:DataGridColumn dataField="businessKey" width="250" textAlign="center"
-                               headerText="业务主键">
+                               headerText="进程">
                 <mx:itemRenderer>
                     <fx:Component>
                         <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7" label="{data.businessKey}"

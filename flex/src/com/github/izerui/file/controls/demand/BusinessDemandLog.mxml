@@ -141,7 +141,7 @@
                         <mx:itemRenderer>
                             <fx:Component>
                                 <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                               label="{data.purchaseQty}"
+                                               label="{data.productQuantity}"
                                                click="viewLog()">
                                     <fx:Script>
                                 <![CDATA[
@@ -250,7 +250,7 @@
                         <mx:itemRenderer>
                             <fx:Component>
                                 <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                               label="{data.purchaseQty}"
+                                               label="{data.outsourceQty}"
                                                click="viewLog()">
                                     <fx:Script>
                                 <![CDATA[
@@ -354,7 +354,7 @@
                         <mx:itemRenderer>
                             <fx:Component>
                                 <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
-                                               label="{data.purchaseQty}"
+                                               label="{data.customerQty}"
                                                click="viewLog()">
                                     <fx:Script>
                                 <![CDATA[

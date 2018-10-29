@@ -40,8 +40,8 @@
     <mx:ControlBar>
         <mx:Label text="按货品搜索:"/>
         <components:SearchInput id="searchKey" width="200" textChange="filterResult()"/>
-        <mx:LinkButton label="增加需求" click="addBomDemand()" visible="{tabNavigator.selectedIndex == 0}"/>
-        <mx:LinkButton label="减少需求" click="subBomDemand()" visible="{tabNavigator.selectedIndex == 0}"/>
+        <mx:LinkButton label="增加净需" click="addBomDemand()" visible="{tabNavigator.selectedIndex == 0}"/>
+        <mx:LinkButton label="减少净需" click="subBomDemand()" visible="{tabNavigator.selectedIndex == 0}"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
         import com.github.izerui.file.utils.RemoteObjectUtils;

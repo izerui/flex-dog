@@ -7,7 +7,7 @@
                 width="{this.parentApplication.width - 100}"
                 height="{this.parentApplication.height - 100}"
                 close="PopUpManager.removePopUp(this);"
-                title="货品: {inventory.inventoryCode} {inventory.inventoryName} 需求日志记录"
+                title="{inventory.inventoryCode} {inventory.businessKey ? '在订单:'+inventory.businessDocNo+'下的' : '全部'}需求日志"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"

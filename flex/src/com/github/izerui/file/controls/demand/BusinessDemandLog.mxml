@@ -8,7 +8,7 @@
                 width="{this.parentApplication.width - 100}"
                 height="{this.parentApplication.height - 100}"
                 close="PopUpManager.removePopUp(this);"
-                title="订单: {selItem.businessKey} 现在的物料进程"
+                title="订单: {selItem.businessKey} 的进程"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
 
     <mx:TabNavigator id="tabNavigator" width="100%" height="100%" selectedIndex="1">

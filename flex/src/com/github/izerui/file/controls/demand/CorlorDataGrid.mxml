@@ -165,7 +165,8 @@
         <mx:DataGridColumn dataField="lastDeliveryDate" textAlign="center" visible="{attributeCode == '4'}"
                            headerText="最晚交期"/>
 
-
+        <mx:DataGridColumn dataField="purgeQty" textAlign="center"
+                           headerText="未完成"/>
         <mx:DataGridColumn dataField="stockQty" textAlign="center"
                            headerText="即时库存">
             <mx:itemRenderer>
@@ -223,8 +224,6 @@
         <![CDATA[
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
 
-        import flatspark.utils.ColorUtils;
-
         import mx.collections.ArrayCollection;
         import mx.core.FlexGlobals;
         import mx.managers.PopUpManager;
@@ -235,7 +234,7 @@
         public var _dataList:ArrayCollection;
 
         [Bindable]
-        public function set dataList(dataList:ArrayCollection):void{
+        public function set dataList(dataList:ArrayCollection):void {
             var list:ArrayCollection = new ArrayCollection();
             for each(var data in dataList) {
                 if (data.attributeCode == attributeCode) {
@@ -246,7 +245,7 @@
         }
 
         [Bindable]
-        public function get dataList():ArrayCollection{
+        public function get dataList():ArrayCollection {
             return _dataList;
         }
 

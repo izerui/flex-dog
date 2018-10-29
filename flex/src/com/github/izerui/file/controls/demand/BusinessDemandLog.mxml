@@ -90,7 +90,7 @@
             }
             var tempSearchList:ArrayCollection = new ArrayCollection;
 
-            for each (var fi:Object in dataList) {
+            for each (var fi:Object in lastDataList) {
                 if (fi.inventoryCode.indexOf(searchKey.text) != -1 || fi.inventoryName.indexOf(searchKey.text) != -1) {
                     tempSearchList.addItem(ObjectUtil.clone(fi));
                 }

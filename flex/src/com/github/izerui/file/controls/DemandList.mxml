@@ -5,9 +5,10 @@
 
 
     <mx:HBox>
-        <mx:Label text="选择企业: "></mx:Label>
+        <mx:Label text="企业: "></mx:Label>
         <components:SearchBox id="box" dataProvider="{ents}" itemSelected="itemSelectedHandler(event)" width="200"/>
         <!--<mx:ComboBox id="box" labelField="name" rowCount="20"/>-->
+        <mx:Label text="货品: "></mx:Label>
         <mx:TextInput id="input" width="200" enter="page.number = 0; loadData()"/>
         <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查询" click="page.number = 0; loadData()"/>
     </mx:HBox>

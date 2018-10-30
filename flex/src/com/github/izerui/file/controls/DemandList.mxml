@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
-         xmlns:mx="library://ns.adobe.com/flex/mx"
+         xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="com.github.izerui.file.components.*"
          creationComplete="loadEnts()">
 
 
     <mx:HBox>
-        <mx:ComboBox id="box" labelField="name" rowCount="20"/>
+        <mx:Label text="选择企业: "></mx:Label>
+        <components:SearchBox id="box" dataProvider="{ents}" itemSelected="itemSelectedHandler(event)" width="200"/>
+        <!--<mx:ComboBox id="box" labelField="name" rowCount="20"/>-->
         <mx:TextInput id="input" width="200" enter="page.number = 0; loadData()"/>
         <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查询" click="page.number = 0; loadData()"/>
     </mx:HBox>
@@ -153,6 +155,7 @@
         <mx:Label text="共 {page.totalElements} 条记录"/>
     </mx:ControlBar>
     <fx:Script><![CDATA[
+        import com.github.izerui.file.components.SearchBoxEvent;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;
 
@@ -172,18 +175,26 @@
             content: []
         };
 
+        [Bindable]
+        protected var ents:ArrayCollection;
+
+        [Bindable]
+        private var entCode:String;
+        [Bindable]
+        private var entName:String = '';
+
         private function loadEnts():void {
             RemoteObjectUtils.execute("demandService", "getEntList", function (event:ResultEvent) {
-                box.dataProvider = event.result;
+                ents = event.result as ArrayCollection;
             });
-
         }
 
         private function loadData():void {
-            RemoteObjectUtils.execute("demandService", "inventoryDemands", function (event:ResultEvent) {
-                page = event.result;
-            }, box.selectedItem.code, page.number, page.size, input.text)
-
+            if (entCode) {
+                RemoteObjectUtils.execute("demandService", "inventoryDemands", function (event:ResultEvent) {
+                    page = event.result;
+                }, entCode, page.number, page.size, input.text)
+            }
         }
 
         private function dateLabelFun(item:Object, column:DataGridColumn):String {
@@ -242,6 +253,11 @@
         }
 
         private function itemRollOut(event:ListEvent):void {
+        }
+
+        private function itemSelectedHandler(event:SearchBoxEvent):void {
+            entCode = event.item.code;
+            entName = event.item.name;
         }
         ]]>
     </fx:Script>

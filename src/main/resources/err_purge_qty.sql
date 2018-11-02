@@ -48,11 +48,13 @@ LEFT JOIN(
 	GROUP BY
 		ent_code ,
 		business_key ,
-		inventory_id
+		inventory_id,
+		attribute_code
 ) AS c USING(
 	ent_code ,
 	business_key ,
-	inventory_id
+	inventory_id ,
+	attribute_code
 )
 WHERE
 	d.purge_qty <> 0

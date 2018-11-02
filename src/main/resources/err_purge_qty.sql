@@ -17,6 +17,7 @@ LEFT JOIN(
 		ent_code ,
 		business_key ,
 		inventory_id ,
+		attribute_code,
 		sum(purge_qty) AS purge_qty
 	FROM
 		(
@@ -24,11 +25,6 @@ LEFT JOIN(
 				*
 			FROM
 				purchase.demand
-			UNION
-				SELECT
-					*
-				FROM
-					purchase.demand_hh
 				UNION
 					SELECT
 						*
@@ -62,4 +58,4 @@ AND(
 	c.purge_qty IS NULL
 	OR d.purge_qty <> c.purge_qty
 )
-and ent_code = ?
+and ent_code = ? order by d.attribute_code

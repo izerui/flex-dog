@@ -144,7 +144,7 @@ public class SearchBox extends UIComponent {
 
     private function searchName(item:Object):Boolean
     {
-        return item.name.search(textInput.text) != -1;
+        return item.name.search(textInput.text) != -1 || item.code.search(textInput.text) != -1;
     }
 
 }

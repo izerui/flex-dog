@@ -254,7 +254,10 @@
             var tempSearchList:ArrayCollection = new ArrayCollection;
 
             for each (var fi:Object in page.content) {
-                if (fi.businessKey.indexOf(searchKey.text) != -1 || fi.businessDocNo.indexOf(searchKey.text) != -1) {
+
+                if (fi.businessKey.search(searchKey.text) != -1
+                        || fi.businessDocNo.search(searchKey.text) != -1
+                        || fi.remark.search(searchKey.text) != -1) {
                     tempSearchList.addItem(ObjectUtil.clone(fi));
                 }
             }

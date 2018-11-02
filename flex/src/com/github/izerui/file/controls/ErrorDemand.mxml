@@ -83,6 +83,7 @@
         </mx:columns>
     </mx:DataGrid>
     <fx:Script><![CDATA[
+        import com.github.izerui.file.components.SearchBoxEvent;
         import com.github.izerui.file.controls.demand.UpdateDemandWindow;
         import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
         import com.github.izerui.file.utils.RemoteObjectUtils;

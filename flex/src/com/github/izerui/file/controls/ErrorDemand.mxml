@@ -113,9 +113,11 @@
         }
 
         private function loadData():void {
-            RemoteObjectUtils.execute("demandService", "findErrorDemandInventories", function (event:ResultEvent) {
-                dataList = event.result as ArrayCollection;
-            }, box.selectedItem.code)
+            if (entCode) {
+                RemoteObjectUtils.execute("demandService", "findErrorDemandInventories", function (event:ResultEvent) {
+                    dataList = event.result as ArrayCollection;
+                }, entCode)
+            }
 
         }
 

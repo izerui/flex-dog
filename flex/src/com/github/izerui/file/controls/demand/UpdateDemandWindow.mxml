@@ -6,9 +6,11 @@
                 layout="vertical"
                 showCloseButton="true"
                 close="PopUpManager.removePopUp(this);"
+                creationComplete="init()"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
     <fx:Script>
         <![CDATA[
+        import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.controls.titlewin.UserWindow;
         import com.github.izerui.file.event.SelUserEvent;
         import com.github.izerui.file.utils.RemoteObjectUtils;
@@ -24,6 +26,9 @@
         [Bindable]
         public var demandItem:Object;
 
+        [Bindable]
+        public var publishers:ArrayCollection;
+
         private function updateQty():void {
             if (!code.text) {
                 return;
@@ -35,7 +40,7 @@
             RemoteObjectUtils.execute("demandService", "updateDemand", function (event:ResultEvent) {
                         close();
                     }
-                    , "13911523134"
+                    , box.selectedItem.phone
                     , code.text
                     , demandItem.entCode
                     , userCode
@@ -50,7 +55,7 @@
 
         private function sendSms():void {
             RemoteObjectUtils.execute("demandService", "sendUpdateDemandCaptcha", function (event:ResultEvent) {
-            }, "13911523134");
+            }, box.selectedItem.phone);
         }
 
         private function close():void {
@@ -79,6 +84,17 @@
                     return;
                 }
             }
+        }
+
+        private function init():void {
+            RemoteObjectUtils.execute("smsService", "getPublishers", function (event:ResultEvent) {
+                LoaderManager.hideLoading();
+                publishers = ArrayCollection(event.result);
+                publishers.filterFunction = function (item:Object) {
+                    return item.name.search('陈翔')!=-1 || item.name.search('刘玉华') != -1;
+                };
+                publishers.refresh();
+            });
         }
         ]]>
     </fx:Script>
@@ -112,6 +128,9 @@
         </mx:FormItem>
         <mx:FormItem label="操作人">
             <mx:TextInput id="userName" editable="false" click="userCode_clickHandler(event)"/>
+        </mx:FormItem>
+        <mx:FormItem label="发送验证码">
+            <mx:ComboBox id="box" dataProvider="{publishers}" labelField="name"/>
         </mx:FormItem>
         <mx:FormItem label="验证码">
             <mx:TextInput id="code"/>

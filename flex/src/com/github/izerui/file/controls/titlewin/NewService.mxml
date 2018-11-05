@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
                 xmlns:mx="library://ns.adobe.com/flex/mx"
-                width="400" height="280"
+                width="400" height="320"
                 title="新建发布服务"
                 layout="vertical"
                 showCloseButton="true"
                 close="close()"
+                creationComplete="init()"
                 keyDown="if(event.charCode == Keyboard.ESCAPE) close();">
     <fx:Script>
         <![CDATA[
+        import com.github.izerui.file.components.loading.LoaderManager;
         import com.github.izerui.file.utils.RemoteObjectUtils;
         import com.github.izerui.file.vo.FileItem;
 
@@ -17,6 +19,9 @@
 
         [Bindable]
         public var serverDataList:ArrayCollection;
+
+        [Bindable]
+        public var publishers:ArrayCollection;
 
         private function confirm():void {
             if (server.selectedIndex == -1) {
@@ -61,14 +66,25 @@
                     }else{
                         queding.enabled = false;
                     }
-                }, "13911523134",captcha.text);
+                }, box.selectedItem.phone,captcha.text);
             }
         }
 
         private function captchaButton_clickHandler(event:MouseEvent):void {
             captchaButton.enabled = false;
             RemoteObjectUtils.execute("fileService", "sendCaptcha", function (data:ResultEvent) {
-            },"13911523134");
+            },box.selectedItem.phone);
+        }
+
+        private function init():void {
+            RemoteObjectUtils.execute("smsService", "getPublishers", function (event:ResultEvent) {
+                LoaderManager.hideLoading();
+                publishers = ArrayCollection(event.result);
+                publishers.filterFunction = function (item:Object) {
+                    return item.name.search('陈翔')!=-1 || item.name.search('刘玉华') != -1;
+                };
+                publishers.refresh();
+            });
         }
         ]]>
     </fx:Script>
@@ -95,6 +111,9 @@
                     </mx:ArrayCollection>
                 </mx:dataProvider>
             </mx:ComboBox>
+        </mx:FormItem>
+        <mx:FormItem label="发送验证码">
+            <mx:ComboBox id="box" dataProvider="{publishers}" labelField="name"/>
         </mx:FormItem>
         <mx:FormItem label="验证码">
             <mx:TextInput id="captcha" width="100" change="captcha_changeHandler(event)"/>

@@ -80,12 +80,60 @@
                                labelFunction="demandChangeLabelFun"
                                headerText="需求改变量"/>
             <mx:DataGridColumn dataField="demandQty" textAlign="center" labelFunction="demandLabelFun"
-                               headerText="单需/总需"/>
+                               headerText="单需/总需">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                       label="{data.demandQty + ' / ' + data.totalDemandQty}"
+                                       click="viewLog()">
+                            <fx:Script>
+                                <![CDATA[
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewLog():void {
+                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                    demandLog.inventory = data;
+                                    demandLog.setFocus();
+
+                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(demandLog);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:LinkButton>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="changePurgeQty" textAlign="center" color="#b77219"
                                labelFunction="purgeChangeLabelFun"
                                headerText="净需改变量"/>
             <mx:DataGridColumn dataField="purgeQty" textAlign="center" labelFunction="purgeLabelFun"
-                               headerText="单净需/总净需"/>
+                               headerText="单净需/总净需">
+                <mx:itemRenderer>
+                    <fx:Component>
+                        <mx:LinkButton buttonMode="true" useHandCursor="true" color="#6c7dc7"
+                                       label="{data.purgeQty + ' / ' + data.totalPurgeQty}"
+                                       click="viewLog()">
+                            <fx:Script>
+                                <![CDATA[
+                                import mx.core.Application;
+                                import mx.managers.PopUpManager;
+
+                                private function viewLog():void {
+                                    var demandLog:InventoryDemandLog = new InventoryDemandLog();
+                                    demandLog.inventory = data;
+                                    demandLog.setFocus();
+
+                                    PopUpManager.addPopUp(demandLog, Application.application as DisplayObject, true);
+                                    PopUpManager.centerPopUp(demandLog);
+                                }
+                                ]]>
+                            </fx:Script>
+                        </mx:LinkButton>
+                    </fx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
             <mx:DataGridColumn dataField="stockQty" textAlign="center"
                                headerText="库存量">
                 <mx:itemRenderer>

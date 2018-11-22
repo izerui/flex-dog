@@ -141,11 +141,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-client</artifactId>
         </dependency>
-        <!-- 将配置更新的消息通知给各节点,重新加载配置 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bus-kafka</artifactId>
-        </dependency>
         <!-- 服务注册发现 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

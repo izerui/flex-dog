@@ -47,6 +47,8 @@ public class FileEntity implements Serializable{
     private String appId;
     @Transient
     private String instanceId;
+    @Transient
+    private String pid;
 
     public String getUploadTimeStr(){
         if(uploadTime == null){

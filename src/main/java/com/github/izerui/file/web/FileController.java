@@ -3,7 +3,6 @@ package com.github.izerui.file.web;
 import com.github.izerui.file.entity.FileEntity;
 import com.github.izerui.file.service.FileService;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ConfigurationProperties

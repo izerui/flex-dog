@@ -17,6 +17,7 @@ import com.qiniu.util.Auth;
 import eureka.client.EurekaClient;
 import eureka.client.EurekaClientImpl;
 import eureka.client.EurekaInstanceStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
@@ -24,7 +25,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -48,14 +48,13 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.*;
 
+@Slf4j
 @RemotingDestination
 @Service("fileService")
 @ConfigurationProperties
 @Transactional
 @EnableConfigurationProperties(FileConfig.class)
 public class FileService {
-
-    private static Logger log = Logger.getLogger(FileService.class);
 
 
     @Value("${root-path}")

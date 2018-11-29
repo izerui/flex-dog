@@ -20,6 +20,7 @@ import eureka.client.EurekaInstanceStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -225,6 +226,7 @@ public class FileService {
         DefaultExecutor exec = new DefaultExecutor();
 
         exec.setExitValues(null);
+        exec.setWatchdog(new ExecuteWatchdog(60000));
 
         PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
 

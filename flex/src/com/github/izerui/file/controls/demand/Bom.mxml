@@ -9,6 +9,7 @@
             </mx:dataProvider>
 
             <mx:columns>
+                <mx:AdvancedDataGridColumn dataField="bomItemChangeStatus" headerText="变更状态"/>
                 <mx:AdvancedDataGridColumn dataField="inventoryCode" headerText="物料编码" width="250"/>
                 <mx:AdvancedDataGridColumn dataField="inventoryName" headerText="物料名称" width="250"/>
                 <mx:AdvancedDataGridColumn dataField="inventorySpec" headerText="规格型号"/>

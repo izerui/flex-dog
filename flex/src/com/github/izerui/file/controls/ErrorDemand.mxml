@@ -178,9 +178,9 @@
             var udw:UpdateDemandWindow = new UpdateDemandWindow();
             udw.demandItem = grid.selectedItem;
             udw.setFocus();
-            udw.addEventListener("DataChange", function (event:Event) {
-                loadData();
-            });
+//            udw.addEventListener("DataChange", function (event:Event) {
+//                loadData();
+//            });
             PopUpManager.addPopUp(udw, DisplayObject(FlexGlobals.topLevelApplication), true);
             PopUpManager.centerPopUp(udw);
         }

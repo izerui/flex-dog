@@ -80,9 +80,9 @@
     <orderEntry type="library" name="Maven: com.yj2025:finance-global:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:8.0.13" level="project" />
     <orderEntry type="library" name="Maven: com.github.izerui:eureka-client:1.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:development-remote:4.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:development-remote:4.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:financial-global:1.3.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:development-document:4.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:development-document:4.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:esms-autoconfig:1.2.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-redis:1.4.7.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-redis:2.1.2.RELEASE" level="project" />

@@ -40,8 +40,8 @@ public class OnlineService {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private StService stService;
+//    @Autowired
+//    private StService stService;
 
     private List<Record> userRecordListLimit100 = new ArrayList<>();
 
@@ -98,7 +98,7 @@ public class OnlineService {
             userRecordListLimit100.remove(0);
         }
         userRecordListLimit100.add(record);
-        stService.logCount(record);
+//        stService.logCount(record);
     }
 
     public List<Record> getUserRecordListLimit100() {

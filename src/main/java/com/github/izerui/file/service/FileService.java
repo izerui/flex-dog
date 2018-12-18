@@ -68,10 +68,6 @@ public class FileService {
     private FileConfig fileConfig;
     @Autowired
     private MchuanSmsService mchuanSmsService;
-    //    @Autowired
-//    private DiscoveryClient discoveryClient;
-    @Autowired
-    private com.netflix.discovery.EurekaClient eurekaClient;
     @Autowired
     private UcloudService ucloudService;
     @Autowired
@@ -168,7 +164,8 @@ public class FileService {
             files = fileRepository.findByServerOrderByUploadTimeDesc(server);
         }
 
-        List<Application> registeredApplications = eurekaClient.getApplications().getRegisteredApplications();
+        EurekaClient eurekaClient = new EurekaClientImpl(eurekaServiceUrl);
+        List<Application> registeredApplications = eurekaClient.applications().getRegisteredApplications();
 
         for_each_files:
         for (FileEntity file : files) {

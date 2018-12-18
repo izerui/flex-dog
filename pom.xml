@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.github.izerui</groupId>
             <artifactId>eureka-client</artifactId>
-            <version>1.1.0.RELEASE</version>
+            <version>1.1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.ecworking</groupId>
@@ -244,6 +244,10 @@
         <repository>
             <id>nexus</id>
             <url>http://192.168.1.235:8081/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 

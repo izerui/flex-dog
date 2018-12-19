@@ -23,9 +23,9 @@
     <!--</mx:DataGrid>-->
     <mx:HBox>
         <mx:CheckBox id="box" label="滚动日志" paddingLeft="20" selected="true"></mx:CheckBox>
-        <mx:Label text="今日访问量: {countMap.logCount}"/>
-        <mx:Label text="今日访问用户数: {countMap.userCount}"/>
-        <mx:Label text="今日访问企业数: {countMap.entCount}"/>
+        <!--<mx:Label text="今日访问量: {countMap.logCount}"/>-->
+        <!--<mx:Label text="今日访问用户数: {countMap.userCount}"/>-->
+        <!--<mx:Label text="今日访问企业数: {countMap.entCount}"/>-->
     </mx:HBox>
     <mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载...&#13;" backgroundColor="black"
                  color="#06b71b"/>
@@ -40,25 +40,25 @@
         [Bindable]
         private var dataList:ArrayCollection;
 
-        [Bindable]
-        private var countMap:Object;
+//        [Bindable]
+//        private var countMap:Object;
 
         private var timer:Timer = new Timer(500, 0);
 
-        private var timer2:Timer = new Timer(3000, 0);
+//        private var timer2:Timer = new Timer(3000, 0);
 
         private function init():void {
             timer.addEventListener(TimerEvent.TIMER, loadData);
-            timer2.addEventListener(TimerEvent.TIMER, loadCountMap);
+//            timer2.addEventListener(TimerEvent.TIMER, loadCountMap);
             timer.start();
-            timer2.start();
+//            timer2.start();
         }
 
-        private function loadCountMap(event:TimerEvent):void {
-            RemoteObjectUtils.execute("stService", "countMap", function (event:ResultEvent):void {
-                countMap = event.result;
-            });
-        }
+//        private function loadCountMap(event:TimerEvent):void {
+//            RemoteObjectUtils.execute("stService", "countMap", function (event:ResultEvent):void {
+//                countMap = event.result;
+//            });
+//        }
 
         private function loadData(event:TimerEvent):void {
             if (box.selected) {

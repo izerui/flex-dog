@@ -11,6 +11,9 @@
         <mx:DataGridColumn width="100" dataField="size"
                            headerText="文件大小"
                            labelFunction="filesize_labelFun"/>
+        <mx:DataGridColumn dataField="owner"
+                           width="100"
+                           headerText="拥有者"/>
         <mx:DataGridColumn width="60" dataField="port"
                            headerText="端口"/>
         <mx:DataGridColumn width="200" dataField="url"

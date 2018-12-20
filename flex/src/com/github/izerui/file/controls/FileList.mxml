@@ -48,15 +48,24 @@
 
 
         protected function filterResult():void {
+//            dataList.filterFunction = function (item:Object) {
+//                if (!searchKey.text) {
+//                    return true;
+//                }
+//                return (item.fileName && item.fileName.indexOf(searchKey.text) != -1) || (item.owner && item.owner.indexOf(searchKey.text) != -1);
+//            };
+//            dataList.refresh();
+
             if (!searchKey.text) {
                 myFileGrid.dataProvider = dataList;
                 return;
             }
             var tempSearchList:ArrayCollection = new ArrayCollection;
 
-            for each (var fi:FileItem in dataList) {
-                if (fi.fileName.indexOf(searchKey.text) != -1) {
-                    tempSearchList.addItem(ObjectUtil.clone(fi));
+            for each (var item:FileItem in dataList) {
+                if ((item.fileName && item.fileName.indexOf(searchKey.text) != -1)
+                        || (item.owner && item.owner.indexOf(searchKey.text) != -1)) {
+                    tempSearchList.addItem(ObjectUtil.clone(item));
                 }
             }
             myFileGrid.dataProvider = tempSearchList;
@@ -118,6 +127,7 @@
                             return;
                         }
                         var deployWin:AlertWindow = new AlertWindow();
+                        deployWin.selectItem = myFileGrid.selectedItem as FileItem;
                         deployWin.addEventListener("successEvent", exec);
                         PopUpManager.addPopUp(deployWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
                         PopUpManager.centerPopUp(deployWin);
@@ -132,6 +142,7 @@
                 case 10:
                     if (myFileGrid.selectedIndex != -1 && myFileGrid.selectedItem.appId && myFileGrid.selectedItem.instanceId) {
                         var deployWin:AlertWindow = new AlertWindow();
+                        deployWin.selectItem = myFileGrid.selectedItem as FileItem;
                         deployWin.addEventListener("successEvent", stopService);
                         PopUpManager.addPopUp(deployWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);
                         PopUpManager.centerPopUp(deployWin);
@@ -140,6 +151,7 @@
                 case 9:
                     if (myFileGrid.selectedIndex != -1 && myFileGrid.selectedItem.appId && myFileGrid.selectedItem.instanceId) {
                         var deployWin:AlertWindow = new AlertWindow();
+                        deployWin.selectItem = myFileGrid.selectedItem as FileItem;
                         deployWin.addEventListener("successEvent", startService);
                         deployWin.setFocus();
                         PopUpManager.addPopUp(deployWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true);

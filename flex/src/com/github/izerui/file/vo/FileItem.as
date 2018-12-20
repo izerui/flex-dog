@@ -9,6 +9,8 @@ public class FileItem {
     public var deployTime:Date;
     //文件名
     public var fileName:String;
+    //拥有者
+    public var owner:String;
     //服务器
     public var server:String;
     //服务器IP地址

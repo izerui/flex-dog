@@ -23,6 +23,8 @@ public class FileEntity implements Serializable{
     private Date deployTime;
     //文件名
     private String fileName;
+    //拥有者
+    private String owner;
     //服务器
     private String server;
     //服务器IP地址

@@ -17,14 +17,12 @@ package com.github.izerui.file.components.searchInput
 		
 		public function SearchTextInput()
 		{
-			//TODO: implement function
 			addEventListener(Event.CHANGE,textChangeFun);
 			super();
 		}
 		
 		protected function textChangeFun(event:Event):void
 		{
-			// TODO Auto-generated method stub
 			if(this.text&&this.getChildByName("closeButton")==null){
 				if(!clearButton){
 					clearButton = new Button;

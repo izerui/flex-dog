@@ -1,0 +1,1 @@
+./qshell fput sz-yunji-dev file-dog-exec.jar target/file-dog-exec.jar

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+                xmlns:mx="library://ns.adobe.com/flex/mx"
+                width="500" height="400"
+                title="修改当前需求、净需"
+                layout="vertical"
+                showCloseButton="true"
+                close="PopUpManager.removePopUp(this);"
+                creationComplete="init()"
+                keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
+    <fx:Script>
+        <![CDATA[
+        import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.controls.titlewin.UserWindow;
+        import com.github.izerui.file.event.SelUserEvent;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.controls.Alert;
+
+        import mx.core.FlexGlobals;
+
+        import mx.managers.PopUpManager;
+        import mx.rpc.events.ResultEvent;
+        import mx.utils.UIDUtil;
+
+        [Bindable]
+        public var demandItem:Object;
+
+        [Bindable]
+        public var publishers:ArrayCollection;
+
+        private function updateQty():void {
+            if (!code.text) {
+                return;
+            }
+            if(attributeBox.selectedIndex == -1){
+                Alert.show("请选择属性");
+                return;
+            }
+            RemoteObjectUtils.execute("demandService", "updateDemand", function (event:ResultEvent) {
+                        close();
+                    }
+                    , box.selectedItem.phone
+                    , code.text
+                    , demandItem.entCode
+                    , userCode
+                    , demandItem.businessKey
+                    , UIDUtil.createUID()
+                    , "手动调整前:【单需:" + demandItem.demandQty + " 单净需:" + demandItem.purgeQty + "】"
+                    , demandItem.inventoryId
+                    , attributeBox.selectedItem.code
+                    , demand.value - demandItem.demandQty
+                    , purge.value - demandItem.purgeQty);
+        }
+
+        private function sendSms():void {
+            RemoteObjectUtils.execute("demandService", "sendUpdateDemandCaptcha", function (event:ResultEvent) {
+            }, box.selectedItem.phone);
+        }
+
+        private function close():void {
+            PopUpManager.removePopUp(this);
+            var e:Event = new Event("DataChange", true);
+            this.dispatchEvent(e);
+        }
+
+        private var userCode:String;
+        private function userCode_clickHandler(event:MouseEvent):void {
+            var userWin:UserWindow = new UserWindow();
+            userWin.entCode = demandItem.entCode as String;
+            userWin.addEventListener("selUserEvent",function (ev:SelUserEvent) {
+                userCode = ev.user.code as String;
+                userName.text = ev.user.name as String;
+            });
+            userWin.setFocus();
+            PopUpManager.addPopUp(userWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+            PopUpManager.centerPopUp(userWin)
+        }
+
+        private function initAttributeCode():void {
+            for each(var data in attributeBox.dataProvider) {
+                if(demandItem.attributeCode == data.code){
+                    attributeBox.selectedItem = data;
+                    return;
+                }
+            }
+        }
+
+        private function init():void {
+            RemoteObjectUtils.execute("smsService", "getPublishers", function (event:ResultEvent) {
+                LoaderManager.hideLoading();
+                publishers = ArrayCollection(event.result);
+                publishers.filterFunction = function (item:Object) {
+                    return item.name.search('陈翔')!=-1 || item.name.search('刘玉华') != -1;
+                };
+                publishers.refresh();
+            });
+        }
+        ]]>
+    </fx:Script>
+    <fx:Declarations>
+        <!-- 将非可视元素（例如服务、值对象）放在此处 -->
+    </fx:Declarations>
+    <fx:Metadata>
+        [Event(name="DataChange", type="flash.events.Event")]
+    </fx:Metadata>
+    <mx:Form>
+        <mx:FormItem label="当前单需求">
+            <mx:NumericStepper id="demand" width="200" value="{demandItem.demandQty}" minimum="0"
+                               maximum="{Number.MAX_VALUE}"
+                               stepSize="0.00000001"/>
+        </mx:FormItem>
+        <mx:FormItem label="当前单净需">
+            <mx:NumericStepper id="purge" width="200" value="{demandItem.purgeQty}" minimum="0"
+                               maximum="{Number.MAX_VALUE}"/>
+        </mx:FormItem>
+        <mx:FormItem label="货品属性">
+            <mx:ComboBox id="attributeBox" labelField="name" creationComplete="initAttributeCode()">
+                <mx:dataProvider>
+                    <mx:ArrayCollection>
+                        <fx:Object code="0" name="采购件"/>
+                        <fx:Object code="1" name="自制件"/>
+                        <fx:Object code="2" name="委外件"/>
+                        <fx:Object code="4" name="客供件"/>
+                    </mx:ArrayCollection>
+                </mx:dataProvider>
+            </mx:ComboBox>
+        </mx:FormItem>
+        <mx:FormItem label="操作人">
+            <mx:TextInput id="userName" editable="false" click="userCode_clickHandler(event)"/>
+        </mx:FormItem>
+        <mx:FormItem label="发送验证码">
+            <mx:ComboBox id="box" dataProvider="{publishers}" labelField="name"/>
+        </mx:FormItem>
+        <mx:FormItem label="验证码">
+            <mx:TextInput id="code"/>
+        </mx:FormItem>
+        <mx:FormItem>
+            <mx:Button id="button" label="发送验证码" click="sendSms();button.enabled=false;"/>
+        </mx:FormItem>
+    </mx:Form>
+    <mx:ControlBar horizontalAlign="right">
+        <mx:Button label="确定" click="updateQty()"/>
+    </mx:ControlBar>
+</mx:TitleWindow>

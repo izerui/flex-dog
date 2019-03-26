@@ -43,423 +43,391 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
 package com.github.izerui.file.controls.uploader {
 
-	// Imported Class Definitions
-    import com.github.izerui.file.event.FileUploadEvent;
-    
-    import flash.events.*;
-    import flash.net.FileReference;
-    import flash.net.FileReferenceList;
-    import flash.net.URLRequest;
-    import flash.net.URLRequestMethod;
-    import flash.net.URLVariables;
-    
-    import mx.collections.ArrayCollection;
-    import mx.controls.Alert;
-    import mx.controls.Button;
-    import mx.controls.DataGrid;
-    import mx.controls.ProgressBar;
-    import mx.controls.dataGridClasses.*;
-    import mx.events.CollectionEvent;
-    import mx.resources.ResourceManager;
+// Imported Class Definitions
+import com.github.izerui.file.event.FileUploadEvent;
+import com.github.izerui.file.event.ServerCheckEvent;
+import com.github.izerui.file.utils.RemoteObjectUtils;
 
-    
-    
-    public class MultiFileUpload extends EventDispatcher{
-    
-    	
-    	
-        //UI Vars
-        private var _datagrid:DataGrid;
-        private var _browsebutton:Button;
-        private var _remselbutton:Button;
-        private var _remallbutton:Button;
-        private var _uploadbutton:Button;
-        private var _progressbar:ProgressBar;
-        private var _testButton:Button;
+import flash.events.*;
+import flash.net.FileReference;
+import flash.net.FileReferenceList;
+import flash.net.URLRequest;
+import flash.net.URLRequestMethod;
 
-        //DataGrid Columns
-        private var _nameColumn:DataGridColumn;
-        private var _typeColumn:DataGridColumn;
-        private var _sizeColumn:DataGridColumn;
-        private var _creationDate:DataGridColumn;
-        private var _modificationDate:DataGridColumn;
-        private var _progressColumn:DataGridColumn;
-        private var _columns:Array;
-        
-        //File Reference Vars
-        [Bindable]
-        private var _files:ArrayCollection;
-        private var _fileref:FileReferenceList
-        private var _file:FileReference;
-        private var _uploadURL:URLRequest;
-        private var  _totalbytes:Number;
-        
-        //File Filter vars
-        private var _filefilter:Array;
+import mx.collections.ArrayCollection;
+import mx.controls.Alert;
+import mx.controls.Button;
+import mx.controls.DataGrid;
+import mx.controls.ProgressBar;
+import mx.controls.dataGridClasses.*;
+import mx.core.ClassFactory;
+import mx.events.CollectionEvent;
+import mx.rpc.events.ResultEvent;
 
-        //config vars
-        private var _url:String; // location of the file upload handler can be a relative path or FQDM
-        private var _maxFileSize:Number; //bytes
-        private var _variables:URLVariables; //variables to passed along to the file upload handler on the server.
-        
-        //Constructor    
+public class MultiFileUpload extends EventDispatcher {
+
+
+
+    //UI Vars
+    private var _datagrid:DataGrid;
+    private var _browsebutton:Button;
+    private var _remselbutton:Button;
+    private var _remallbutton:Button;
+    private var _uploadbutton:Button;
+    private var _progressbar:ProgressBar;
+    private var _testButton:Button;
+
+    //DataGrid Columns
+    private var _nameColumn:DataGridColumn;
+    private var _typeColumn:DataGridColumn;
+    private var _sizeColumn:DataGridColumn;
+    private var _columns:Array;
+
+    //File Reference Vars
+    [Bindable]
+    private var _files:ArrayCollection;
+    private var _fileref:FileReferenceList
+    private var _file:FileReference;
+    private var _uploadURL:URLRequest;
+    private var _totalbytes:Number;
+
+    //File Filter vars
+    private var _filefilter:Array;
+
+    //config vars
+    private var _url:String = "upload";
+    public var fileList:ArrayCollection;
+    // location of the file upload handler can be a relative path or FQDM
+
+    //Constructor
 //        private var continueUploadStatus:Boolean = true;
-		
-        public function MultiFileUpload(
-        								dataGrid:DataGrid,
-        								browseButton:Button,
-        								removeAllButton:Button,
-                                        removeSelectedButton:Button,
-                                        uploadButton:Button,
-                                        progressBar:ProgressBar,
-                                        url:String,
-                                        variables:URLVariables,
-                                        maxFileSize:Number,
-                                        filter:Array
-                                        ){
-            _datagrid = dataGrid;
-            _browsebutton = browseButton;
-            _remallbutton = removeAllButton;
-            _remselbutton = removeSelectedButton;            
-            _uploadbutton = uploadButton;
-            _url = url;
-            _progressbar = progressBar;
-            _variables = variables;
-            _maxFileSize = maxFileSize;
-            _filefilter = filter;
-            init();
-        }
-        
-        //Initialize  Component
-        private function init():void{
-	        
-	        // Setup File Array Collection and FileReference
-	        _files = new ArrayCollection();
-	        _fileref = new FileReferenceList;
-	        _file = new FileReference;
-	        
-	        // Set Up Total Byes Var
-	        _totalbytes = 0;
-	        
-	        // Add Event Listeners to UI 
-	        _browsebutton.addEventListener(MouseEvent.CLICK, browseFiles);
-	        _uploadbutton.addEventListener(MouseEvent.CLICK,uploadFiles);
-	        _remallbutton.addEventListener(MouseEvent.CLICK,clearFileCue);
-	        _remselbutton.addEventListener(MouseEvent.CLICK,removeSelectedFileFromCue);
-	        _fileref.addEventListener(Event.SELECT, selectHandler);
-	        _files.addEventListener(CollectionEvent.COLLECTION_CHANGE,popDataGrid);
-	        
-	        // Set Up Progress Bar UI
-	        _progressbar.mode = "manual";
-	        _progressbar.label = "";
-	        
-	        // Set Up UI Buttons;
-	        _uploadbutton.enabled = false;
-	        _remselbutton.enabled = false;
-	        _remallbutton.enabled = false;
-	        
-	        
-	        // Set Up DataGrid UI
-	        _nameColumn = new DataGridColumn;
-	        _typeColumn = new DataGridColumn;
-	        _sizeColumn = new DataGridColumn;
-	            
-	        _nameColumn.dataField = "name";
-	        _nameColumn.headerText= ResourceManager.getInstance().getString("jhaij","filegrid_name_header");
-	        
-	        _typeColumn.dataField = "type";
-	        _typeColumn.headerText = ResourceManager.getInstance().getString("jhaij","filegrid_type_header");
-	        _typeColumn.width = 80;
-	        
-	        _sizeColumn.dataField = "size";
-	        _sizeColumn.headerText = ResourceManager.getInstance().getString("jhaij","filegrid_size_header");
-	        _sizeColumn.labelFunction = bytesToKilobytes as Function;
-	        _sizeColumn.width = 150;
-	        
-	        _columns = new Array(_nameColumn,_typeColumn,_sizeColumn);
-	        _datagrid.columns = _columns
-	        _datagrid.sortableColumns = false;
-	        _datagrid.dataProvider = _files;
-	        _datagrid.dragEnabled = true;
-	        _datagrid.dragMoveEnabled = true;
-	        _datagrid.dropEnabled = true;
-	    	
-	    	// Set Up URLRequest
-	        _uploadURL = new URLRequest;
-	        _uploadURL.url = _url;
-	        
-	        _uploadURL.data = _variables;
-	        _uploadURL.method = URLRequestMethod.POST;  // this can also be set to "GET" depending on your needs 
-	        _uploadURL.contentType = "multipart/form-data";
-	        
-	        
-        }
-        
-        /********************************************************
-        *   PRIVATE METHODS                                     *
-        ********************************************************/
-        
-        
-        //Browse for files
-        private function browseFiles(event:Event):void{        
-                
-                _fileref.browse(_filefilter);
-                
-            }
 
-		//Upload File Cue
-        private function uploadFiles(event:Event):void{
-           
-            if (_files.length > 0){
-                _file = FileReference(_files.getItemAt(0));    
-                _file.addEventListener(Event.OPEN, openHandler);
-                _file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+    public function MultiFileUpload(dataGrid:DataGrid,
+                                    browseButton:Button,
+                                    removeAllButton:Button,
+                                    removeSelectedButton:Button,
+                                    uploadButton:Button,
+                                    progressBar:ProgressBar,
+                                    filter:Array) {
+        _datagrid = dataGrid;
+        _browsebutton = browseButton;
+        _remallbutton = removeAllButton;
+        _remselbutton = removeSelectedButton;
+        _uploadbutton = uploadButton;
+        _progressbar = progressBar;
+        _filefilter = filter;
+        init();
+    }
+
+    //Initialize  Component
+    private function init():void {
+
+        // Setup File Array Collection and FileReference
+        _files = new ArrayCollection();
+        _fileref = new FileReferenceList;
+        _file = new FileReference;
+
+        // Set Up Total Byes Var
+        _totalbytes = 0;
+
+        // Add Event Listeners to UI
+        _browsebutton.addEventListener(MouseEvent.CLICK, browseFiles);
+        _uploadbutton.addEventListener(MouseEvent.CLICK, uploadFiles);
+        _remallbutton.addEventListener(MouseEvent.CLICK, clearFileCue);
+        _remselbutton.addEventListener(MouseEvent.CLICK, removeSelectedFileFromCue);
+        _fileref.addEventListener(Event.SELECT, selectHandler);
+        _files.addEventListener(CollectionEvent.COLLECTION_CHANGE, popDataGrid);
+
+        // Set Up Progress Bar UI
+        _progressbar.mode = "manual";
+        _progressbar.label = "";
+        _progressbar.height = 5;
+
+        // Set Up UI Buttons;
+        _uploadbutton.enabled = false;
+        _remselbutton.enabled = false;
+        _remallbutton.enabled = false;
+
+
+        // Set Up DataGrid UI
+        _nameColumn = new DataGridColumn;
+        _typeColumn = new DataGridColumn;
+        _sizeColumn = new DataGridColumn;
+
+        _nameColumn.dataField = "name";
+        _nameColumn.headerText = "文件名";
+
+        _nameColumn.itemRenderer = new ClassFactory(FileNameRenderer)
+
+        _typeColumn.dataField = "servers";
+        _typeColumn.headerText = "服务器";
+        _typeColumn.width = 200;
+
+        _sizeColumn.dataField = "size";
+        _sizeColumn.headerText = "文件大小(KB)";
+        _sizeColumn.labelFunction = bytesToKilobytes as Function;
+        _sizeColumn.width = 90;
+
+        _columns = new Array(_nameColumn, _sizeColumn, _typeColumn);
+        _datagrid.columns = _columns
+        _datagrid.sortableColumns = false;
+        _datagrid.dataProvider = _files;
+
+        _datagrid.addEventListener("serverChecked", datagrid_serverCheckedHandler);
+//        _datagrid.dragEnabled = true;
+//        _datagrid.dragMoveEnabled = true;
+//        _datagrid.dropEnabled = true;
+
+        // Set Up URLRequest
+        _uploadURL = new URLRequest;
+        _uploadURL.url = _url;
+
+        _uploadURL.method = URLRequestMethod.POST;  // this can also be set to "GET" depending on your needs
+        _uploadURL.contentType = "multipart/form-data";
+
+
+    }
+
+    /********************************************************
+     *   PRIVATE METHODS                                     *
+     ********************************************************/
+
+
+    //Browse for files
+    private function browseFiles(event:Event):void {
+
+        _fileref.browse(_filefilter);
+
+    }
+
+    //Upload File Cue
+    private function uploadFiles(event:Event):void {
+
+        for each(var obj in _files) {
+            if (obj.errMsg) {
+                Alert.show("请移除异常文件,再开始上传.", "错误");
+                return;
+            }
+        }
+
+        if (_files.length > 0) {
+            _file = FileReference(_files.getItemAt(0)["file"]);
+            _file.addEventListener(Event.OPEN, openHandler);
+            _file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
 //                _file.addEventListener(Event.COMPLETE, completeHandler);
-				_file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,successHandler);
-                _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR,securityErrorHandler);
+            _file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, successHandler);
+            _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 //                _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
-                _file.addEventListener(IOErrorEvent.IO_ERROR,ioErrorHandler);
-				
-                _file.upload(_uploadURL);
-                 setupCancelButton(true);
-            }
+            _file.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+
+            _file.upload(_uploadURL, "Filedata");
+            setupCancelButton(true);
         }
-        
-        //Remove Selected File From Cue
-        private function removeSelectedFileFromCue(event:Event):void{
-           
-            if (_datagrid.selectedIndex >= 0){
-            _files.removeItemAt( _datagrid.selectedIndex);
-            }
+    }
+
+    //Remove Selected File From Cue
+    private function removeSelectedFileFromCue(event:Event):void {
+
+        if (_datagrid.selectedIndex >= 0) {
+            _files.removeItemAt(_datagrid.selectedIndex);
         }
+    }
 
 
-		 //Remove all files from the upload cue;
-        private function clearFileCue(event:Event):void{
-       
-            _files.removeAll();
-        }
-		
-		// Cancel Current File Upload
-        private function cancelFileIO(event:Event):void{
-        	
-            _file.cancel();
-            setupCancelButton(false);
-            checkCue();
-            
-        }    
-    
-       
+    //Remove all files from the upload cue;
+    private function clearFileCue(event:Event):void {
+
+        _files.removeAll();
+    }
+
+    // Cancel Current File Upload
+    private function cancelFileIO(event:Event):void {
+
+        _file.cancel();
+        setupCancelButton(false);
+        checkCue();
+
+    }
 
 
-		//label function for the datagird File Size Column
-        private function bytesToKilobytes(data:Object,blank:Object):String {
-            var kilobytes:String;
-            kilobytes = String(Math.round(data.size/ 1024));
-            return kilobytes
-        }
-        
-        
-        // Feed the progress bar a meaningful label
-        private function getByteCount():void{
-	        var i:int;
-	        _totalbytes = 0;
-	            for(i=0;i < _files.length;i++){
-	            _totalbytes +=  _files[i].size;
-	            }
-	        _progressbar.label = ResourceManager.getInstance().getString("jhaij","allfilesnumber")+": "+  _files.length+ " "+ResourceManager.getInstance().getString("jhaij","allfileslength")+": " + Math.round(_totalbytes/1024) + " kb"
-        }        
-        
-        // Checks the files do not exceed maxFileSize | if _maxFileSize == 0 No File Limit Set
-        private function checkFileSize(filesize:Number):Boolean{
-      
-        	var r:Boolean = false;
-        		//if  filesize greater then _maxFileSize
-		        if (filesize > _maxFileSize){
-		        	r = false;
-//		        	trace("false");
-		       	 }else if (filesize <= _maxFileSize){
-		        	r = true;
-//		        	trace("true");
-	        	}
-	        	
-	        	if (_maxFileSize == 0){
-	        	r = true;
-	        	}
-	   	
-        	return r;
-        }
-        
-        // restores progress bar back to normal
-        private function resetProgressBar():void{
-        
-                  _progressbar.label = "";
-                 _progressbar.maximum = 0;
-                 _progressbar.minimum = 0;
-        }
-        
-        // reset form item elements
-        private function resetForm():void{
+    //label function for the datagird File Size Column
+    private function bytesToKilobytes(data:Object, blank:Object):String {
+        var kilobytes:String;
+        kilobytes = String(Math.round(data.size / 1024));
+        return kilobytes
+    }
+
+
+    // restores progress bar back to normal
+    private function resetProgressBar():void {
+
+        _progressbar.label = "";
+        _progressbar.maximum = 0;
+        _progressbar.minimum = 0;
+    }
+
+    // reset form item elements
+    private function resetForm():void {
+        _uploadbutton.enabled = false;
+        _uploadbutton.addEventListener(MouseEvent.CLICK, uploadFiles);
+        _uploadbutton.label = "传送";
+        _progressbar.maximum = 0;
+        _totalbytes = 0;
+        _progressbar.label = "";
+        _remselbutton.enabled = false;
+        _remallbutton.enabled = false;
+        _browsebutton.enabled = true;
+    }
+
+    // whenever the _files arraycollection changes this function is called to make sure the datagrid data jives
+    private function popDataGrid(event:CollectionEvent):void {
+        checkCue();
+    }
+
+    // enable or disable upload and remove controls based on files in the cue;
+    private function checkCue():void {
+        if (_files.length > 0) {
+            _uploadbutton.enabled = true;
+            _remselbutton.enabled = true;
+            _remallbutton.enabled = true;
+        } else {
+            resetProgressBar();
             _uploadbutton.enabled = false;
-            _uploadbutton.addEventListener(MouseEvent.CLICK,uploadFiles);
-            _uploadbutton.label = ResourceManager.getInstance().getString("jhaij","upload_btn_label");
-            _progressbar.maximum = 0;
-            _totalbytes = 0;
-            _progressbar.label = "";
+        }
+    }
+
+    // toggle upload button label and function to trigger file uploading or upload cancelling
+    private function setupCancelButton(x:Boolean):void {
+        if (x == true) {
+//                _uploadbutton.label = "取消";
+            _uploadbutton.enabled = false;
+            _browsebutton.enabled = false;
             _remselbutton.enabled = false;
             _remallbutton.enabled = false;
-            _browsebutton.enabled = true;
-        }
-        
-        // whenever the _files arraycollection changes this function is called to make sure the datagrid data jives
-        private function popDataGrid(event:CollectionEvent):void{                
-            getByteCount();
-            checkCue();
-        }
-        
-       // enable or disable upload and remove controls based on files in the cue;        
-        private function checkCue():void{
-             if (_files.length > 0){
-                _uploadbutton.enabled = true;
-                _remselbutton.enabled = true;
-                _remallbutton.enabled = true;            
-             }else{
-                resetProgressBar();
-                _uploadbutton.enabled = false;     
-             }    
-        }
-
-    	// toggle upload button label and function to trigger file uploading or upload cancelling
-        private function setupCancelButton(x:Boolean):void{
-            if (x == true){
-//                _uploadbutton.label = "取消";
-				_uploadbutton.enabled = false;
-                _browsebutton.enabled = false;
-                _remselbutton.enabled = false;
-                _remallbutton.enabled = false;
 //                _uploadbutton.addEventListener(MouseEvent.CLICK,cancelFileIO);        
-            }else if (x == false){
+        } else if (x == false) {
 //                _uploadbutton.removeEventListener(MouseEvent.CLICK,cancelFileIO);
-                 resetForm();
-            }
+            resetForm();
         }
-        
-
-       /*********************************************************
-       *  File IO Event Handlers                                *
-       *********************************************************/
-      
-        //  called after user selected files form the browse dialouge box.
-        private function selectHandler(event:Event):void {
-            var i:int;
-            var msg:String ="";
-            var dl:Array = [];                          
-	            for (i=0;i < event.currentTarget.fileList.length; i ++){
-	            	if (checkFileSize(event.currentTarget.fileList[i].size)){
-	                _files.addItem(event.currentTarget.fileList[i]);
-	                trace("under size " + event.currentTarget.fileList[i].size);
-	            	}  else {
-	            	dl.push(event.currentTarget.fileList[i]);
-	            	trace(event.currentTarget.fileList[i].name + " too large");
-	            	}
-	            }	            
-	            if (dl.length > 0){
-	            	for (i=0;i<dl.length;i++){
-	            	msg += String(dl[i].name + " "+ResourceManager.getInstance().getString("jhaij","tooLarge")+". \n");
-	            	}
-	            	mx.controls.Alert.show(msg + ResourceManager.getInstance().getString("jhaij","Maximum_file_size")+": " + Math.round(_maxFileSize / 1024) + " kb",ResourceManager.getInstance().getString("jhaij","tooLarge"),4,null).clipContent;
-	            }        
-        }        
-        
-        // called after the file is opened before upload    
-        private function openHandler(event:Event):void{
-            trace('openHandler triggered');
-            _files;
-        }
-        
-        // called during the file upload of each file being uploaded | we use this to feed the progress bar its data
-        private function progressHandler(event:ProgressEvent):void {        
-            _progressbar.setProgress(event.bytesLoaded,event.bytesTotal);
-			if(event.bytesLoaded == event.bytesTotal){
-				_progressbar.label = ResourceManager.getInstance().getString("jhaij","progressbar_label");
-			}else{
-	            _progressbar.label = ResourceManager.getInstance().getString("jhaij","haveUploadTootip")+" " + Math.round(event.bytesTotal / 1024) + " kb "+ResourceManager.getInstance().getString("jhaij","of")+" " + Math.round(event.bytesLoaded / 1024) + " kb " + (_files.length - 1) + " "+ResourceManager.getInstance().getString("jhaij","remaining_files");
-			}
-        }
-
-        // called after a file has been successully uploaded | we use this as well to check if there are any files left to upload and how to handle it
-//        private function completeHandler(event:Event):void{
-//            //trace('completeHanderl triggered');
-//            _files.removeItemAt(0);
-//            if (_files.length > 0){
-//            	_totalbytes = 0;
-//				dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE));
-//                uploadFiles(null);
-//            }else{
-//                setupCancelButton(false);
-//                 _progressbar.label = ResourceManager.getInstance().getString("jhaij","uploadComplete");
-//                 var uploadCompleted:Event = new Event(Event.COMPLETE);
-//                dispatchEvent(uploadCompleted);
-//            }
-//        }
-		
-        // called after a file has been successully uploaded | we use this as well to check if there are any files left to upload and how to handle it
-		private function successHandler(event:DataEvent):void{
-			if(event&&event.data&&event.data == "success"){ //服务器必须返回一个输出信息,否则不会继续下一个,出错可以不返回信息
-				//trace('completeHanderl triggered');
-				_files.removeItemAt(0);
-				if (_files.length > 0){
-					_totalbytes = 0;
-					dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE));
-					uploadFiles(null);//继续上传下一个文件
-				}else{ // 全部上传完毕触发完成事件
-					setupCancelButton(false);
-					_progressbar.label = ResourceManager.getInstance().getString("jhaij","uploadComplete");
-					var uploadCompleted:Event = new Event(Event.COMPLETE);
-					dispatchEvent(uploadCompleted);
-				}
-			}
-			
-		}
-          
-        // only called if there is an  error detected by flash player browsing or uploading a file   
-        private function ioErrorHandler(event:IOErrorEvent):void{
-            //trace('And IO Error has occured:' +  event);
-			Alert.show(ResourceManager.getInstance().getString("jhaij","uploadErrorTootip"),ResourceManager.getInstance().getString("jhaij","error"));
-//			mx.controls.Alert.show(String(event),"ioError",0);
-        }    
-        // only called if a security error detected by flash player such as a sandbox violation
-        private function securityErrorHandler(event:SecurityErrorEvent):void{
-            //trace("securityErrorHandler: " + event);
-            mx.controls.Alert.show(String(event),"Security Error",0);
-        }
-        
-        //  This function its not required
-        private function cancelHandler(event:Event):void{
-            // cancel button has been clicked;
-            trace('cancelled');
-        }
-		
-		public function cancelUploadHandler():void{
-			try{
-				_file.cancel();
-			}catch(error:Error){
-				trace("cancelled");
-			}
-		}
-        
-        //  after a file upload is complete or attemted the server will return an http status code, code 200 means all is good anything else is bad.
-        private function httpStatusHandler(event:HTTPStatusEvent):void {
-        //        trace("httpStatusHandler: " + event);
-            if (event.status != 200){
-                mx.controls.Alert.show(String(event),"Error",0);
-            }
-        }
-
-        
     }
+
+
+    /*********************************************************
+     *  File IO Event Handlers                                *
+     *********************************************************/
+
+    //  选择文件回调
+    private function selectHandler(event:Event):void {
+        for each(var currentFile in event.currentTarget.fileList) {
+
+            var fileItem:Object = {
+                "name": currentFile.name,
+                "size": currentFile.size,
+                "servers": [],
+                "file": currentFile,
+                "errMsg": ""
+            };
+
+            for each(var file in fileList) {
+                if(file.fileName == fileItem.name){
+                    fileItem.servers.push(file.server);
+                }
+            }
+
+            if (!(fileItem.servers.length > 0)) {
+                fileItem.errMsg = "不支持发布.";
+            }
+            _files.addItem(fileItem);
+        }
+    }
+
+    // called after the file is opened before upload
+    private function openHandler(event:Event):void {
+        trace('openHandler triggered');
+        _files;
+    }
+
+    // called during the file upload of each file being uploaded | we use this to feed the progress bar its data
+    private function progressHandler(event:ProgressEvent):void {
+        _progressbar.setProgress(event.bytesLoaded, event.bytesTotal);
+//        if (event.bytesLoaded == event.bytesTotal) {
+//            _progressbar.label = "文件保存中...";
+//        } else {
+//            _progressbar.label = "已传送 " + Math.round(event.bytesTotal / 1024) + " kb 的 " + Math.round(event.bytesLoaded / 1024) + " kb " + (_files.length - 1) + " 个文件剩余";
+//        }
+    }
+
+
+    // called after a file has been successully uploaded | we use this as well to check if there are any files left to upload and how to handle it
+    private function successHandler(event:DataEvent):void {
+        if (event && event.data) { //服务器必须返回一个输出信息,否则不会继续下一个,出错可以不返回信息
+            var result:Object = JSON.parse(event.data);
+            if (result.success) {
+                var uploadedItem:Object = _files.removeItemAt(0);
+                dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE));
+                if (_files.length > 0) {
+                    _totalbytes = 0;
+                    uploadFiles(null);//继续上传下一个文件
+                } else { // 全部上传完毕触发完成事件
+                    setupCancelButton(false);
+//                    _progressbar.label = "传送完毕";
+                    var uploadCompleted:Event = new Event(Event.COMPLETE);
+                    dispatchEvent(uploadCompleted);
+                }
+            } else {
+                Alert.show(result.data.message, "失败");
+                setupCancelButton(true);
+            }
+        }
+
+    }
+
+    // only called if there is an  error detected by flash player browsing or uploading a file
+    private function ioErrorHandler(event:IOErrorEvent):void {
+        //trace('And IO Error has occured:' +  event);
+        Alert.show("文件传输错误", "错误");
+//			mx.controls.Alert.show(String(event),"ioError",0);
+    }
+
+    // only called if a security error detected by flash player such as a sandbox violation
+    private function securityErrorHandler(event:SecurityErrorEvent):void {
+        //trace("securityErrorHandler: " + event);
+        Alert.show(String(event), "安全限制", 0);
+    }
+
+    //  This function its not required
+    private function cancelHandler(event:Event):void {
+        // cancel button has been clicked;
+        trace('cancelled');
+    }
+
+    public function cancelUploadHandler():void {
+        try {
+            _file.cancel();
+        } catch (error:Error) {
+            trace("cancelled");
+        }
+    }
+
+    //  after a file upload is complete or attemted the server will return an http status code, code 200 means all is good anything else is bad.
+    private function httpStatusHandler(event:HTTPStatusEvent):void {
+        //        trace("httpStatusHandler: " + event);
+        if (event.status != 200) {
+            Alert.show(String(event), "Error", 0);
+        }
+    }
+
+
+    private function datagrid_serverCheckedHandler(event:ServerCheckEvent):void {
+        var dataList:ArrayCollection = _datagrid.dataProvider as ArrayCollection;
+        for each(var obj in dataList) {
+            if (obj.id == event.selItem.id) {
+                dataList.itemUpdated(obj, null, null, event.selItem)
+            }
+        }
+
+    }
+}
 }

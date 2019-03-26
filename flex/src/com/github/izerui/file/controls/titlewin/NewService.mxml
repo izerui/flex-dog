@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+                xmlns:mx="library://ns.adobe.com/flex/mx"
+                width="400" height="350"
+                title="新建发布服务"
+                layout="vertical"
+                showCloseButton="true"
+                close="close()"
+                creationComplete="init()"
+                keyDown="if(event.charCode == Keyboard.ESCAPE) close();">
+    <fx:Script>
+        <![CDATA[
+        import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+        import com.github.izerui.file.vo.FileItem;
+
+        import mx.managers.PopUpManager;
+        import mx.rpc.events.ResultEvent;
+
+        [Bindable]
+        public var serverDataList:ArrayCollection;
+
+        [Bindable]
+        public var publishers:ArrayCollection;
+
+        private function confirm():void {
+            if (server.selectedIndex == -1) {
+                return;
+            }
+            if (!fileName.text) {
+                return;
+            }
+
+            var fileItem:FileItem = new FileItem();
+            fileItem.server = server.selectedLabel;
+            fileItem.deployType = deployType.selectedLabel;
+            fileItem.fileName = fileName.text;
+            fileItem.owner = ownerBox.selectedLabel;
+            var _ips:String = "";
+            for each(var ipObj in server.selectedItem.IPSet) {
+                if (_ips) {
+                    _ips = _ips + "," + ipObj.IP;
+                } else {
+                    _ips = ipObj.IP;
+                }
+            }
+            fileItem.serverAddress = _ips;
+
+            RemoteObjectUtils.execute("fileService", "addService", function (data:ResultEvent) {
+                close(true);
+            }, fileItem);
+        }
+
+        private function close(event:Boolean = false):void {
+            if(event){
+                var ev:Event = new Event("addEvent",true,false);
+                dispatchEvent(ev);
+            }
+            PopUpManager.removePopUp(this);
+        }
+
+        private function captcha_changeHandler(event:Event):void {
+            if (captcha.text) {
+                RemoteObjectUtils.execute("fileService", "validateCaptcha", function (data:ResultEvent) {
+                    if(data.result){
+                        queding.enabled = true;
+                    }else{
+                        queding.enabled = false;
+                    }
+                }, box.selectedItem.phone,captcha.text);
+            }
+        }
+
+        private function captchaButton_clickHandler(event:MouseEvent):void {
+            captchaButton.enabled = false;
+            RemoteObjectUtils.execute("fileService", "sendCaptcha", function (data:ResultEvent) {
+            },box.selectedItem.phone);
+        }
+
+        private function init():void {
+            RemoteObjectUtils.execute("smsService", "getPublishers", function (event:ResultEvent) {
+                LoaderManager.hideLoading();
+                publishers = ArrayCollection(event.result);
+            });
+        }
+        ]]>
+    </fx:Script>
+    <fx:Declarations>
+        <!-- 将非可视元素（例如服务、值对象）放在此处 -->
+    </fx:Declarations>
+    <fx:Metadata>
+        [Event(name="addEvent", type="flash.events.Event")]
+    </fx:Metadata>
+    <mx:Form>
+        <mx:FormItem label="服务器">
+            <mx:ComboBox id="server" dataProvider="{serverDataList}" labelField="Name"/>
+        </mx:FormItem>
+        <mx:FormItem label="文件名">
+            <mx:TextInput width="250" id="fileName"/>
+        </mx:FormItem>
+        <mx:FormItem label="拥有者">
+            <mx:ComboBox id="ownerBox" labelField="name" dataProvider="{publishers}">
+
+            </mx:ComboBox>
+        </mx:FormItem>
+        <mx:FormItem label="发布方式">
+            <mx:ComboBox id="deployType" labelField="data">
+                <mx:dataProvider>
+                    <mx:ArrayCollection>
+                        <fx:Object data="jar"/>
+                        <fx:Object data="file"/>
+                        <fx:Object data="www"/>
+                    </mx:ArrayCollection>
+                </mx:dataProvider>
+            </mx:ComboBox>
+        </mx:FormItem>
+        <mx:FormItem label="发送验证码">
+            <mx:ComboBox id="box" dataProvider="{publishers}" labelField="name"/>
+        </mx:FormItem>
+        <mx:FormItem label="验证码">
+            <mx:TextInput id="captcha" width="100" change="captcha_changeHandler(event)"/>
+            <mx:LinkButton id="captchaButton" label="获取验证码" click="captchaButton_clickHandler(event)"/>
+        </mx:FormItem>
+    </mx:Form>
+
+    <mx:ControlBar horizontalAlign="right">
+        <mx:Button id="queding" label="确定" click="confirm()" enabled="false"/>
+        <mx:Button label="取消" click="close()"/>
+    </mx:ControlBar>
+</mx:TitleWindow>

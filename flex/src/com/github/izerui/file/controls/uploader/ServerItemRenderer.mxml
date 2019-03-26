@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" paddingLeft="5">
+
+    <fx:Script><![CDATA[
+        import com.github.izerui.file.event.ServerCheckEvent;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.collections.ArrayCollection;
+        import mx.controls.CheckBox;
+        import mx.rpc.events.ResultEvent;
+
+        override public function set data(value:Object):void {
+            super.data = value;
+            renderFunction();
+        }
+
+
+        protected function renderFunction():void {
+            this.removeAllChildren();
+            for each(var server in data.servers) {
+                var ck:CheckBox = new CheckBox();
+                ck.name = "check";
+                ck.label = server.label;
+                ck.selected = server.selected;
+                ck.enabled = false;
+                ck.addEventListener(MouseEvent.CLICK, ck_clickHandler);
+                this.addChild(ck);
+            }
+        }
+
+        private function ck_clickHandler(event:MouseEvent):void {
+            var selItem:Object = data;
+            var servers:ArrayCollection = new ArrayCollection();
+            var cr:Array  = this.getChildren();
+            for each (var c in cr){
+                servers.addItem({
+                    label:c.label,
+                    selected:c.selected
+                });
+            }
+            selItem.servers = servers;
+            var ev:ServerCheckEvent = new ServerCheckEvent("serverChecked",selItem);
+            dispatchEvent(ev);
+        }
+        ]]>
+    </fx:Script>
+    <fx:Metadata>
+        [Event(name="serverChecked", type="com.github.izerui.file.event.ServerCheckEvent")]
+    </fx:Metadata>
+</mx:HBox>

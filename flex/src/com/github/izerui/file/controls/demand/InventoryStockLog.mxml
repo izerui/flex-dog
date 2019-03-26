@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx"
+                layout="vertical"
+                creationComplete="loadData()"
+                showCloseButton="true"
+                width="{this.parentApplication.width - 100}"
+                height="{this.parentApplication.height - 100}"
+                close="PopUpManager.removePopUp(this);"
+                title="{inventory.inventoryCode} {inventory.inventoryName} 出入库记录"
+                keyDown="if(event.charCode == Keyboard.ESCAPE) PopUpManager.removePopUp(this);">
+
+    <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"
+                 doubleClickEnabled="true" itemDoubleClick="view()">
+        <mx:columns>
+            <mx:DataGridColumn dataField="index" textAlign="center"
+                               headerText="序号"
+                               labelFunction="indexNumLabelFun"
+                               width="40"/>
+            <mx:DataGridColumn dataField="businessSourceDocNo" textAlign="center"
+                               headerText="业务单号"/>
+            <mx:DataGridColumn dataField="useDocNo" textAlign="center"
+                               headerText="单号"/>
+            <mx:DataGridColumn dataField="businessSourceType" textAlign="center"
+                               headerText="动作"/>
+            <mx:DataGridColumn textAlign="center"
+                               headerText="改变量" labelFunction="qtyLabelFun"/>
+            <mx:DataGridColumn dataField="stockQuantity" textAlign="center"
+                               headerText="改变后总库存"/>
+            <mx:DataGridColumn dataField="useTime" textAlign="center"
+                               headerText="操作时间"/>
+        </mx:columns>
+    </mx:DataGrid>
+    <mx:ControlBar>
+        <mx:LinkBar id="linkButtonBar" iconField="ico" horizontalAlign="right" itemClick="pageClick(event)">
+            <mx:dataProvider>
+                <mx:ArrayCollection>
+                    <fx:Object label="首页" itemData="0" ico="@Embed('/assets/img/bar_img/resultset_first.png')"/>
+                    <fx:Object label="上一页" itemData="1" ico="@Embed('/assets/img/bar_img/resultset_previous.png')"/>
+                    <fx:Object label="下一页" itemData="2" ico="@Embed('/assets/img/bar_img/resultset_next.png')"/>
+                    <fx:Object label="末页" itemData="3" ico="@Embed('/assets/img/bar_img/resultset_last.png')"/>
+                </mx:ArrayCollection>
+            </mx:dataProvider>
+        </mx:LinkBar>
+        <mx:Label text="{page.number + 1} / {page.totalPages} 页"/>
+        <mx:Label text="共 {page.totalElements} 条记录"/>
+        <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查看" click="view()"/>
+    </mx:ControlBar>
+    <fx:Script><![CDATA[
+        import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.core.FlexGlobals;
+        import mx.events.ItemClickEvent;
+        import mx.formatters.DateFormatter;
+        import mx.managers.PopUpManager;
+        import mx.rpc.events.ResultEvent;
+
+        [Bindable]
+        public var inventory:Object;
+
+        [Bindable]
+        protected var page:Object = {
+            number: 0,
+            size: 50,
+            totalPages: 0,
+            totalElements: 0,
+            content: []
+        };
+
+        private function loadData():void {
+            RemoteObjectUtils.execute("demandService", "inventoryStockHistory", function (event:ResultEvent) {
+                page = event.result;
+            }, inventory.entCode, inventory.inventoryId, page.number, page.size)
+
+        }
+
+        private function dateLabelFun(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD JJ:NN:SS";
+            return df.format(item.docDate);
+        }
+        private function qtyLabelFun(item:Object, column:DataGridColumn):String {
+            if(item.operateType == "add" && item.quantity > 0){
+                return "+"+item.quantity;
+            }else if(item.operateType == "subtract" && item.quantity > 0){
+                return "-"+item.quantity;
+            }
+            return "";
+        }
+
+        private function pageClick(event:ItemClickEvent):void {
+            switch (event.item["itemData"]) {
+                case 0: {
+                    page.number = 0;
+                    break;
+                }
+                case 1: {
+                    page.number--;
+                    break;
+                }
+                case 2: {
+                    page.number++;
+                    break;
+                }
+                case 3: {
+                    page.number = page.totalPages - 1;
+                    break;
+                }
+            }
+            if (page.number == page.totalPages) {
+                page.number = page.totalPages - 1;
+            }
+            if (page.number < 0) {
+                page.number = 0;
+            }
+            loadData();
+        }
+
+        private function view():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var popUp:DetailTitleWindow = new DetailTitleWindow();
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
+            popUp.setFocus();
+            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+            PopUpManager.centerPopUp(popUp)
+//            var copyText:String = JSON.stringify(grid.selectedItem);
+//            System.setClipboard(copyText);
+        }
+
+        private function indexNumLabelFun(item:Object, column:DataGridColumn):String {
+            var indexNum:int = (page.content.getItemIndex(item) + 1);
+            return indexNum.toString();
+        }
+        ]]>
+    </fx:Script>
+</mx:TitleWindow>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+         xmlns:mx="library://ns.adobe.com/flex/mx"
+         creationComplete="loadData()">
+
+
+    <mx:LinkBar height="25" id="linkButtonBar" iconField="ico" itemClick="buttonClick(event)">
+        <mx:dataProvider>
+            <s:ArrayCollection>
+                <fx:Object label="刷新" itemData="0"
+                           ico="@Embed('/assets/img/bar_img/refresh.png')"/>
+            </s:ArrayCollection>
+        </mx:dataProvider>
+    </mx:LinkBar>
+    <mx:DataGrid id="grid" width="100%" height="100%" doubleClickEnabled="true" doubleClick="view()">
+        <mx:columns>
+            <mx:DataGridColumn dataField="Name"
+                               headerText="机器名"/>
+            <mx:DataGridColumn dataField="CPUUtilization"
+                               headerText="CPU使用率(%)"/>
+            <mx:DataGridColumn dataField="MemUsage"
+                               headerText="内存使用率(%)"/>
+            <mx:DataGridColumn dataField="DataSpaceUsage"
+                               headerText="数据盘使用率(%)"/>
+            <mx:DataGridColumn dataField="RootSpaceUsage"
+                               headerText="系统盘使用率(%)"/>
+            <mx:DataGridColumn dataField="RunnableProcessCount"
+                               headerText="运行进程数"/>
+            <mx:DataGridColumn dataField="BlockProcessCount"
+                               headerText="阻塞进程数"/>
+            <mx:DataGridColumn dataField="ProcessCount"
+                               headerText="进程总数"/>
+            <mx:DataGridColumn dataField="TcpConnectCount"
+                               headerText="TCP连接数"/>
+            <mx:DataGridColumn dataField="DiskReadOps"
+                               labelFunction="diskReadLabelFun"
+                               headerText="磁盘读写次数"/>
+            <mx:DataGridColumn dataField="NICOut"
+                               labelFunction="inOutLabelFun"
+                               headerText="网卡出入带宽(Mb/s)"/>
+            <mx:DataGridColumn dataField="NetPacketIn"
+                               labelFunction="netPacketLabelFun"
+                               headerText="网卡出入包(个/s)"/>
+
+
+        </mx:columns>
+    </mx:DataGrid>
+    <fx:Script><![CDATA[
+        import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.core.FlexGlobals;
+
+        import mx.events.ItemClickEvent;
+        import mx.formatters.DateFormatter;
+        import mx.managers.PopUpManager;
+        import mx.rpc.events.ResultEvent;
+
+        private function loadData():void {
+            RemoteObjectUtils.execute("ucloudService", "getMetricOverview", function (event:ResultEvent) {
+                var json:String = String(event.result);
+                var data:Object = JSON.parse(json);
+                grid.dataProvider = data.DataSet;
+            })
+        }
+
+        private function buttonClick(event:ItemClickEvent):void {
+            switch (event.item["itemData"]) {
+                case 0:
+                    this.loadData();
+                    break;
+            }
+        }
+
+        private function diskReadLabelFun(item:Object, column:DataGridColumn):String {
+            return item.DiskReadOps + "/" + item.DiskWriteOps;
+        }
+
+        private function netPacketLabelFun(item:Object, column:DataGridColumn):String{
+            return item.NetPacketIn + "/" + item.NetPacketOut;
+        }
+
+        private function inOutLabelFun(item:Object, column:DataGridColumn):String{
+            return item.NICOut + "/" + item.NICIn;
+        }
+
+        private function view():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var popUp:DetailTitleWindow = new DetailTitleWindow();
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
+            popUp.setFocus();
+            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+            PopUpManager.centerPopUp(popUp)
+        }
+
+        ]]>
+    </fx:Script>
+</mx:VBox>

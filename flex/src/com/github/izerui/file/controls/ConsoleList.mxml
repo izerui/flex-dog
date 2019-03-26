@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+         xmlns:mx="library://ns.adobe.com/flex/mx"
+         creationComplete="init()">
+
+
+    <!--<mx:DataGrid id="grid" dataProvider="{dataList}" width="100%" height="100%" variableRowHeight="true" doubleClickEnabled="true"-->
+    <!--doubleClick="view()">-->
+    <!--<mx:columns>-->
+    <!--<mx:DataGridColumn dataField="entName" headerText="企业" wordWrap="true"/>-->
+    <!--<mx:DataGridColumn dataField="userName" headerText="用户名" wordWrap="true"/>-->
+    <!--<mx:DataGridColumn dataField="application" headerText="应用名" wordWrap="true"/>-->
+    <!--<mx:DataGridColumn dataField="type" headerText="类型" wordWrap="true"/>-->
+    <!--<mx:DataGridColumn dataField="name" headerText="动作" wordWrap="true"/>-->
+    <!--<mx:DataGridColumn dataField="url" headerText="请求地址" wordWrap="true"/>-->
+    <!--<mx:DataGridColumn dataField="begin" headerText="请求时间" wordWrap="true" labelFunction="beginDateLabelFun"/>-->
+    <!--<mx:DataGridColumn dataField="time" headerText="耗时" wordWrap="true"/>-->
+    <!--&lt;!&ndash;<mx:DataGridColumn dataField="ip" headerText="ip地址" wordWrap="true"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<mx:DataGridColumn dataField="endTime" headerText="结束时间" wordWrap="true" labelFunction="endDateLabelFun"/>&ndash;&gt;-->
+    <!--<mx:DataGridColumn dataField="success" headerText="是否成功" wordWrap="true"/>-->
+    <!--&lt;!&ndash;<mx:DataGridColumn dataField="accountName" headerText="手机号" wordWrap="true"/>&ndash;&gt;-->
+    <!--</mx:columns>-->
+    <!--</mx:DataGrid>-->
+    <mx:HBox>
+        <mx:CheckBox id="box" label="滚动日志" paddingLeft="20" selected="true"></mx:CheckBox>
+        <!--<mx:Label text="今日访问量: {countMap.logCount}"/>-->
+        <!--<mx:Label text="今日访问用户数: {countMap.userCount}"/>-->
+        <!--<mx:Label text="今日访问企业数: {countMap.entCount}"/>-->
+    </mx:HBox>
+    <mx:TextArea id="area" width="100%" height="100%" editable="false" text="正在加载...&#13;" backgroundColor="black"
+                 color="#06b71b"/>
+    <fx:Script><![CDATA[
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.collections.ArrayCollection;
+        import mx.controls.dataGridClasses.DataGridColumn;
+        import mx.formatters.DateFormatter;
+        import mx.rpc.events.ResultEvent;
+
+        [Bindable]
+        private var dataList:ArrayCollection;
+
+//        [Bindable]
+//        private var countMap:Object;
+
+        private var timer:Timer = new Timer(500, 0);
+
+//        private var timer2:Timer = new Timer(3000, 0);
+
+        private function init():void {
+            timer.addEventListener(TimerEvent.TIMER, loadData);
+//            timer2.addEventListener(TimerEvent.TIMER, loadCountMap);
+            timer.start();
+//            timer2.start();
+        }
+
+//        private function loadCountMap(event:TimerEvent):void {
+//            RemoteObjectUtils.execute("stService", "countMap", function (event:ResultEvent):void {
+//                countMap = event.result;
+//            });
+//        }
+
+        private function loadData(event:TimerEvent):void {
+            if (box.selected) {
+                var df:DateFormatter = new DateFormatter();
+                df.formatString = "JJ:NN:SS";
+                RemoteObjectUtils.execute("onlineService", "getUserRecordListLimit100", function (event:ResultEvent) {
+                    dataList = event.result as ArrayCollection;
+                    var _str = "";
+                    for each(var item:Object in dataList) {
+                        _str += item.entName + "    -   " + item.userName + "    " + df.format(item.begin) + ":    " + item.name + " / " + item.type + " / " + item.application + "    耗时: " + item.time + " " + (item.success == true ? "成功" : "失败") + "\n";
+                    }
+                    area.text = _str;
+                })
+            }
+        }
+
+
+        private function beginDateLabelFun(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD JJ:NN:SS";
+            return df.format(item.begin);
+        }
+
+        private function endDateLabelFun(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD JJ:NN:SS";
+            return df.format(item.end);
+        }
+
+        //        private function view():void {
+        //            if (grid.selectedIndex == -1) {
+        //                return;
+        //            }
+        //            var popUp:DetailTitleWindow = new DetailTitleWindow();
+        //            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
+        //            popUp.setFocus();
+        //            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+        //            PopUpManager.centerPopUp(popUp)
+        //        }
+        ]]>
+    </fx:Script>
+</mx:VBox>

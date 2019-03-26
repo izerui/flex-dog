@@ -4,23 +4,6 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx" paddingTop="10">
 	
 	<fx:Script>
-		<![CDATA[
-			import com.github.izerui.file.event.I18nEvent;
-			
-			import mx.managers.BrowserManager;
-			protected function language_clickHandler(event:MouseEvent):void
-			{
-				if(resourceManager.localeChain[0]=="zh_CN"){
-					resourceManager.localeChain = ["en_US"]; 
-					i18nButton.label = "中文";
-				}else if(resourceManager.localeChain[0]=="en_US"){
-					resourceManager.localeChain = ["zh_CN"]; 
-					i18nButton.label = "ENGLISH";
-				}
-				ExternalInterface.call("settitle",encodeURIComponent(resourceManager.getString("jhaij","browerTitle")));
-				resourceManager.dispatchEvent(new I18nEvent(I18nEvent.I18NRESOURCECHANGE));
-			}
-		]]>
 	</fx:Script>
 	
 	
@@ -30,5 +13,4 @@
 	<mx:Image source="@Embed('/assets/img/logo.png')" height="50" width="100"/>
 	<mx:Label text="我的经管-发布工具" fontSize="24" color="white"/>
 	<mx:Spacer width="100%"/>
-	<mx:Button id="i18nButton" label="ENGLISH" click="language_clickHandler(event)"/>
 </s:HGroup>

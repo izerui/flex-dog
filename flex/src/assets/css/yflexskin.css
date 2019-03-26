@@ -55,7 +55,7 @@ mx|Button
 	downSkin: Embed(source="/yflexskin.swf", symbol="Button_downSkin");
 	overSkin: Embed(source="/yflexskin.swf", symbol="Button_overSkin");
 	upSkin: Embed(source="/yflexskin.swf", symbol="Button_upSkin");
-	paddingTop: 2;
+	/*paddingTop: 2;*/
 }
 
 /*
@@ -72,7 +72,7 @@ mx|Button
 	downSkin: Embed(source="/yflexskin.swf", symbol="primaryButton_downSkin");
 	overSkin: Embed(source="/yflexskin.swf", symbol="primaryButton_overSkin");
 	upSkin: Embed(source="/yflexskin.swf", symbol="primaryButton_upSkin");
-	paddingTop: 2;
+	/*paddingTop: 2;*/
 }
 
 /* 
@@ -205,15 +205,15 @@ mx|CursorManager
 //  DataGrid
 //------------------------------
 */
-mx|DataGrid
-{
+/*mx|DataGrid*/
+/*{*/
 
-	columnDropIndicatorSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_columnDropIndicatorSkin");
-	columnResizeSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_columnResizeSkin");
-	headerSeparatorSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_headerSeparatorSkin");
-	sortArrowSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_sortArrowSkin");
-	stretchCursor: Embed(source="/yflexskin.swf",symbol="DataGrid_stretchCursor");
-}
+	/*columnDropIndicatorSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_columnDropIndicatorSkin");*/
+	/*columnResizeSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_columnResizeSkin");*/
+	/*headerSeparatorSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_headerSeparatorSkin");*/
+	/*sortArrowSkin: Embed(source="/yflexskin.swf", symbol="DataGrid_sortArrowSkin");*/
+	/*stretchCursor: Embed(source="/yflexskin.swf",symbol="DataGrid_stretchCursor");*/
+/*}*/
 
 /*
 //------------------------------
@@ -265,12 +265,12 @@ mx|DateField
 //  DividedBox
 //------------------------------
 */
-mx|DividedBox
-{
-	dividerSkin: Embed(source="/yflexskin.swf",symbol="DividedBox_dividerSkin");
-	horizontalCursor: Embed(source="/yflexskin.swf",symbol="DividedBox_horizontalCursor");
-	verticalCursor: Embed(source="/yflexskin.swf",symbol="DividedBox_verticalCursor");
-}
+/*mx|DividedBox*/
+/*{*/
+	/*dividerSkin: Embed(source="/yflexskin.swf",symbol="DividedBox_dividerSkin");*/
+	/*horizontalCursor: Embed(source="/yflexskin.swf",symbol="DividedBox_horizontalCursor");*/
+	/*verticalCursor: Embed(source="/yflexskin.swf",symbol="DividedBox_verticalCursor");*/
+/*}*/
 
 /*
 //------------------------------
@@ -315,13 +315,13 @@ mx|Image
 //  LinkButton
 //------------------------------
 */
-mx|LinkButton
-{
-	disabledSkin: Embed(source="/yflexskin.swf", symbol="LinkButton_disabledSkin");
-	downSkin: Embed(source="/yflexskin.swf", symbol="LinkButton_downSkin");
-	overSkin: Embed(source="/yflexskin.swf", symbol="LinkButton_overSkin");
-	upSkin: Embed(source="/yflexskin.swf", symbol="LinkButton_upSkin");
-}		
+/*mx|LinkButton*/
+/*{*/
+	/*disabledSkin: Embed(source="/yflexskin.swf", symbol="LinkButton_disabledSkin");*/
+	/*downSkin: Embed(source="/yflexskin.swf", symbol="LinkButton_downSkin");*/
+	/*overSkin: Embed(source="/yflexskin.swf", symbol="LinkButton_overSkin");*/
+	/*upSkin: Embed(source="/yflexskin.swf", symbol="LinkButton_upSkin");*/
+/*}		*/
 
 /*
 //------------------------------
@@ -398,29 +398,29 @@ mx|Panel
 	/*
 	Removed due to incompatibilities with Flex 3
 	borderSkin: Embed(source="/yflexskin.swf", symbol="Panel_borderSkin");
-	*/	
+	*/
 	titleBackgroundSkin: Embed(source="/yflexskin.swf", symbol="Panel_titleBackgroundSkin");
 	borderThicknessLeft: 0;
 	borderThicknessRight: 0;
 	borderThicknessTop: 0;
 	borderThicknessBottom: 0;
-	headerHeight: 32;
-	background-color: #FFFFFF;
-	background-alpha: 1;
-	border-alpha: 1;
-	alpha:1;
-	padding-left:5;
-	padding-right:5;
-	padding-top:5;
-	padding-bottom:5;
+	/*headerHeight: 32;*/
+	/*background-color: #FFFFFF;*/
+	/*background-alpha: 1;*/
+	/*border-alpha: 1;*/
+	/*alpha:1;*/
+	/*padding-left:5;*/
+	/*padding-right:5;*/
+	/*padding-top:5;*/
+	/*padding-bottom:5;*/
 	drop-shadow-enabled: false;
-	titleStyleName: "panelTitle";
+	/*titleStyleName: "panelTitle";*/
 }
 
-.panelTitle {
-    fontSize: 16;
-	fontWeight: bold;
-}
+/*.panelTitle {*/
+    /*fontSize: 16;*/
+    /*fontWeight: bold;*/
+/*}*/
 
 /*
 //------------------------------

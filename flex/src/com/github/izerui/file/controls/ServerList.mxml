@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+         xmlns:mx="library://ns.adobe.com/flex/mx"
+         creationComplete="loadData()">
+
+
+    <mx:LinkBar height="25" id="linkButtonBar" iconField="ico" itemClick="buttonClick(event)">
+        <mx:dataProvider>
+            <s:ArrayCollection>
+                <fx:Object label="刷新" itemData="0"
+                           ico="@Embed('/assets/img/bar_img/refresh.png')"/>
+            </s:ArrayCollection>
+        </mx:dataProvider>
+    </mx:LinkBar>
+
+    <mx:DataGrid id="grid" width="100%" height="100%" doubleClickEnabled="true" doubleClick="view()">
+        <mx:columns>
+            <mx:DataGridColumn dataField="UHostId"
+                               headerText="资源ID"/>
+            <mx:DataGridColumn dataField="Name"
+                               headerText="机器名"/>
+            <mx:DataGridColumn dataField="Tag"
+                               headerText="标签"/>
+            <mx:DataGridColumn dataField="配置"
+                               labelFunction="configLabelFun"
+                               headerText="配置"/>
+            <mx:DataGridColumn dataField="OsName"
+                               headerText="操作系统"/>
+            <mx:DataGridColumn dataField="IPSet"
+                               labelFunction="ipLabelFun"
+                               headerText="IP地址"/>
+            <mx:DataGridColumn dataField="CreateTime"
+                               labelFunction="timeLabelFun"
+                               headerText="创建时间"/>
+            <mx:DataGridColumn dataField="ExpireTime"
+                               labelFunction="expireTimeLabelFun"
+                               headerText="过期时间"/>
+            <mx:DataGridColumn dataField="State"
+                               headerText="运行状态"/>
+            <mx:DataGridColumn dataField="NetworkState"
+                               headerText="网络状态"/>
+
+        </mx:columns>
+    </mx:DataGrid>
+
+    <fx:Script><![CDATA[
+        import com.github.izerui.file.components.loading.LoaderManager;
+        import com.github.izerui.file.controls.titlewin.DetailTitleWindow;
+        import com.github.izerui.file.utils.RemoteObjectUtils;
+
+        import mx.core.FlexGlobals;
+
+        import mx.events.ItemClickEvent;
+        import mx.formatters.DateFormatter;
+        import mx.managers.PopUpManager;
+        import mx.rpc.events.ResultEvent;
+
+        private function loadData():void {
+            RemoteObjectUtils.execute("ucloudService", "getDescribeUHostInstance", function (event:ResultEvent) {
+                var json:String = String(event.result);
+                var data:Object = JSON.parse(json);
+                grid.dataProvider = data.UHostSet;
+            })
+        }
+
+        private function buttonClick(event:ItemClickEvent):void {
+            switch (event.item["itemData"]) {
+                case 0:
+                    this.loadData();
+                    break;
+            }
+        }
+
+        private function ipLabelFun(item:Object, column:DataGridColumn):String {
+            var _label:String = "";
+            for each(var ipObj in item.IPSet) {
+                if (_label) {
+                    _label = _label + "\n" + ipObj.IP;
+                } else {
+                    _label = ipObj.IP;
+                }
+            }
+            return _label;
+        }
+
+        private function timeLabelFun(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD";
+            return df.format(new Date(new Number(item.CreateTime) * 1000));
+        }
+
+        private function expireTimeLabelFun(item:Object, column:DataGridColumn):String {
+            var df:DateFormatter = new DateFormatter();
+            df.formatString = "YYYY-MM-DD";
+            return df.format(new Date(new Number(item.ExpireTime) * 1000));
+        }
+
+        private function configLabelFun(item:Object, column:DataGridColumn):String {
+            var _label:String = "CPU(" + item.CPU + ")";
+            _label += ",内存(" + item.Memory + ")";
+
+            var _disk:String = "";
+            for each(var disk in item.DiskSet) {
+                if (_disk) {
+                    _disk = _disk + "," + disk.Size;
+                } else {
+                    _disk = disk.Size;
+                }
+
+            }
+
+            _label += ",磁盘(" + _disk + ")";
+            return _label;
+        }
+
+        private function view():void {
+            if (grid.selectedIndex == -1) {
+                return;
+            }
+            var popUp:DetailTitleWindow = new DetailTitleWindow();
+            popUp.output = JSON.stringify(grid.selectedItem, null, "  ");
+            popUp.setFocus();
+            PopUpManager.addPopUp(popUp, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)
+            PopUpManager.centerPopUp(popUp)
+        }
+        ]]>
+    </fx:Script>
+</mx:VBox>

@@ -32,6 +32,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.ecworking:manufacture-remote:4.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:manufacture-commons:4.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:warehouse-remote:3.4.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:warehouse-global:3.4.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-remote:3.7.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-global:3.7.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:jpa-configuration:2.1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:druid:1.1.12" level="project" />
@@ -69,13 +75,13 @@
     <orderEntry type="library" name="Maven: org.mapstruct:mapstruct:1.2.0.Final" level="project" />
     <orderEntry type="library" name="Maven: io.springfox:springfox-swagger-ui:2.9.2" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:rest-exception-autoconfigure:2.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:manufacture-remote:4.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:manufacture-remote:4.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:2.1.2.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:manufacture-commons:4.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:warehouse-remote:3.4.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:warehouse-global:3.4.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:purchase-remote:3.7.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:purchase-global:3.7.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:manufacture-commons:4.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:warehouse-remote:3.4.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:warehouse-global:3.4.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-remote:4.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-global:4.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.yj2025:finance-global:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:8.0.13" level="project" />
     <orderEntry type="library" name="Maven: com.github.izerui:eureka-client:1.2.0-SNAPSHOT" level="project" />
@@ -120,8 +126,8 @@
     <orderEntry type="library" name="Maven: com.taobao:taobao-sdk:20160106" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:esms-global:1.2.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:mrp-remote:4.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:rbac-remote:3.3.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:rbac-global:3.3.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:rbac-remote:3.3.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:rbac-global:3.3.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:audit-core:2.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-stream:2.1.0.M3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-validation:2.1.0.RELEASE" level="project" />

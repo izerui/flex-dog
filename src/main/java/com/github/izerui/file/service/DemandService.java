@@ -3,12 +3,13 @@ package com.github.izerui.file.service;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.ecworking.commons.em.InventoryAttributeEnum;
 import com.ecworking.commons.vo.PageVo;
-import com.ecworking.development.vo.BusinessInventoryVo;
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
 import com.ecworking.mrp.vo.PurgeResultVo;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
+import com.ecworking.warehouse.enums.LackMaterialEnum;
+import com.ecworking.warehouse.vo.message.LackMaterialMessageVo;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.izerui.file.client.BomClient;
@@ -375,6 +376,12 @@ public class DemandService {
             map.put("realPurgeQty", toPlainString((BigDecimal) map.get("c_purge_qty")));
         }
         return maps;
+    }
+
+
+    public void lackMaterial(String entCode, String userCode, String inventoryId) {
+        LackMaterialMessageVo vo = new LackMaterialMessageVo(entCode, userCode, inventoryId, LackMaterialEnum.系统);
+        rabbitTemplate.convertAndSend("ierp", "ierp.lack.material.warehouse", vo);
     }
 
 

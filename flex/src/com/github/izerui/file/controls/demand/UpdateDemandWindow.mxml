@@ -90,10 +90,10 @@
             RemoteObjectUtils.execute("smsService", "getPublishers", function (event:ResultEvent) {
                 LoaderManager.hideLoading();
                 publishers = ArrayCollection(event.result);
-                publishers.filterFunction = function (item:Object) {
-                    return item.name.search('陈翔')!=-1 || item.name.search('刘玉华') != -1;
-                };
-                publishers.refresh();
+//                publishers.filterFunction = function (item:Object) {
+//                    return item.name.search('陈翔')!=-1 || item.name.search('刘玉华') != -1;
+//                };
+//                publishers.refresh();
             });
         }
         ]]>

@@ -5,7 +5,6 @@ import com.github.izerui.file.service.FileService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,14 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-@ConfigurationProperties
 @Controller
 public class FileController {
 
@@ -47,7 +44,7 @@ public class FileController {
         File file = new File(entity.getFilePath());
         if (file.exists()) {//存在文件
             response.reset();
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(file.getName().getBytes("utf-8"),"ISO-8859-1"));
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(file.getName().getBytes("utf-8"), "ISO-8859-1"));
             response.addHeader("Content-Length", "" + file.length());
             response.setContentType("application/octet-stream;charset=UTF-8");
             IOUtils.copy(new FileInputStream(file), response.getOutputStream());

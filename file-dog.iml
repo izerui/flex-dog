@@ -126,8 +126,8 @@
     <orderEntry type="library" name="Maven: com.taobao:taobao-sdk:20160106" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:esms-global:1.2.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:mrp-remote:4.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:rbac-remote:3.3.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:rbac-global:3.3.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:rbac-remote:3.4.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:rbac-global:3.4.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:audit-core:2.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-stream:2.1.0.M3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-validation:2.1.0.RELEASE" level="project" />

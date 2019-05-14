@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Events from "../plugins/events";
 
 Vue.use(VueRouter)
 
@@ -31,6 +30,16 @@ const routes = [
                 component: () => import('../views/Dashboard/Logs')
             }
         ]
+    },
+    {
+        path: '/home',
+        name: 'home',
+        component: () => import('../views/Home'),
+    },
+    {
+        path: '/hello',
+        name: 'hello',
+        component: () => import('../views/HelloWorld'),
     }
 ]
 
@@ -42,15 +51,12 @@ const router = new VueRouter({
 
 
 router.afterEach((to, from, next) => {
-
     const rjson = {
         to,
         from,
         next
     }
-
     Vue.prototype.$events.dispatch(process.env.TYPE_ROUTER,rjson);
-
 });
 
 

@@ -98,14 +98,14 @@
                                 link: '/dashboard'
                             },
                             {
-                                icon: 'event',
+                                icon: 'dashboard',
                                 title: '服务列表',
-                                link: '/fff'
+                                link: '/home'
                             },
                             {
-                                icon: 'comment',
+                                icon: 'computer',
                                 title: '服务器列表',
-                                link: '/df'
+                                link: '/hello'
                             }
                         ],
                     },
@@ -113,7 +113,7 @@
                         header: "监控",
                         children: [
                             {
-                                icon: 'supervisor_account',
+                                icon: 'perm_media',
                                 title: '服务器监控',
                                 link: '/wef'
                             },
@@ -123,7 +123,7 @@
                                 link: '/sdf'
                             },
                             {
-                                icon: 'perm_media',
+                                icon: 'code',
                                 title: 'redis监控',
                                 link: '/few'
                             }
@@ -133,12 +133,12 @@
                         header: "MRP",
                         children: [
                             {
-                                icon: 'supervisor_account',
+                                icon: 'person_add_disabled',
                                 title: 'MRP数据',
                                 link: '/weeeef'
                             },
                             {
-                                icon: 'storage',
+                                icon: 'contact_support',
                                 title: 'MRP异常',
                                 link: '/sdffff'
                             }

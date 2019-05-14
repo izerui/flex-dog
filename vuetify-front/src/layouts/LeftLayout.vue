@@ -79,7 +79,7 @@
     export default {
         name: "LeftLayout",
         props: {
-            drawer:{
+            drawer: {
                 type: Boolean,
                 default: true
             }
@@ -147,10 +147,19 @@
                 ]
             }
         },
+        created() {
+            this.registerEvents()
+        },
         methods: {
-            drawerUpdate(val){
-                console.log(this.$events)
-                this.$emit("update:drawer",val);
+            registerEvents() {
+                // this.$events.listener(process.env.TYPE_ROUTER, (data) => {
+                //     if (data.to !== '/') {
+                //         this.miniVariant = true;
+                //     }
+                // })
+            },
+            drawerUpdate(val) {
+                this.$emit("update:drawer", val);
             }
         }
     }

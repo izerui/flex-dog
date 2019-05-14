@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Events from "../plugins/events";
 
 Vue.use(VueRouter)
 
@@ -33,8 +34,24 @@ const routes = [
     }
 ]
 
-export default new VueRouter({
+const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes
 })
+
+
+router.beforeEach((to, from, next) => {
+
+    const rjson = {
+        to,
+        from,
+        next
+    }
+
+    Vue.prototype.$events.dispatch(process.env.TYPE_ROUTER,rjson);
+
+});
+
+
+export default router;

@@ -9,7 +9,7 @@
             <v-toolbar-title class="pl-2">Dashboard</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-tabs
-                    v-model="tabs"
+                    :value="tabs"
                     color="transparent"
                     slider-color="white"
                     slot="extension"
@@ -40,7 +40,7 @@
     export default {
         data() {
             return {
-                tabs: null,
+                tabs: false,
                 tabsItems: [
                     {id: 1, title: 'Indicators', link: '/dashboard/indicators'},
                     {id: 2, title: 'Backup', link: '/dashboard/backup'},

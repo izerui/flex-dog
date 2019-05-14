@@ -148,15 +148,15 @@
             }
         },
         created() {
-            this.registerEvents()
+            // this.registerEvents()
         },
         methods: {
             registerEvents() {
-                // this.$events.listener(process.env.TYPE_ROUTER, (data) => {
-                //     if (data.to !== '/') {
-                //         this.miniVariant = true;
-                //     }
-                // })
+                this.$events.listener(process.env.TYPE_ROUTER, (data) => {
+                    if (data.to !== '/') {
+                        this.miniVariant = true;
+                    }
+                })
             },
             drawerUpdate(val) {
                 this.$emit("update:drawer", val);

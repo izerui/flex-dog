@@ -41,7 +41,7 @@ const router = new VueRouter({
 })
 
 
-router.beforeEach((to, from, next) => {
+router.afterEach((to, from, next) => {
 
     const rjson = {
         to,

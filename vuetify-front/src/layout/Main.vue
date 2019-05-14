@@ -21,36 +21,9 @@
                             </v-subheader>
                         </v-flex>
                     </v-layout>
-                    <!-- if -->
-                    <v-list-group
-                            v-else-if="item.children"
-                            :key="item.text"
-                            :prepend-icon="item.icon"
-                            append-icon="keyboard_arrow_down">
-                        <v-list-tile slot="activator">
-                            <v-list-tile-content>
-                                <v-list-tile-title>
-                                    {{ item.text }}
-                                </v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                        <v-list-tile
-                                v-for="(child, i) in item.children"
-                                :key="i"
-                                @click="">
-                            <v-list-tile-action v-if="child.icon">
-                                <v-icon>{{ child.icon }}</v-icon>
-                            </v-list-tile-action>
-                            <v-list-tile-content>
-                                <v-list-tile-title>
-                                    {{ child.text }}
-                                </v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </v-list-group>
 
                     <!-- else -->
-                    <v-list-tile v-else @click="" :key="item.text">
+                    <v-list-tile v-else @click="" :key="item.text" avatar ripple>
                         <v-list-tile-action>
                             <v-icon>{{ item.icon }}</v-icon>
                         </v-list-tile-action>

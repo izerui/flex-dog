@@ -24,4 +24,13 @@ public class UCloudController {
         return ucloudService.getDescribeUHostInstance();
     }
 
+    @ApiOperation("获取服务器监控列表")
+    @GetMapping(value = "/api/v1/metrics",
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            consumes = MediaType.ALL_VALUE
+    )
+    public String getMetrics() {
+        return ucloudService.getMetricOverview();
+    }
+
 }

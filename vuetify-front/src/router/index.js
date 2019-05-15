@@ -53,6 +53,12 @@ const routes = [
         name: 'ecs',
         meta: { title: '服务器列表' },
         component: () => import('../views/ecs/EcsList'),
+    },
+    {
+        path: '/metrics',
+        name: 'metrics',
+        meta: { title: '服务器监控' },
+        component: () => import('../views/ecs/EcsMetricsList'),
     }
 ]
 

@@ -114,7 +114,7 @@
                             {
                                 icon: 'perm_media',
                                 title: '服务器监控',
-                                link: '/wef'
+                                link: '/metrics'
                             },
                             {
                                 icon: 'storage',

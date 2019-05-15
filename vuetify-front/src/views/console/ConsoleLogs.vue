@@ -5,7 +5,7 @@
                 box
                 disabled
                 label="访问日志:"
-                class="body-1"
+                class="body-2"
                 :value="content"
         ></v-textarea>
     </v-container>

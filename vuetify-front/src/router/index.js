@@ -72,6 +72,12 @@ const routes = [
                 name: 'dbs',
                 meta: { title: '数据库监控' },
                 component: () => import('../views/metrics/DbMetricsList'),
+            },
+            {
+                path: 'redis',
+                name: 'redis',
+                meta: { title: 'redis监控' },
+                component: () => import('../views/metrics/RedisMetricsList'),
             }
         ]
     },

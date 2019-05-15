@@ -43,4 +43,14 @@ public class UCloudController {
         return ucloudService.getDbMetricOverview();
     }
 
+
+    @ApiOperation("获取redis监控列表")
+    @GetMapping(value = "/api/v1/metrics/redis",
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            consumes = MediaType.ALL_VALUE
+    )
+    public String getRedisMetrics() {
+        return ucloudService.getRedisMetricOverview();
+    }
+
 }

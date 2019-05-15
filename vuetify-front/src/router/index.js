@@ -52,13 +52,13 @@ const routes = [
         path: '/ecs',
         name: 'ecs',
         meta: { title: '服务器列表' },
-        component: () => import('../views/ecs/EcsList'),
+        component: () => import('../views/ucloud/EcsList'),
     },
     {
         path: '/metrics',
         name: 'metrics',
         meta: { title: '服务器监控' },
-        component: () => import('../views/ecs/EcsMetricsList'),
+        component: () => import('../views/ucloud/EcsMetricsList'),
     }
 ]
 

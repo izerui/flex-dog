@@ -1,6 +1,14 @@
 <template>
     <v-card>
         <v-card-title>
+            <v-btn
+                    :loading="loading"
+                    color="primary"
+                    @click="loadData"
+            >
+                <v-icon left dark>refresh</v-icon>
+                重新加载
+            </v-btn>
             <v-spacer></v-spacer>
             <v-text-field
                     v-model="search"

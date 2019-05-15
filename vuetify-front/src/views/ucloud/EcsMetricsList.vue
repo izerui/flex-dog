@@ -1,6 +1,14 @@
 <template>
     <v-card>
         <v-card-title>
+            <v-btn
+                    :loading="loading"
+                    color="primary"
+                    @click="loadData"
+            >
+                <v-icon left dark>refresh</v-icon>
+                重新加载
+            </v-btn>
             <v-spacer></v-spacer>
             <v-text-field
                     v-model="search"
@@ -9,6 +17,7 @@
                     single-line
                     hide-details
             ></v-text-field>
+
         </v-card-title>
         <v-data-table
                 :headers="headers"
@@ -29,7 +38,10 @@
                 <td class="text-xs-left">{{ props.item.ProcessCount }}</td>
                 <td class="text-xs-left">{{ props.item.TcpConnectCount }}</td>
                 <td class="text-xs-left">{{ props.item.DiskReadOps }}</td>
+                <td class="text-xs-left">{{ props.item.DiskWriteOps }}</td>
                 <td class="text-xs-left">{{ props.item.NICOut }}</td>
+                <td class="text-xs-left">{{ props.item.NICIn }}</td>
+                <td class="text-xs-left">{{ props.item.NetPacketOut }}</td>
                 <td class="text-xs-left">{{ props.item.NetPacketIn }}</td>
             </template>
             <template v-slot:no-results>
@@ -56,9 +68,12 @@
                     {text: '阻塞进程数', value: 'BlockProcessCount'},
                     {text: '进程总数', value: 'ProcessCount'},
                     {text: 'TCP连接数', value: 'TcpConnectCount'},
-                    {text: '磁盘读写次数', value: 'DiskReadOps'},
-                    {text: '网卡出入带宽(Mb/s)', value: 'NICOut'},
-                    {text: '网卡出入包(个/s)', value: 'NetPacketIn'},
+                    {text: '磁盘读次数', value: 'DiskReadOps'},
+                    {text: '磁盘写次数', value: 'DiskWriteOps'},
+                    {text: '网卡出带宽(Mb/s)', value: 'NICOut'},
+                    {text: '网卡入带宽(Mb/s)', value: 'NICIn'},
+                    {text: '网卡出包(个/s)', value: 'NetPacketOut'},
+                    {text: '网卡入包(个/s)', value: 'NetPacketIn'},
                 ],
                 dataList: [],
                 loading: false,
@@ -75,26 +90,24 @@
             this.loadData();
         },
         methods: {
-            timeFormat(time){
+            timeFormat(time) {
                 const newTime = new Date(time * 1000);
-                return newTime.toISOString().
-                                replace(/T/, ' ').
-                                replace(/\..+/, '')
+                return newTime.toISOString().replace(/T/, ' ').replace(/\..+/, '')
             },
-            config(item){
+            config(item) {
                 var _label = item.CPU + "/U、";
                 _label += item.Memory + "/M、";
 
                 var _disk = "";
-                item.DiskSet.forEach(disk=>{
-                    _disk += disk.Size + "/"+ disk.Type + "、";
+                item.DiskSet.forEach(disk => {
+                    _disk += disk.Size + "/" + disk.Type + "、";
                 })
-                _label +=_disk;
+                _label += _disk;
                 return _label;
             },
-            getIps(item){
+            getIps(item) {
                 var _label = "";
-                item.IPSet.forEach(ipObj=>{
+                item.IPSet.forEach(ipObj => {
                     if (_label) {
                         _label = _label + "\n" + ipObj.IP;
                     } else {

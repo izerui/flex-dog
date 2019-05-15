@@ -72,16 +72,8 @@ http.install = function (Vue, fly) {
                 // NProgress.done()
                 return data;
             }
-            const {success, errMsg} = data;
-            if (!success) {
-                if (errMsg === '用户未登录') {
-                    router.push({path: '/login'})
-                } else {
-                    Vue.prototype.$message.error(errMsg === undefined || errMsg === null || errMsg === '' ? '服务器异常' : errMsg);
-                }
-            }
-            //只将请求结果的data字段返回
-            return data.data;
+
+            return data;
         },
         (error) => {
             //发生网络错误后会走到这里

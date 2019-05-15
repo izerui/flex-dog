@@ -7,26 +7,31 @@ const routes = [
     {
         path: '/',
         name: 'home',
+        meta: { title: '主页' },
         component: () => import('../views/Home')
     },
     {
         path: '/dashboard',
         name: 'dashboard',
+        meta: { title: '测试1' },
         component: () => import('../views/Dashboard/Layout'),
         children: [
             {
                 path: 'indicators',
                 name: 'dashboard.indicators',
+                meta: { title: '测试1' },
                 component: () => import('../views/Dashboard/Indicators')
             },
             {
                 path: 'backup',
                 name: 'dashboard.backup',
+                meta: { title: '测试1' },
                 component: () => import('../views/Dashboard/Backup')
             },
             {
                 path: 'logs',
                 name: 'dashboard.logs',
+                meta: { title: '测试1' },
                 component: () => import('../views/Dashboard/Logs')
             }
         ]
@@ -34,12 +39,20 @@ const routes = [
     {
         path: '/home',
         name: 'home',
+        meta: { title: 'Home' },
         component: () => import('../views/Home'),
     },
     {
         path: '/hello',
         name: 'hello',
+        meta: { title: 'hello' },
         component: () => import('../views/HelloWorld'),
+    },
+    {
+        path: '/ecs',
+        name: 'ecs',
+        meta: { title: '服务器列表' },
+        component: () => import('../views/ecs/EcsList'),
     }
 ]
 

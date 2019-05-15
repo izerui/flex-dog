@@ -58,8 +58,7 @@
                             :key="item.icon"
                             :to="item.link"
                             slot="activator"
-                            ripple
-                    >
+                            ripple>
                         <v-list-tile-action>
                             <v-icon :color="item.color">{{item.icon}}</v-icon>
                         </v-list-tile-action>
@@ -105,7 +104,7 @@
                             {
                                 icon: 'computer',
                                 title: '服务器列表',
-                                link: '/hello'
+                                link: '/ecs'
                             }
                         ],
                     },

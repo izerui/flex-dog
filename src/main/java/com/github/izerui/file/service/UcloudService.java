@@ -10,7 +10,6 @@ import java.util.Map;
 
 @RemotingDestination
 @Service("ucloudService")
-@ConfigurationProperties
 public class UcloudService {
 
     private static ApiClient apiClient = new ApiClient(

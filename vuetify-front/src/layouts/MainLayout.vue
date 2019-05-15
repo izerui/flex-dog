@@ -12,7 +12,7 @@
                 dark
         >
             <v-toolbar-side-icon @click.stop="leftDrawer = !leftDrawer"/>
-
+            <v-toolbar-title>{{$route.meta.title}}</v-toolbar-title>
             <v-spacer></v-spacer>
 
             <v-tooltip bottom>
@@ -93,7 +93,8 @@
                 search: ''
             }
         },
-
+        created(){
+        },
         methods: {
         }
     }

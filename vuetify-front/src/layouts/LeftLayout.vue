@@ -93,8 +93,8 @@
                         children: [
                             {
                                 icon: 'query_builder',
-                                title: '服务日志',
-                                link: '/dashboard'
+                                title: '访问日志',
+                                link: '/console'
                             },
                             {
                                 icon: 'dashboard',

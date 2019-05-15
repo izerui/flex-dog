@@ -73,7 +73,6 @@
 
         <!-- 右侧通知栏 -->
         <RightNotification :drawer.sync="rightDrawer"></RightNotification>
-
     </v-app>
 </template>
 

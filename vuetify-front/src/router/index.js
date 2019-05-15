@@ -11,30 +11,10 @@ const routes = [
         component: () => import('../views/Home')
     },
     {
-        path: '/dashboard',
-        name: 'dashboard',
-        meta: { title: '测试1' },
-        component: () => import('../views/Dashboard/Layout'),
-        children: [
-            {
-                path: 'indicators',
-                name: 'dashboard.indicators',
-                meta: { title: '测试1' },
-                component: () => import('../views/Dashboard/Indicators')
-            },
-            {
-                path: 'backup',
-                name: 'dashboard.backup',
-                meta: { title: '测试1' },
-                component: () => import('../views/Dashboard/Backup')
-            },
-            {
-                path: 'logs',
-                name: 'dashboard.logs',
-                meta: { title: '测试1' },
-                component: () => import('../views/Dashboard/Logs')
-            }
-        ]
+        path: '/console',
+        name: 'console',
+        meta: { title: '访问日志' },
+        component: () => import('../views/console/ConsoleLogs'),
     },
     {
         path: '/home',

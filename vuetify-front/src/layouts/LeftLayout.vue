@@ -116,6 +116,11 @@
                                 title: '数据监控',
                                 link: '/metrics'
                             },
+                            {
+                                icon: 'airline_seat_recline_normal',
+                                title: '在线用户',
+                                link: '/onlines'
+                            },
                         ]
                     },
                     {

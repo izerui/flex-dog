@@ -62,24 +62,30 @@ const routes = [
         component: () => import('../views/metrics/Layout'),
         children: [
             {
-                path: 'ecs',
+                path: '/metrics/ecs',
                 name: 'ecs',
                 meta: { title: '服务器监控' },
                 component: () => import('../views/metrics/EcsMetricsList'),
             },
             {
-                path: 'dbs',
+                path: '/metrics/dbs',
                 name: 'dbs',
                 meta: { title: '数据库监控' },
                 component: () => import('../views/metrics/DbMetricsList'),
             },
             {
-                path: 'redis',
+                path: '/metrics/redis',
                 name: 'redis',
                 meta: { title: 'redis监控' },
                 component: () => import('../views/metrics/RedisMetricsList'),
             }
         ]
+    },
+    {
+        path: '/onlines',
+        name: 'onlines',
+        meta: { title: '在线用户' },
+        component: () => import('../views/onlines/OnlineUserList'),
     },
 ]
 

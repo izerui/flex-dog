@@ -6,7 +6,6 @@ import com.github.izerui.file.repository.AuditRecordRepository;
 import com.github.izerui.file.repository.StIgnoreTypeRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -25,9 +24,6 @@ public class StService {
 
     @Autowired
     private StIgnoreTypeRepository stIgnoreTypeRepository;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
 
     @Async
     public void logCount(Record record) {

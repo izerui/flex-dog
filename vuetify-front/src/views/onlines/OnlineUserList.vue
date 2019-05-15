@@ -1,14 +1,13 @@
 <template>
     <v-card>
         <v-card-title>
-            <v-btn
-                    :loading="loading"
-                    color="primary"
-                    @click="loadData"
-            >
-                <v-icon left dark>refresh</v-icon>
-                重新加载
-            </v-btn>
+            <v-text-field
+                    v-model="search"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+            ></v-text-field>
             <v-badge
                     :value="true"
                     color="blue"
@@ -28,16 +27,15 @@
                 </template>
                 <span>在线数</span>
             </v-badge>
-
             <v-spacer></v-spacer>
-            <v-text-field
-                    v-model="search"
-                    append-icon="search"
-                    label="Search"
-                    single-line
-                    hide-details
-            ></v-text-field>
-
+            <v-btn
+                    :loading="loading"
+                    color="primary"
+                    @click="loadData"
+            >
+                <v-icon left dark>refresh</v-icon>
+                重新加载
+            </v-btn>
         </v-card-title>
         <v-data-table
                 :headers="headers"

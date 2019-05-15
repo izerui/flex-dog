@@ -1,6 +1,14 @@
 <template>
     <v-card>
         <v-card-title>
+            <v-text-field
+                    v-model="search"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
             <v-btn
                     :loading="loading"
                     color="primary"
@@ -9,15 +17,6 @@
                 <v-icon left dark>refresh</v-icon>
                 重新加载
             </v-btn>
-            <v-spacer></v-spacer>
-            <v-text-field
-                    v-model="search"
-                    append-icon="search"
-                    label="Search"
-                    single-line
-                    hide-details
-            ></v-text-field>
-
         </v-card-title>
         <v-data-table
                 :headers="headers"

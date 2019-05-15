@@ -52,7 +52,6 @@ import java.util.*;
 @Slf4j
 @RemotingDestination
 @Service("fileService")
-@ConfigurationProperties
 @Transactional
 @EnableConfigurationProperties(FileConfig.class)
 public class FileService {

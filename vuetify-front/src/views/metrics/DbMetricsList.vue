@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-card-title>
+        <v-toolbar card prominent>
             <v-text-field
                     v-model="search"
                     append-icon="search"
@@ -17,7 +17,7 @@
                 <v-icon left dark>refresh</v-icon>
                 重新加载
             </v-btn>
-        </v-card-title>
+        </v-toolbar>
         <v-data-table
                 :headers="headers"
                 :items="dataList"

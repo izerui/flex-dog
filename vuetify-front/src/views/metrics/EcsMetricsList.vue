@@ -92,7 +92,7 @@
         methods: {
             async loadData() {
                 this.loading = true;
-                const result = await this.$fly.get('/api/v1/metrics');
+                const result = await this.$fly.get('/api/v1/metrics/ecs');
                 this.dataList = result.DataSet;
                 this.loading = false;
             }

@@ -25,7 +25,7 @@ public class UCloudController {
     }
 
     @ApiOperation("获取服务器监控列表")
-    @GetMapping(value = "/api/v1/metrics",
+    @GetMapping(value = "/api/v1/metrics/ecs",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
             consumes = MediaType.ALL_VALUE
     )
@@ -35,7 +35,7 @@ public class UCloudController {
 
 
     @ApiOperation("获取数据库监控列表")
-    @GetMapping(value = "/api/v1/dbs",
+    @GetMapping(value = "/api/v1/metrics/dbs",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
             consumes = MediaType.ALL_VALUE
     )

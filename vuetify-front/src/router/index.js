@@ -52,14 +52,29 @@ const routes = [
         path: '/ecs',
         name: 'ecs',
         meta: { title: '服务器列表' },
-        component: () => import('../views/ucloud/EcsList'),
+        component: () => import('../views/ecs/EcsList'),
     },
     {
         path: '/metrics',
+        redirect: '/metrics/ecs',
         name: 'metrics',
-        meta: { title: '服务器监控' },
-        component: () => import('../views/ucloud/EcsMetricsList'),
-    }
+        meta: { title: '数据监控' },
+        component: () => import('../views/metrics/Layout'),
+        children: [
+            {
+                path: 'ecs',
+                name: 'ecs',
+                meta: { title: '服务器监控' },
+                component: () => import('../views/metrics/EcsMetricsList'),
+            },
+            {
+                path: 'dbs',
+                name: 'dbs',
+                meta: { title: '数据库监控' },
+                component: () => import('../views/metrics/DbMetricsList'),
+            }
+        ]
+    },
 ]
 
 const router = new VueRouter({

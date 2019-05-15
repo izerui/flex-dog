@@ -90,39 +90,11 @@
             this.loadData();
         },
         methods: {
-            timeFormat(time) {
-                const newTime = new Date(time * 1000);
-                return newTime.toISOString().replace(/T/, ' ').replace(/\..+/, '')
-            },
-            config(item) {
-                var _label = item.CPU + "/U、";
-                _label += item.Memory + "/M、";
-
-                var _disk = "";
-                item.DiskSet.forEach(disk => {
-                    _disk += disk.Size + "/" + disk.Type + "、";
-                })
-                _label += _disk;
-                return _label;
-            },
-            getIps(item) {
-                var _label = "";
-                item.IPSet.forEach(ipObj => {
-                    if (_label) {
-                        _label = _label + "\n" + ipObj.IP;
-                    } else {
-                        _label = ipObj.IP;
-                    }
-                })
-                return _label;
-            },
             async loadData() {
                 this.loading = true;
                 const result = await this.$fly.get('/api/v1/metrics');
                 this.dataList = result.DataSet;
                 this.loading = false;
-
-                console.log(this.pagination)
             }
         }
     }

@@ -116,8 +116,6 @@
                 const result = await this.$fly.get('/api/v1/servers');
                 this.dataList = result.UHostSet;
                 this.loading = false;
-
-                console.log(this.pagination)
             }
         }
     }

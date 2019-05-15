@@ -33,4 +33,14 @@ public class UCloudController {
         return ucloudService.getMetricOverview();
     }
 
+
+    @ApiOperation("获取数据库监控列表")
+    @GetMapping(value = "/api/v1/dbs",
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            consumes = MediaType.ALL_VALUE
+    )
+    public String getDbMetrics() {
+        return ucloudService.getDbMetricOverview();
+    }
+
 }

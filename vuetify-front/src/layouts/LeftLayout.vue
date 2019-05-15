@@ -112,20 +112,10 @@
                         header: "监控",
                         children: [
                             {
-                                icon: 'perm_media',
-                                title: '服务器监控',
+                                icon: 'storage',
+                                title: '数据监控',
                                 link: '/metrics'
                             },
-                            {
-                                icon: 'storage',
-                                title: '数据库监控',
-                                link: '/sdf'
-                            },
-                            {
-                                icon: 'code',
-                                title: 'redis监控',
-                                link: '/few'
-                            }
                         ]
                     },
                     {

@@ -50,12 +50,12 @@
                 <tr @click="props.expanded = !props.expanded">
                     <td class="text-xs-left">{{ props.item.code }}</td>
                     <td class="text-xs-left">{{ props.item.name }}</td>
-                    <td class="text-xs-left">{{ props.item.date }}</td>
-                    <td class="text-xs-left">{{ props.item.type }}</td>
-                    <td class="text-xs-left">{{ props.item.status }}</td>
                     <td class="text-xs-left">{{ props.item.relatedCount }}</td>
                     <td class="text-xs-left">{{ props.item.postCount }}</td>
                     <td class="text-xs-left">{{ props.item.count }}</td>
+                    <td class="text-xs-left">{{ props.item.date }}</td>
+                    <td class="text-xs-left">{{ props.item.type }}</td>
+                    <td class="text-xs-left">{{ props.item.status }}</td>
                 </tr>
             </template>
             <template v-slot:expand="props">
@@ -81,12 +81,12 @@
                 headers: [
                     {text: '账套编号', align: 'left', value: 'code'},
                     {text: '企业名称', value: 'name'},
-                    {text: '开户日期', value: 'date'},
-                    {text: '类型', value: 'type'},
-                    {text: '状态', value: 'status'},
                     {text: '员工数', value: 'relatedCount'},
                     {text: '授权数', value: 'postCount'},
                     {text: '在线数', value: 'count'},
+                    {text: '开户日期', value: 'date'},
+                    {text: '类型', value: 'type'},
+                    {text: '状态', value: 'status'},
                 ],
                 dataList: [],
                 loading: false,

@@ -27,17 +27,18 @@
                 fix-header
         >
             <template v-slot:items="props">
-                <td class="text-xs-left">{{ props.item.Name }}</td>
-                <td class="text-xs-left">{{ props.item.Usage }}</td>
-                <td class="text-xs-left">{{ Math.round(props.item.InstanceUsage / 1024) }}</td>
-                <td class="text-xs-left">{{ props.item.QPS }}</td>
-                <td class="text-xs-left">{{ props.item.NICOut }}</td>
-                <td class="text-xs-left">{{ props.item.NICIn }}</td>
-                <td class="text-xs-left">{{ props.item.URedisInstanceConnCount }}</td>
-                <td class="text-xs-left">{{ props.item.InstanceKey }}</td>
-                <td class="text-xs-left">{{ props.item.InstanceGetHit }}</td>
-                <td class="text-xs-left">{{ props.item.InstanceGetHitRate }}</td>
-                <td class="text-xs-left">{{ props.item.RedisSinglenodeMaxload }}</td>
+                <tr>
+                    <td class="text-xs-left">{{ props.item.server }}</td>
+                    <td class="text-xs-left">{{ props.item.serverAddress }}</td>
+                    <td class="text-xs-left">{{ props.item.fileName }}</td>
+                    <td class="text-xs-left">{{ props.item.size }}</td>
+                    <td class="text-xs-left">{{ props.item.owner }}</td>
+                    <td class="text-xs-left">{{ props.item.port }}</td>
+                    <td class="text-xs-left">{{ props.item.url }}</td>
+                    <td class="text-xs-left">{{ props.item.uploadTimeStr }}</td>
+                    <td class="text-xs-left">{{ props.item.deployTimeStr }}</td>
+                    <td class="text-xs-left">{{ props.item.status }}</td>
+                </tr>
             </template>
             <template v-slot:no-results>
                 <v-alert :value="true" color="error" icon="warning">
@@ -54,17 +55,16 @@
             return {
                 search: '',
                 headers: [
-                    {text: 'redis名称', align: 'left', value: 'Name'},
-                    {text: '内存使用率(%)', value: 'Usage'},
-                    {text: '空间使用量(Mb)', value: 'InstanceUsage'},
-                    {text: 'QPS', value: 'QPS'},
-                    {text: '网卡出带宽', value: 'NICOut'},
-                    {text: '网卡入带宽', value: 'NICIn'},
-                    {text: '实例连接数', value: 'URedisInstanceConnCount'},
-                    {text: '实例Key数量', value: 'InstanceKey'},
-                    {text: '命中次数', value: 'InstanceGetHit'},
-                    {text: '命中率(%)', value: 'InstanceGetHitRate'},
-                    {text: 'Redis负载', value: 'RedisSinglenodeMaxload'},
+                    {text: '服务器', align: 'left', value: 'server'},
+                    {text: 'IP地址', value: 'serverAddress'},
+                    {text: '文件名称', value: 'fileName'},
+                    {text: '文件大小', value: 'size'},
+                    {text: '拥有者', value: 'owner'},
+                    {text: '端口', value: 'port'},
+                    {text: '服务地址', value: 'url'},
+                    {text: '上传时间', value: 'uploadTimeStr'},
+                    {text: '最后发布时间', value: 'deployTimeStr'},
+                    {text: '状态', value: 'status'},
                 ],
                 dataList: [],
                 loading: false,
@@ -83,8 +83,8 @@
         methods: {
             async loadData() {
                 this.loading = true;
-                const result = await this.$fly.get('/api/v1/metrics/redis');
-                this.dataList = result.DataSet;
+                const result = await this.$fly.get('/api/v1/files');
+                this.dataList = result.data;
                 this.loading = false;
             }
         }

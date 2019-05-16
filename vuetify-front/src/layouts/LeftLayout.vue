@@ -99,7 +99,7 @@
                             {
                                 icon: 'dashboard',
                                 title: '服务列表',
-                                link: '/home'
+                                link: '/files'
                             },
                             {
                                 icon: 'computer',

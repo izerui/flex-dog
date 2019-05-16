@@ -60,7 +60,8 @@
             </template>
             <template v-slot:expand="props">
                 <v-card flat>
-                    <v-card-text>{{props.item.users}}</v-card-text>
+                    <v-chip v-if="props.item.users" v-for="it in props.item.users.split(',')">{{it}}</v-chip>
+                    <!--<v-card-text>{{props.item.users}}</v-card-text>-->
                 </v-card>
             </template>
             <template v-slot:no-results>

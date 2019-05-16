@@ -17,10 +17,10 @@ const routes = [
         component: () => import('../views/console/ConsoleLogs'),
     },
     {
-        path: '/home',
-        name: 'home',
-        meta: { title: 'Home' },
-        component: () => import('../views/Home'),
+        path: '/files',
+        name: 'files',
+        meta: { title: '服务列表' },
+        component: () => import('../views/file/FileList'),
     },
     {
         path: '/hello',

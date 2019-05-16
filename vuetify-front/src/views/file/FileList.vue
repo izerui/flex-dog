@@ -30,6 +30,14 @@
                     hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
+            <v-btn color="primary" @click="newFile">
+                <v-icon dark>playlist_add</v-icon>
+                新建服务
+            </v-btn>
+            <v-btn color="primary">
+                <v-icon dark>cloud_upload</v-icon>
+                上传文件
+            </v-btn>
             <v-btn
                     :loading="loading"
                     color="primary"
@@ -37,14 +45,6 @@
             >
                 <v-icon left dark>refresh</v-icon>
                 重新加载
-            </v-btn>
-            <v-btn color="primary">
-                <v-icon dark>playlist_add</v-icon>
-                新建服务
-            </v-btn>
-            <v-btn color="primary">
-                <v-icon dark>cloud_upload</v-icon>
-                上传文件
             </v-btn>
         </v-toolbar>
         <v-data-table
@@ -98,11 +98,19 @@
                 </v-alert>
             </template>
         </v-data-table>
+
+        <v-dialog v-model="dialog" persistent max-width="600px">
+            <NewFileDialog @close="cancelFile" @save="saveFile"></NewFileDialog>
+        </v-dialog>
+
     </v-card>
 </template>
 
 <script>
+    import NewFileDialog from "./NewFileDialog";
+
     export default {
+        components: {NewFileDialog},
         data() {
             return {
                 search: '',
@@ -130,12 +138,24 @@
                 expand: false,
                 tabsItems: [],
                 tabIndex: null,
+                dialog: false
             }
         },
         created() {
             this.loadData("全部");
         },
         methods: {
+            cancelFile(){
+              this.dialog = false
+            },
+            saveFile(file) {
+              console.log(file);
+              this.dialog = false;
+              this.loadData(this.tabsItems[this.tabIndex])
+            },
+            newFile() {
+                this.dialog = true;
+            },
             async loadData(server) {
                 this.loading = true;
                 const result = await this.$fly.get('/api/v1/files', {server: server});

@@ -75,11 +75,11 @@
             </template>
             <template v-slot:expand="props">
                 <v-card flat>
-                    <v-btn small color="grey" v-if="props.item.status === 'UP'">
+                    <v-btn small color="grey" v-if="props.item.status === 'UP'" @click="disableService(props.item)">
                         <v-icon dark>airplanemode_inactive</v-icon>
                         下线
                     </v-btn>
-                    <v-btn small color="success" v-else>
+                    <v-btn small color="success" v-else @click="enableService(props.item)">
                         <v-icon dark>airplanemode_active</v-icon>
                         上线
                     </v-btn>
@@ -104,6 +104,9 @@
             <NewFileDialog @close="cancelFile" @save="saveFile" :servers="tabsItems"></NewFileDialog>
         </v-dialog>
 
+        <v-dialog v-model="validation" max-width="400px">
+            <VerificationDialog :callBack="responseFun" @close="validation = false"></VerificationDialog>
+        </v-dialog>
 
         <v-dialog
                 v-model="uploading"
@@ -130,9 +133,10 @@
 
 <script>
     import NewFileDialog from "./NewFileDialog";
+    import VerificationDialog from "../../components/VerificationDialog";
 
     export default {
-        components: {NewFileDialog},
+        components: {VerificationDialog, NewFileDialog},
         data() {
             return {
                 search: '',
@@ -162,12 +166,46 @@
                 tabIndex: null,
                 dialog: false,
                 uploading: false,
+                validation: false,
+                responseFun: function (phone,code) {
+
+                }
             }
         },
         created() {
             this.loadData("全部");
         },
         methods: {
+            async disableService(item){
+                this.validation = true;
+                this.responseFun = function (phone, code) {
+                    this.$fly.get("/api/v1/file/disable", {
+                        appId: item.appId,
+                        instanceId: item.instanceId,
+                        phone: phone,
+                        code: code,
+                    }).then(result => {
+                        if (result.success) {
+                            this.$message.success("下线成功")
+                        }
+                    })
+                }
+            },
+            async enableService(item) {
+                this.validation = true;
+                this.responseFun = function (phone, code) {
+                    this.$fly.get("/api/v1/file/enable", {
+                        appId: item.appId,
+                        instanceId: item.instanceId,
+                        phone: phone,
+                        code: code,
+                    }).then(result => {
+                        if (result.success) {
+                            this.$message.success("上线成功")
+                        }
+                    })
+                }
+            },
             async handleFilesUpload() {
                 this.uploading = true;
                 let uploadedFiles = this.$refs.file.files[0];
@@ -187,7 +225,6 @@
                 this.dialog = false
             },
             async saveFile(file) {
-                console.log("server", file.servers);
                 let formData = new FormData;
                 file.servers.forEach((s, index) => {
                     formData.append('servers[]', s)

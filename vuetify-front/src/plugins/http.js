@@ -74,7 +74,6 @@ http.install = function (Vue, fly) {
             }
             const {errMsg} = data;
             if (errMsg) {
-                console.log(Vue.prototype.$message)
                 Vue.prototype.$message.error(errMsg);
             }
             return data;

@@ -28,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.http.HttpHeaders;
@@ -148,10 +147,17 @@ public class FileService {
         return map;
     }
 
+    public void addServices(List<FileEntity> fileEntities) {
+        for (FileEntity fileEntity : fileEntities) {
+            addService(fileEntity);
+        }
+    }
+
     public void addService(FileEntity fileEntity) {
         long count = fileRepository.countByFileNameAndServer(fileEntity.getFileName(), fileEntity.getServer());
         Assert.state(count == 0, "服务器已经存在当前服务");
         fileEntity.setId(UUID.randomUUID().toString());
+        fileEntity.setFilePath(FilenameUtils.getPath(rootPath) + fileEntity.getFileName());
         fileRepository.save(fileEntity);
         logRepository.save(new LogEntity("service", String.format("服务器: %s 增加服务: %s", fileEntity.getServer(), fileEntity.getFileName())));
     }
@@ -249,7 +255,7 @@ public class FileService {
     public void saveFile(MultipartFile file) throws IOException {
         List<FileEntity> entities = fileRepository.findByFileName(file.getOriginalFilename());
         List<FileEntity> collect = entities.stream().filter(fileEntity -> fileEntity.getFileName().equals(file.getOriginalFilename())).collect(Collectors.toList());
-        if(collect.isEmpty()){
+        if (collect.isEmpty()) {
             throw new RuntimeException("不支持该文件上传");
         }
         File newFile = new File(rootPath + file.getOriginalFilename());

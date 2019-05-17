@@ -101,7 +101,28 @@
         </v-data-table>
 
         <v-dialog v-model="dialog" persistent max-width="600px">
-            <NewFileDialog @close="cancelFile" @save="saveFile"></NewFileDialog>
+            <NewFileDialog @close="cancelFile" @save="saveFile" :servers="tabsItems"></NewFileDialog>
+        </v-dialog>
+
+
+        <v-dialog
+                v-model="uploading"
+                persistent
+                width="300"
+        >
+            <v-card
+                    color="primary"
+                    dark
+            >
+                <v-card-text>
+                    正在上传...
+                    <v-progress-linear
+                            indeterminate
+                            color="white"
+                            class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
         </v-dialog>
 
     </v-card>
@@ -149,31 +170,39 @@
         methods: {
             async handleFilesUpload() {
                 this.uploading = true;
-                let l = this.$message.loading({
-                    message: '正在上传...',
-                    align: 'center',
-                    showClose: false
-                })
                 let uploadedFiles = this.$refs.file.files[0];
-                if(uploadedFiles){
+                if (uploadedFiles) {
                     var formData = new FormData;
-                    formData.append("Filedata",uploadedFiles);
-                    await this.$fly.post("/api/v1/upload",formData);
+                    formData.append("Filedata", uploadedFiles);
+                    await this.$fly.post("/api/v1/upload", formData);
                     this.uploading = false;
                     this.$refs.file.value = null
-                    l.close()
                     this.loadData(this.tabsItems[this.tabIndex])
                 }
             },
-            selectFile(){
+            selectFile() {
                 this.$refs.file.click();
             },
-            cancelFile(){
-              this.dialog = false
+            cancelFile() {
+                this.dialog = false
             },
-            saveFile(file) {
-              this.dialog = false;
-              this.loadData(this.tabsItems[this.tabIndex])
+            async saveFile(file) {
+                console.log("server", file.servers);
+                let formData = new FormData;
+                file.servers.forEach((s, index) => {
+                    formData.append('servers[]', s)
+                })
+                formData.append("fileName", file.fileName)
+                formData.append("owner", file.owner)
+                formData.append("type", file.type)
+                formData.append("sender", file.sender)
+                formData.append("code", file.code)
+                const result = await this.$fly.post("/api/v1/new-service", formData)
+                if (result.success) {
+                    this.$message.success('新建服务成功');
+                    this.dialog = false;
+                    this.loadData(this.tabsItems[this.tabIndex])
+                }
             },
             newFile() {
                 this.dialog = true;

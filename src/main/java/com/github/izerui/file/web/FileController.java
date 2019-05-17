@@ -1,5 +1,6 @@
 package com.github.izerui.file.web;
 
+import com.ecworking.rest.exception.BusinessException;
 import com.github.izerui.file.entity.FileEntity;
 import com.github.izerui.file.service.FileService;
 import org.apache.commons.io.IOUtils;
@@ -14,6 +15,7 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.github.izerui.file.web.Response.success;
 
@@ -53,6 +55,37 @@ public class FileController {
     public Response getFiles(@RequestParam(value = "server", required = false) String server) {
         List<FileEntity> fileEntities = fileService.listFiles(server);
         return success(fileEntities);
+    }
+
+    @GetMapping("/api/v1/file/send-captcha")
+    public Response sendCaptcha(@RequestParam("phone") String phone) {
+        fileService.sendCaptcha(phone);
+        return success();
+    }
+
+    @PostMapping("/api/v1/new-service")
+    public Response newService(@RequestParam("servers[]") List<String> servers,
+                               @RequestParam("fileName") String fileName,
+                               @RequestParam("owner") String owner,
+                               @RequestParam("type") String type,
+                               @RequestParam("sender") String sender,
+                               @RequestParam("code") String code) {
+        boolean validateCaptcha = fileService.validateCaptcha(sender, code);
+        if (!validateCaptcha) {
+            throw new BusinessException("验证码不对");
+        }
+        List<FileEntity> collect = servers.stream().map(server -> {
+            String[] split = server.split(",");
+            FileEntity entity = new FileEntity();
+            entity.setFileName(fileName);
+            entity.setOwner(owner);
+            entity.setServer(split[0]);
+            entity.setServerAddress(split[1]);
+            entity.setDeployType(type);
+            return entity;
+        }).collect(Collectors.toList());
+        fileService.addServices(collect);
+        return success();
     }
 
 }

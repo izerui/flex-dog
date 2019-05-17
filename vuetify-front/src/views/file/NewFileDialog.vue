@@ -99,6 +99,7 @@
         },
         methods: {
             initData() {
+                this.resetForm()
                 this.$fly.get("/api/v1/publishers").then(result => {
                     this.publishers = result.data;
                 });

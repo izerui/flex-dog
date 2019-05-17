@@ -70,12 +70,12 @@ public class FileController {
                                @RequestParam("type") String type,
                                @RequestParam("sender") String sender,
                                @RequestParam("code") String code) {
-        boolean validateCaptcha = fileService.validateCaptcha(sender, code);
-        if (!validateCaptcha) {
-            throw new BusinessException("验证码不对");
-        }
+//        boolean validateCaptcha = fileService.validateCaptcha(sender, code);
+//        if (!validateCaptcha) {
+//            throw new BusinessException("验证码不对");
+//        }
         List<FileEntity> collect = servers.stream().map(server -> {
-            String[] split = server.split(",");
+            String[] split = server.split(";");
             FileEntity entity = new FileEntity();
             entity.setFileName(fileName);
             entity.setOwner(owner);

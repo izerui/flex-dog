@@ -110,9 +110,9 @@
                     serverList.forEach(s => {
                         let ips = "";
                         s.IPSet.forEach(d => {
-                            ips += d.IP + ",";
+                            ips += d.IP + ";";
                         })
-                        s.server = s.Name + "," + ips;
+                        s.server = s.Name + ";" + ips;
                     })
                     this.servers = serverList;
                 })

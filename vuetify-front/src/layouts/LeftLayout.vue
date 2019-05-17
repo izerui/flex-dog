@@ -1,6 +1,6 @@
 <template>
     <v-navigation-drawer
-            width="250"
+            width="220"
             dark
             persistent
             :mini-variant="miniVariant"

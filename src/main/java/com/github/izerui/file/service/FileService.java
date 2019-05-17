@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RemotingDestination
@@ -246,9 +247,13 @@ public class FileService {
     }
 
     public void saveFile(MultipartFile file) throws IOException {
+        List<FileEntity> entities = fileRepository.findByFileName(file.getOriginalFilename());
+        List<FileEntity> collect = entities.stream().filter(fileEntity -> fileEntity.getFileName().equals(file.getOriginalFilename())).collect(Collectors.toList());
+        if(collect.isEmpty()){
+            throw new RuntimeException("不支持该文件上传");
+        }
         File newFile = new File(rootPath + file.getOriginalFilename());
         IOUtils.copy(file.getInputStream(), new FileOutputStream(newFile));
-        List<FileEntity> entities = fileRepository.findByFileName(file.getOriginalFilename());
         Date time = new Date();
         for (FileEntity one : entities) {
             one.setSize(file.getSize());

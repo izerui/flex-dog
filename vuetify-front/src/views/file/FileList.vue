@@ -34,10 +34,11 @@
                 <v-icon dark>playlist_add</v-icon>
                 新建服务
             </v-btn>
-            <v-btn color="primary">
+            <v-btn color="primary" @click="selectFile" :loading="uploading">
                 <v-icon dark>cloud_upload</v-icon>
                 上传文件
             </v-btn>
+            <input type="file" style="display: none" id="file" ref="file" v-on:change="handleFilesUpload()"/>
             <v-btn
                     :loading="loading"
                     color="primary"
@@ -138,18 +139,39 @@
                 expand: false,
                 tabsItems: [],
                 tabIndex: null,
-                dialog: false
+                dialog: false,
+                uploading: false,
             }
         },
         created() {
             this.loadData("全部");
         },
         methods: {
+            async handleFilesUpload() {
+                this.uploading = true;
+                let l = this.$message.loading({
+                    message: '正在上传...',
+                    align: 'center',
+                    showClose: false
+                })
+                let uploadedFiles = this.$refs.file.files[0];
+                if(uploadedFiles){
+                    var formData = new FormData;
+                    formData.append("Filedata",uploadedFiles);
+                    await this.$fly.post("/api/v1/upload",formData);
+                    this.uploading = false;
+                    this.$refs.file.value = null
+                    l.close()
+                    this.loadData(this.tabsItems[this.tabIndex])
+                }
+            },
+            selectFile(){
+                this.$refs.file.click();
+            },
             cancelFile(){
               this.dialog = false
             },
             saveFile(file) {
-              console.log(file);
               this.dialog = false;
               this.loadData(this.tabsItems[this.tabIndex])
             },

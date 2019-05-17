@@ -72,7 +72,11 @@ http.install = function (Vue, fly) {
                 // NProgress.done()
                 return data;
             }
-
+            const {errMsg} = data;
+            if (errMsg) {
+                console.log(Vue.prototype.$message)
+                Vue.prototype.$message.error(errMsg);
+            }
             return data;
         },
         (error) => {

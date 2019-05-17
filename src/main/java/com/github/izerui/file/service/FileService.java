@@ -157,7 +157,6 @@ public class FileService {
         long count = fileRepository.countByFileNameAndServer(fileEntity.getFileName(), fileEntity.getServer());
         Assert.state(count == 0, "服务器已经存在当前服务");
         fileEntity.setId(UUID.randomUUID().toString());
-        fileEntity.setFilePath(FilenameUtils.getPath(rootPath) + fileEntity.getFileName());
         fileRepository.save(fileEntity);
         logRepository.save(new LogEntity("service", String.format("服务器: %s 增加服务: %s", fileEntity.getServer(), fileEntity.getFileName())));
     }

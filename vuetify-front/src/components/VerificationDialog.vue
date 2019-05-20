@@ -1,7 +1,18 @@
 <template>
     <v-card tile>
-        <v-card-title>安全验证</v-card-title>
-        <v-divider></v-divider>
+        <v-toolbar card dark color="primary">
+            <v-btn icon dark @click="cancel">
+                <v-icon>close</v-icon>
+            </v-btn>
+            <v-toolbar-title>安全校验</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+                <v-btn @click="confirm" dark flat>
+                    <v-icon>done</v-icon>
+                    确定
+                </v-btn>
+            </v-toolbar-items>
+        </v-toolbar>
         <v-card-text>
             <v-container grid-list-md>
                 <v-layout wrap>
@@ -25,18 +36,6 @@
                 </v-layout>
             </v-container>
         </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn @click="confirm" color="primary">
-                <v-icon>done</v-icon>
-                确定
-            </v-btn>
-            <v-btn @click="cancel">
-                <v-icon>cancel</v-icon>
-                取消
-            </v-btn>
-        </v-card-actions>
     </v-card>
 </template>
 

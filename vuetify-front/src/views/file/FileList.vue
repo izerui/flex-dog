@@ -83,7 +83,7 @@
                         <v-icon dark>airplanemode_active</v-icon>
                         上线
                     </v-btn>
-                    <v-btn small color="primary">
+                    <v-btn small color="primary" @click="publishService(props.item)">
                         <v-icon dark>cloud_done</v-icon>
                         发布
                     </v-btn>
@@ -104,7 +104,7 @@
             <NewFileDialog @close="cancelFile" @save="saveFile" :servers="tabsItems"></NewFileDialog>
         </v-dialog>
 
-        <v-dialog v-model="validation" max-width="400px">
+        <v-dialog v-model="validation" persistent max-width="400px">
             <VerificationDialog :callBack="responseFun" @close="validation = false"></VerificationDialog>
         </v-dialog>
 
@@ -167,7 +167,7 @@
                 dialog: false,
                 uploading: false,
                 validation: false,
-                responseFun: function (phone,code) {
+                responseFun: function (phone, code) {
 
                 }
             }
@@ -176,7 +176,22 @@
             this.loadData("全部");
         },
         methods: {
-            async disableService(item){
+            async publishService(item) {
+                this.validation = true;
+                this.responseFun = function (phone, code) {
+                    this.$fly.get("/api/v1/file/publish", {
+                        id: item.id,
+                        phone: phone,
+                        code: code,
+                    }).then(result => {
+                        if (result.success) {
+                            this.$message.success("发布成功")
+                            this.validation = false
+                        }
+                    })
+                }
+            },
+            async disableService(item) {
                 this.validation = true;
                 this.responseFun = function (phone, code) {
                     this.$fly.get("/api/v1/file/disable", {
@@ -187,6 +202,7 @@
                     }).then(result => {
                         if (result.success) {
                             this.$message.success("下线成功")
+                            this.validation = false
                         }
                     })
                 }
@@ -202,6 +218,7 @@
                     }).then(result => {
                         if (result.success) {
                             this.$message.success("上线成功")
+                            this.validation = false
                         }
                     })
                 }

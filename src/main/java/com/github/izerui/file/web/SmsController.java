@@ -15,7 +15,7 @@ public class SmsController {
 
     @GetMapping("/api/v1/send-captcha")
     public Response sendCaptcha(@RequestParam("phone")String phone){
-//        smsService.sendCaptcha(phone);
+        smsService.sendCaptcha(phone);
         return Response.success();
     }
 }

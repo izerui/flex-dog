@@ -244,7 +244,7 @@ public class FileService {
     public String getLogContent(String homePageUrl, Long beginRange) {
         try {
             String rangeHeader = "bytes=" + (beginRange != null ? beginRange.toString() : "") + "-";
-            RequestEntity.HeadersBuilder<?> builder = RequestEntity.get(new URI(homePageUrl + "logfile"));
+            RequestEntity.HeadersBuilder<?> builder = RequestEntity.get(new URI(homePageUrl + "actuator/logfile"));
             builder.header(HttpHeaders.RANGE, rangeHeader);
 //            builder.header(HttpHeaders.CONTENT_TYPE, "text/plain;charset=UTF-8");
 //            builder.header(HttpHeaders.ACCEPT_CHARSET, "UTF-8");

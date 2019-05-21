@@ -92,8 +92,8 @@ public class FileController {
                                    @RequestParam("phone") String phone,
                                    @RequestParam("code") String code) throws Exception {
         Assert.state(smsService.validate(phone, code), "验证码验证失败");
-        fileService.exec(id);
-        return success();
+        String exec = fileService.exec(id);
+        return success(exec);
     }
 
     @PostMapping("/api/v1/new-service")

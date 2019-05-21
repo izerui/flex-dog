@@ -103,6 +103,9 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             if (throwable.getClass().getName().equals("com.netflix.zuul.exception.ZuulException")) {
                 errMsg = "请求服务暂时不可用,请稍后重试";
             }
+            if(errMsg == null || "".equals(errMsg)){
+                errMsg = "系统错误,请重试";
+            }
             response.setStatus(200);
             resp.put("errMsg", errMsg);
             resp.put("data", body);

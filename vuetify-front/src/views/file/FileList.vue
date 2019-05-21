@@ -100,12 +100,16 @@
             </template>
         </v-data-table>
 
-        <v-dialog v-model="dialog" persistent max-width="600px">
+        <v-dialog v-model="dialog" persistent max-width="800px">
             <NewFileDialog @close="cancelFile" @save="saveFile" :servers="tabsItems"></NewFileDialog>
         </v-dialog>
 
-        <v-dialog v-model="validation" persistent max-width="400px">
-            <VerificationDialog :callBack="responseFun" @close="validation = false"></VerificationDialog>
+        <v-dialog v-model="validation" persistent max-width="450px">
+            <VerificationDialog  @close="validation = false" @confirm="validateConfirm"></VerificationDialog>
+        </v-dialog>
+
+        <v-dialog v-model="tooltip.show" persistent max-width="800px" scrollable>
+            <TooltipDialog  @close="tooltip.show = false" :text="tooltip.text" :title="tooltip.title"></TooltipDialog>
         </v-dialog>
 
         <v-dialog
@@ -134,9 +138,10 @@
 <script>
     import NewFileDialog from "./NewFileDialog";
     import VerificationDialog from "../../components/VerificationDialog";
+    import TooltipDialog from "../../components/TooltipDialog";
 
     export default {
-        components: {VerificationDialog, NewFileDialog},
+        components: {TooltipDialog, VerificationDialog, NewFileDialog},
         data() {
             return {
                 search: '',
@@ -167,8 +172,12 @@
                 dialog: false,
                 uploading: false,
                 validation: false,
-                responseFun: function (phone, code) {
-
+                validationType: null,
+                selItem: {},
+                tooltip: {
+                    show: false,
+                    title: '',
+                    text: ''
                 }
             }
         },
@@ -176,27 +185,39 @@
             this.loadData("全部");
         },
         methods: {
-            async publishService(item) {
-                this.validation = true;
-                this.responseFun = function (phone, code) {
+            validateConfirm(phone, code) {
+                if(this.validationType === 'publish'){
                     this.$fly.get("/api/v1/file/publish", {
-                        id: item.id,
+                        id: this.selItem.id,
                         phone: phone,
                         code: code,
                     }).then(result => {
                         if (result.success) {
-                            this.$message.success("发布成功")
                             this.validation = false
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            result.data += result.data
+                            this.tooltip = {
+                                show: true,
+                                title: '发布成功',
+                                text: result.data
+                            }
                         }
                     })
-                }
-            },
-            async disableService(item) {
-                this.validation = true;
-                this.responseFun = function (phone, code) {
+                }else if(this.validationType === 'disable'){
                     this.$fly.get("/api/v1/file/disable", {
-                        appId: item.appId,
-                        instanceId: item.instanceId,
+                        appId: this.selItem.appId,
+                        instanceId: this.selItem.instanceId,
                         phone: phone,
                         code: code,
                     }).then(result => {
@@ -205,14 +226,10 @@
                             this.validation = false
                         }
                     })
-                }
-            },
-            async enableService(item) {
-                this.validation = true;
-                this.responseFun = function (phone, code) {
+                }else if(this.validationType === 'enable'){
                     this.$fly.get("/api/v1/file/enable", {
-                        appId: item.appId,
-                        instanceId: item.instanceId,
+                        appId: this.selItem.appId,
+                        instanceId: this.selItem.instanceId,
                         phone: phone,
                         code: code,
                     }).then(result => {
@@ -222,6 +239,21 @@
                         }
                     })
                 }
+            },
+            publishService(item) {
+                this.validation = true;
+                this.validationType = 'publish'
+                this.selItem = item
+            },
+            disableService(item) {
+                this.validation = true;
+                this.validationType = 'disable';
+                this.selItem = item;
+            },
+            enableService(item) {
+                this.validation = true;
+                this.validationType = 'enable';
+                this.selItem = item;
             },
             async handleFilesUpload() {
                 this.uploading = true;

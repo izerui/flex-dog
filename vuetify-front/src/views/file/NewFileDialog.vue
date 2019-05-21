@@ -7,10 +7,14 @@
             <v-toolbar-title>新建服务</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-                <v-btn dark flat @click="save">
-                    <v-icon>save</v-icon>
-                    保存
-                </v-btn>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn dark flat @click="save" icon v-on="on">
+                            <v-icon>save</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>保存</span>
+                </v-tooltip>
             </v-toolbar-items>
         </v-toolbar>
         <v-card-text>

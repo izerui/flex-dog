@@ -139,6 +139,9 @@ public class FileService {
                         //rootPath.contains("dog") 表示测试环境，调试用，正式环境不要包含dog相关名字的目录
                         if (rootPath.contains("dog") || file.getServerAddress().contains(instance.getHostName())) {
                             file.setUrl(instance.getHomePageUrl());
+                            file.setLogUrl(instance.getHealthCheckUrl().replace("health","logfile"));
+                            // todo dev
+                            file.setLogUrl(file.getLogUrl().replace("62","70"));
                             file.setPort(instance.getPort());
                             file.setStatus(instance.getStatus().name());
                             file.setAppId(instance.getAppName());
@@ -232,19 +235,20 @@ public class FileService {
         return fileRepository.findOne(fileId);
     }
 
-    public long getLogLength(String homePageUrl) {
+    public long getLogLength(String logUrl) {
         try {
-            HttpHeaders httpHeaders = REST_TEMPLATE.headForHeaders(new URI(homePageUrl + "logfile"));
+            HttpHeaders httpHeaders = REST_TEMPLATE.headForHeaders(new URI(logUrl));
             return httpHeaders.getContentLength();
         } catch (Exception e) {
             return 0;
         }
     }
 
-    public String getLogContent(String homePageUrl, Long beginRange) {
+    public String getLogContent(String logUrl, Long beginRange) {
         try {
+            log.info(UUID.randomUUID().toString());
             String rangeHeader = "bytes=" + (beginRange != null ? beginRange.toString() : "") + "-";
-            RequestEntity.HeadersBuilder<?> builder = RequestEntity.get(new URI(homePageUrl + "actuator/logfile"));
+            RequestEntity.HeadersBuilder<?> builder = RequestEntity.get(new URI(logUrl));
             builder.header(HttpHeaders.RANGE, rangeHeader);
 //            builder.header(HttpHeaders.CONTENT_TYPE, "text/plain;charset=UTF-8");
 //            builder.header(HttpHeaders.ACCEPT_CHARSET, "UTF-8");

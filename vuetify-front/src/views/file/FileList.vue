@@ -87,7 +87,7 @@
                         <v-icon dark>cloud_done</v-icon>
                         发布
                     </v-btn>
-                    <v-btn small color="info">
+                    <v-btn small color="info" @click="log(props.item)">
                         <v-icon dark>dvr</v-icon>
                         日志
                     </v-btn>
@@ -105,11 +105,15 @@
         </v-dialog>
 
         <v-dialog v-model="validation" persistent max-width="450px">
-            <VerificationDialog  @close="validation = false" @confirm="validateConfirm"></VerificationDialog>
+            <VerificationDialog @close="validation = false" @confirm="validateConfirm"></VerificationDialog>
         </v-dialog>
 
         <v-dialog v-model="tooltip.show" persistent max-width="800px" scrollable>
-            <TooltipDialog  @close="tooltip.show = false" :text="tooltip.text" :title="tooltip.title"></TooltipDialog>
+            <TooltipDialog @close="tooltip.show = false" :text="tooltip.text" :title="tooltip.title"></TooltipDialog>
+        </v-dialog>
+
+        <v-dialog v-model="showLog" persistent fullscreen scrollable transition="dialog-bottom-transition">
+            <LogDialog @close="showLog = false" :log-url="logUrl" :show-log.sync="showLog"></LogDialog>
         </v-dialog>
 
         <v-dialog
@@ -139,9 +143,10 @@
     import NewFileDialog from "./NewFileDialog";
     import VerificationDialog from "../../components/VerificationDialog";
     import TooltipDialog from "../../components/TooltipDialog";
+    import LogDialog from "./LogDialog";
 
     export default {
-        components: {TooltipDialog, VerificationDialog, NewFileDialog},
+        components: {LogDialog, TooltipDialog, VerificationDialog, NewFileDialog},
         data() {
             return {
                 search: '',
@@ -178,15 +183,21 @@
                     show: false,
                     title: '',
                     text: ''
-                }
+                },
+                showLog: false,
+                logUrl: null
             }
         },
         created() {
             this.loadData("全部");
         },
         methods: {
+            log(item) {
+                this.showLog = true
+                this.logUrl = item.logUrl
+            },
             validateConfirm(phone, code) {
-                if(this.validationType === 'publish'){
+                if (this.validationType === 'publish') {
                     this.$fly.get("/api/v1/file/publish", {
                         id: this.selItem.id,
                         phone: phone,
@@ -214,7 +225,7 @@
                             }
                         }
                     })
-                }else if(this.validationType === 'disable'){
+                } else if (this.validationType === 'disable') {
                     this.$fly.get("/api/v1/file/disable", {
                         appId: this.selItem.appId,
                         instanceId: this.selItem.instanceId,
@@ -226,7 +237,7 @@
                             this.validation = false
                         }
                     })
-                }else if(this.validationType === 'enable'){
+                } else if (this.validationType === 'enable') {
                     this.$fly.get("/api/v1/file/enable", {
                         appId: this.selItem.appId,
                         instanceId: this.selItem.instanceId,

@@ -7,6 +7,7 @@ import com.github.izerui.file.service.SmsService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,9 +80,9 @@ public class FileController {
 
     @GetMapping("/api/v1/file/disable")
     public Response disableService(@RequestParam("appId") String appId,
-                                  @RequestParam("instanceId") String instanceId,
-                                  @RequestParam("phone") String phone,
-                                  @RequestParam("code") String code) {
+                                   @RequestParam("instanceId") String instanceId,
+                                   @RequestParam("phone") String phone,
+                                   @RequestParam("code") String code) {
         Assert.state(smsService.validate(phone, code), "验证码验证失败");
         fileService.stopService(appId, instanceId);
         return success();
@@ -119,6 +120,12 @@ public class FileController {
         }).collect(Collectors.toList());
         fileService.addServices(collect);
         return success();
+    }
+
+    @GetMapping("/api/v1/log-length")
+    public Response getLogLength(@RequestParam("logUrl") String logUrl) {
+        long length = fileService.getLogLength(logUrl);
+        return success(length);
     }
 
 }

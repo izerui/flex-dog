@@ -10,8 +10,10 @@
   "dependencies": {
     "core-js": "^2.6.5",
     "flyio": "^0.6.14",
+    "highlight.js": "^9.15.6",
     "material-design-icons-iconfont": "^5.0.1",
     "vue": "^2.6.10",
+    "vue-highlight.js": "^3.1.0",
     "vue-m-message": "^1.1.1",
     "vue-router": "^3.0.3",
     "vuetify": "^1.5.14",

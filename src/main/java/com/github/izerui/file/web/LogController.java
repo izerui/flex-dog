@@ -22,6 +22,7 @@ public class LogController {
     public ResponseEntity<String> getLogContent(@RequestParam("logUrl") String logUrl,
                                                 @RequestParam("begin") Long begin) throws UnsupportedEncodingException {
         String content = fileService.getLogContent(logUrl, begin);
+//        content += "\n.......................\n";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
         return new ResponseEntity<String>(content,

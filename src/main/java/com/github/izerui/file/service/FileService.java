@@ -141,7 +141,7 @@ public class FileService {
                             file.setUrl(instance.getHomePageUrl());
                             file.setLogUrl(instance.getHealthCheckUrl().replace("health","logfile"));
                             // todo dev
-                            file.setLogUrl(file.getLogUrl().replace("62","70"));
+                            file.setLogUrl(file.getLogUrl().replace("62","60"));
                             file.setPort(instance.getPort());
                             file.setStatus(instance.getStatus().name());
                             file.setAppId(instance.getAppName());
@@ -246,7 +246,10 @@ public class FileService {
 
     public String getLogContent(String logUrl, Long beginRange) {
         try {
-            log.info(UUID.randomUUID().toString());
+            new Thread(()->{
+                log.info("djfjdsjfjsdjffjfj");
+               log.error("测试异常",new Throwable("jdsjfjds"));
+            }).start();
             String rangeHeader = "bytes=" + (beginRange != null ? beginRange.toString() : "") + "-";
             RequestEntity.HeadersBuilder<?> builder = RequestEntity.get(new URI(logUrl));
             builder.header(HttpHeaders.RANGE, rangeHeader);

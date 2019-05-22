@@ -23,10 +23,13 @@
                 <!--{{content}}-->
             <!--</div>-->
             <!-- Inline Code Block -->
-            <highlight-code ref="containerDiv">
-                {{content}}
-            </highlight-code>
-            <div ref="end"></div>
+            <!--<highlight-code ref="containerDiv" lang="Bash">-->
+                <!--{{content}}-->
+            <!--</highlight-code>-->
+            <v-flex>
+                <pre v-for="line in contentArray">{{line}}</pre>
+            </v-flex>
+            <div ref="endDivider" style="scroll-behavior: smooth"></div>
         </v-card-text>
     </v-card>
 </template>
@@ -46,7 +49,8 @@
         },
         data() {
             return {
-                content: '',
+                // content: '',
+                contentArray: [],
                 timer: null,
                 loading: false,
                 begin: 0,
@@ -73,7 +77,7 @@
         },
         methods: {
             async getLog() {
-                if(this.loading || !this.scroll){
+                if(this.loading){
                     return;
                 }
                 if(this.logUrl){
@@ -92,12 +96,19 @@
                             logUrl: encodeURI(this.logUrl),
                             begin: this.begin,
                         })
-                        this.content += '<br>' + txt;
-                        this.loading = false
                         this.begin = length
-                        // this.$refs.container.scrollTop = Math.floor(this.$refs.containerDiv.scrollHeight)
+                        // this.content += txt;
+                        this.contentArray = this.contentArray.concat(txt.split(/[(\r\n)\r\n]+/))
+                        this.loading = false
+
                         if(this.scroll){
-                            this.$refs.end.scrollIntoView()
+                            this.$refs.endDivider.scrollIntoView(
+                                {
+                                    behavior: "smooth", //"auto" | "instant" | "smooth", // 默认 auto
+                                    block: "end", //"start" | "center" | "end" | "nearest", // 默认 center
+                                    inline: "nearest", //"start" | "center" | "end" | "nearest", // 默认 nearest
+                                }
+                            )
                         }
                     }
                 }

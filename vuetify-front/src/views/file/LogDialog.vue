@@ -27,7 +27,7 @@
             <!--{{content}}-->
             <!--</highlight-code>-->
             <!--<highlight-code ref="containerDiv" lang="Bash">-->
-            <pre v-for="line in contentArray">{{line}}</pre>
+            <pre v-for="(line) in contentArray">{{line}}</pre>
             <!--</highlight-code>-->
             <div ref="endDivider" v-if="contentArray.length > 0">----------------end</div>
         </v-card-text>
@@ -132,5 +132,9 @@
 <style scoped>
     pre:hover{
         background-color: lightgrey;
+    }
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
     }
 </style>

@@ -29,7 +29,7 @@
             <!--<highlight-code ref="containerDiv" lang="Bash">-->
             <pre v-for="line in contentArray">{{line}}</pre>
             <!--</highlight-code>-->
-            <div ref="endDivider">----------------end</div>
+            <div ref="endDivider" v-if="contentArray.length > 0">----------------end</div>
         </v-card-text>
     </v-card>
 </template>
@@ -52,7 +52,7 @@
                 // content: '',
                 contentArray: [],
                 timer: null,
-                loading: false,
+                waiting: false,
                 begin: 0,
                 scroll: true
             }
@@ -65,6 +65,8 @@
                         this.content = ''
                         this.begin = 0
                     }
+                    this.contentArray = []
+                    this.scroll = true;
                     this.timer = setInterval(this.getLog, 1500)
                 } else {
                     if (this.timer !== null && this.timer !== undefined) {
@@ -85,11 +87,11 @@
                 }
             },
             async getLog() {
-                if (this.loading) {
+                if (this.waiting) {
                     return;
                 }
                 if (this.logUrl) {
-                    this.loading = true;
+                    this.waiting = true;
                     const result = await this.$fly.get("/api/v1/log-length", {logUrl: encodeURI(this.logUrl)})
                     if (result.success) {
                         const length = result.data;
@@ -107,7 +109,7 @@
                         this.begin = length
                         // this.content += txt;
                         this.contentArray = this.contentArray.concat(txt.split(/\r\n|[\r\n]/))
-                        this.loading = false
+                        this.waiting = false
 
                         setTimeout(()=>{
                             if (this.scroll) {

@@ -248,7 +248,7 @@ public class FileService {
         try {
             new Thread(()->{
                 log.info("djfjdsjfjsdjffjfj");
-               log.error("测试异常",new Throwable("jdsjfjds"));
+               log.error("测试异常",new Throwable(UUID.randomUUID().toString()));
             }).start();
             String rangeHeader = "bytes=" + (beginRange != null ? beginRange.toString() : "") + "-";
             RequestEntity.HeadersBuilder<?> builder = RequestEntity.get(new URI(logUrl));

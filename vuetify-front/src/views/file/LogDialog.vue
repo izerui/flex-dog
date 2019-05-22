@@ -18,18 +18,18 @@
                 </v-tooltip>
             </v-toolbar-side-icon>
         </v-toolbar>
-        <v-card-text ref="container">
+        <v-card-text>
             <!--<div ref="containerDiv">-->
-                <!--{{content}}-->
+            <!--{{content}}-->
             <!--</div>-->
             <!-- Inline Code Block -->
             <!--<highlight-code ref="containerDiv" lang="Bash">-->
-                <!--{{content}}-->
+            <!--{{content}}-->
             <!--</highlight-code>-->
-            <v-flex>
-                <pre v-for="line in contentArray">{{line}}</pre>
-            </v-flex>
-            <div ref="endDivider" style="scroll-behavior: smooth"></div>
+            <!--<highlight-code ref="containerDiv" lang="Bash">-->
+            <pre v-for="line in contentArray">{{line}}</pre>
+            <!--</highlight-code>-->
+            <div ref="endDivider">----------------end</div>
         </v-card-text>
     </v-card>
 </template>
@@ -58,14 +58,14 @@
             }
         },
         watch: {
-            showLog: function(val) {
+            showLog: function (val) {
                 if (val) {
                     if (this.timer !== null && this.timer !== undefined) {
                         clearInterval(this.timer)
                         this.content = ''
                         this.begin = 0
                     }
-                    this.timer = setInterval(this.getLog, 1000)
+                    this.timer = setInterval(this.getLog, 1500)
                 } else {
                     if (this.timer !== null && this.timer !== undefined) {
                         clearInterval(this.timer)
@@ -76,11 +76,19 @@
             }
         },
         methods: {
+            onScroll(e) {
+                console.log(e.target.scrollTop, e.target.clientHeight, e.target.scrollHeight)
+                if (e.target.scrollTop + e.target.clientHeight === e.target.scrollHeight) {
+                    this.scroll = true;
+                } else {
+                    this.scroll = false;
+                }
+            },
             async getLog() {
-                if(this.loading){
+                if (this.loading) {
                     return;
                 }
-                if(this.logUrl){
+                if (this.logUrl) {
                     this.loading = true;
                     const result = await this.$fly.get("/api/v1/log-length", {logUrl: encodeURI(this.logUrl)})
                     if (result.success) {
@@ -92,24 +100,26 @@
                             }
                         }
 
-                        const txt = await this.$fly.get("/api/v1/log-content",{
+                        const txt = await this.$fly.get("/api/v1/log-content", {
                             logUrl: encodeURI(this.logUrl),
                             begin: this.begin,
                         })
                         this.begin = length
                         // this.content += txt;
-                        this.contentArray = this.contentArray.concat(txt.split(/[(\r\n)\r\n]+/))
+                        this.contentArray = this.contentArray.concat(txt.split(/\r\n|[\r\n]/))
                         this.loading = false
 
-                        if(this.scroll){
-                            this.$refs.endDivider.scrollIntoView(
-                                {
-                                    behavior: "smooth", //"auto" | "instant" | "smooth", // 默认 auto
-                                    block: "end", //"start" | "center" | "end" | "nearest", // 默认 center
-                                    inline: "nearest", //"start" | "center" | "end" | "nearest", // 默认 nearest
-                                }
-                            )
-                        }
+                        setTimeout(()=>{
+                            if (this.scroll) {
+                                this.$refs.endDivider.scrollIntoView(
+                                    {
+                                        behavior: "smooth", //"auto" | "instant" | "smooth", // 默认 auto
+                                        block: "end", //"start" | "center" | "end" | "nearest", // 默认 center
+                                        inline: "nearest", //"start" | "center" | "end" | "nearest", // 默认 nearest
+                                    }
+                                )
+                            }
+                        },300)
                     }
                 }
             }
@@ -118,5 +128,7 @@
 </script>
 
 <style scoped>
-
+    pre:hover{
+        background-color: lightgrey;
+    }
 </style>

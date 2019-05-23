@@ -96,7 +96,7 @@
                     if (result.success) {
                         const length = result.data;
                         if (!this.begin) {
-                            this.begin = length - 30000;
+                            this.begin = length - 50000;
                             if (this.begin < 0) {
                                 this.begin = 0;
                             }
@@ -111,17 +111,19 @@
                         this.contentArray = this.contentArray.concat(txt.split(/\r\n|[\r\n]/))
                         this.waiting = false
 
-                        setTimeout(()=>{
-                            if (this.scroll) {
-                                this.$refs.endDivider.scrollIntoView(
-                                    {
-                                        behavior: "smooth", //"auto" | "instant" | "smooth", // 默认 auto
-                                        block: "end", //"start" | "center" | "end" | "nearest", // 默认 center
-                                        inline: "nearest", //"start" | "center" | "end" | "nearest", // 默认 nearest
-                                    }
-                                )
-                            }
-                        },300)
+                        if(txt){
+                            setTimeout(()=>{
+                                if (this.scroll) {
+                                    this.$refs.endDivider.scrollIntoView(
+                                        {
+                                            behavior: "smooth", //"auto" | "instant" | "smooth", // 默认 auto
+                                            block: "end", //"start" | "center" | "end" | "nearest", // 默认 center
+                                            inline: "nearest", //"start" | "center" | "end" | "nearest", // 默认 nearest
+                                        }
+                                    )
+                                }
+                            },300)
+                        }
                     }
                 }
             }

@@ -5,6 +5,7 @@ import com.ecworking.commons.em.InventoryAttributeEnum;
 import com.ecworking.commons.vo.PageVo;
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
+import com.ecworking.mrp.vo.InventoryDemandVo;
 import com.ecworking.mrp.vo.PurgeResultVo;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
@@ -49,7 +50,6 @@ import static com.ecworking.commons.jackson.Decimal2StringUtils.toPlainString;
 
 @RemotingDestination
 @Service("demandService")
-@ConfigurationProperties
 public class DemandService {
 
 
@@ -116,18 +116,12 @@ public class DemandService {
      * @param keyword
      * @return
      */
-    public Map inventoryDemands(String entCode,
-                                Integer page,
-                                Integer pageSize,
-                                String keyword) {
-        MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
-        valueMap.set("entCode", entCode);
-        valueMap.set("keyword", keyword);
-        valueMap.set("page", page);
-        valueMap.set("pageSize", pageSize);
-        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
-        Map map = restTemplate.postForObject("http://mrp-api/v3/inventory/demands", httpEntity, Map.class);
-        return map;
+    public PageVo<InventoryDemandVo> inventoryDemands(String entCode,
+                                                      Integer page,
+                                                      Integer pageSize,
+                                                      String keyword) {
+
+        return mrpClient.inventoryDemands(entCode,page,pageSize,keyword);
     }
 
 

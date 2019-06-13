@@ -67,6 +67,12 @@ const routes = [
         meta: { title: '在线用户' },
         component: () => import('../views/onlines/OnlineUserList'),
     },
+    {
+        path: '/mrp',
+        name: 'mrp',
+        meta: { title: 'MRP数据' },
+        component: () => import('../views/mrp/DemandList'),
+    },
 ]
 
 const router = new VueRouter({

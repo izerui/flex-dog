@@ -129,13 +129,8 @@
                             {
                                 icon: 'person_add_disabled',
                                 title: 'MRP数据',
-                                link: '/weeeef'
+                                link: '/mrp'
                             },
-                            {
-                                icon: 'contact_support',
-                                title: 'MRP异常',
-                                link: '/sdffff'
-                            }
                         ]
                     }
                 ]

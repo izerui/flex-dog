@@ -43,6 +43,7 @@
                 :search="search"
                 :loading="loading"
                 :pagination.sync="pagination"
+                :hide-actions="true"
                 :expand="expand"
                 item-key="code"
         >
@@ -93,7 +94,7 @@
                 pagination: {
                     descending: false,
                     page: 1,
-                    rowsPerPage: 10,
+                    rowsPerPage: -1,
                     sortBy: null,
                     totalItems: 0
                 },

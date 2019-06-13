@@ -52,6 +52,7 @@
                 :headers="headers"
                 :items="dataList"
                 :search="search"
+                :hide-actions="true"
                 :loading="loading"
                 :pagination.sync="pagination"
                 :expand="expand"
@@ -167,7 +168,7 @@
                 pagination: {
                     descending: false,
                     page: 1,
-                    rowsPerPage: 10,
+                    rowsPerPage: -1,
                     sortBy: null,
                     totalItems: 0
                 },
@@ -205,19 +206,6 @@
                     }).then(result => {
                         if (result.success) {
                             this.validation = false
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
-                            result.data += result.data
                             this.tooltip = {
                                 show: true,
                                 title: '发布成功',

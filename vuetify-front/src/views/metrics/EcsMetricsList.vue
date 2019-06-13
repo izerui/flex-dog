@@ -24,6 +24,7 @@
                 :search="search"
                 :loading="loading"
                 :pagination.sync="pagination"
+                :hide-actions="true"
                 fix-header
         >
             <template v-slot:items="props">

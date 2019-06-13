@@ -24,6 +24,7 @@
                 :search="search"
                 :loading="loading"
                 :pagination.sync="pagination"
+                :hide-actions="true"
                 fix-header
         >
             <template v-slot:items="props">
@@ -71,7 +72,7 @@
                 pagination: {
                     descending: false,
                     page: 1,
-                    rowsPerPage: 10,
+                    rowsPerPage: -1,
                     sortBy: null,
                     totalItems: 0
                 }

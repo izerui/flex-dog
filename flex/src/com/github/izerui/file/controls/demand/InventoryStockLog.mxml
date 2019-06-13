@@ -82,7 +82,7 @@
         private function qtyLabelFun(item:Object, column:DataGridColumn):String {
             if(item.operateType == "add" && item.quantity > 0){
                 return "+"+item.quantity;
-            }else if(item.operateType == "subtract" && item.quantity > 0){
+            }else if(item.operateType == "subtract" || item.quantity < 0){
                 return "-"+item.quantity;
             }
             return "";

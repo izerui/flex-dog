@@ -347,7 +347,7 @@ public class DemandService {
                              BigDecimal quantity) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
         Assert.state(isValid, "验证码无效");
-        mrpClient.subBomDemand(entCode, userCode, bomId, lastQuantity, quantity);
+        mrpClient.subBomDemand(entCode, userCode, bomId, quantity.subtract(lastQuantity));
     }
 
 

@@ -1,8 +1,13 @@
 package com.github.izerui.file.service;
+import java.util.*;
+
+import com.ecworking.commons.em.SourceType;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.ecworking.commons.em.InventoryAttributeEnum;
 import com.ecworking.commons.vo.PageVo;
+import com.ecworking.commons.vo.SourceMsgVo;
+import com.ecworking.development.document.Bom;
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
 import com.ecworking.mrp.vo.InventoryDemandVo;
@@ -41,10 +46,6 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static com.ecworking.commons.jackson.Decimal2StringUtils.toPlainString;
 
@@ -327,7 +328,7 @@ public class DemandService {
         rabbitTemplate.convertAndSend("ierp", "ierp.demand.update", msg);
     }
 
-    public void addBomDemand(String phone,
+    public void changeBomDemand(String phone,
                              String captcha,
                              String entCode,
                              String userCode,
@@ -335,21 +336,20 @@ public class DemandService {
                              BigDecimal quantity) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
         Assert.state(isValid, "验证码无效");
-        mrpClient.addBomDemand(entCode, userCode, bomId, quantity);
+        Bom bom = bomClient.findByBomId(entCode, bomId);
+        SourceMsgVo msg = new SourceMsgVo();
+        msg.setEntCode(entCode);
+        msg.setUserCode(userCode);
+        msg.setSourceId(UUID.randomUUID().toString());
+        msg.setBusinessKey(bom.getBusinessKey());
+        msg.setSourceDocNo(bom.getBusinessDocNo());
+        msg.setSourceType(SourceType.ORDER_QUANTITY_CHANGE);
+        msg.setBomId(bomId);
+        msg.setQuantity(quantity);
+        msg.setRemark("变更数量");
+        msg.setCreateTime(new Date());
+        rabbitTemplate.convertAndSend("ierp","ierp.mrp.demand.source.change",msg);
     }
-
-    public void subBomDemand(String phone,
-                             String captcha,
-                             String entCode,
-                             String userCode,
-                             String bomId,
-                             BigDecimal lastQuantity,
-                             BigDecimal quantity) {
-        boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
-        Assert.state(isValid, "验证码无效");
-        mrpClient.subBomDemand(entCode, userCode, bomId, quantity.subtract(lastQuantity));
-    }
-
 
     public List<Map<String, Object>> findErrorDemandInventories(String entCode) throws IOException {
         //采购

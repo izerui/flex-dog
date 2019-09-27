@@ -355,12 +355,12 @@ public class DemandService {
     }
 
 
-    public void lackMaterial(String entCode, String userCode, String inventoryId) {
+    public void lackMaterial(String entCode, String userCode, String inventoryId, String attributeCode) {
         LackMaterielVo vo = new LackMaterielVo();
         vo.setEntCode(entCode);
         vo.setUserCode(userCode);
         vo.setInventoryId(inventoryId);
-        vo.setAttributeCode("");
+        vo.setAttributeCode(attributeCode);
         vo.setBusinessType(BusinessType.SYSTEM);
         rabbitTemplate.convertAndSend("ierp", "ierp.storehouse.lack.materiel.task", vo);
     }

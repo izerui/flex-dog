@@ -11,7 +11,9 @@
         <mx:Label text="货品: "></mx:Label>
         <mx:TextInput id="input" width="200" enter="page.number = 0; loadData()"/>
         <mx:LinkButton icon="@Embed('/assets/img/bar_img/zoom.png')" label="查询" click="page.number = 0; loadData()"/>
-        <mx:LinkButton icon="@Embed('/assets/img/billing.png')" label="推缺" click="linkButton1_clickHandler(event)"/>
+        <mx:LinkButton icon="@Embed('/assets/img/billing.png')" label="推缺-采购件" click="lack('0')"/>
+        <mx:LinkButton icon="@Embed('/assets/img/billing.png')" label="推缺-自制件" click="lack('1')"/>
+        <mx:LinkButton icon="@Embed('/assets/img/billing.png')" label="推缺-委外件" click="lack('2')"/>
     </mx:HBox>
     <mx:DataGrid id="grid" width="100%" height="100%" variableRowHeight="true" dataProvider="{page.content}"
                  itemRollOver="itemRollOver(event)" itemRollOut="itemRollOut(event)" doubleClickEnabled="true"
@@ -266,18 +268,18 @@
             entName = event.item.name;
         }
 
-        private function linkButton1_clickHandler(event:MouseEvent):void {
-            if(grid.selectedIndex == -1){
+        private function lack(attributeCode:String = "0"):void {
+            if (grid.selectedIndex == -1) {
                 return;
             }
             var item:Object = grid.selectedItem;
             var userWin:UserWindow = new UserWindow();
             userWin.entCode = item.entCode as String;
-            userWin.addEventListener("selUserEvent",function (ev:SelUserEvent) {
+            userWin.addEventListener("selUserEvent", function (ev:SelUserEvent) {
                 var userCode:String = ev.user.code as String;
                 RemoteObjectUtils.execute("demandService", "lackMaterial", function (event:ResultEvent) {
-                    Alert.show("操作成功",'提示');
-                }, entCode, userCode, grid.selectedItem.inventoryId, grid.selectedItem.attributeCode);
+                    Alert.show("操作成功", '提示');
+                }, entCode, userCode, grid.selectedItem.inventoryId, attributeCode);
             });
             userWin.setFocus();
             PopUpManager.addPopUp(userWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)

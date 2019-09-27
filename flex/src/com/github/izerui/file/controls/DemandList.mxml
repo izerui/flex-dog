@@ -277,7 +277,7 @@
                 var userCode:String = ev.user.code as String;
                 RemoteObjectUtils.execute("demandService", "lackMaterial", function (event:ResultEvent) {
                     Alert.show("操作成功",'提示');
-                }, entCode, userCode, grid.selectedItem.inventoryId);
+                }, entCode, userCode, grid.selectedItem.inventoryId, grid.selectedItem.attributeCode);
             });
             userWin.setFocus();
             PopUpManager.addPopUp(userWin, FlexGlobals.topLevelApplication as DisplayObjectContainer, true)

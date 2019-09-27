@@ -45,8 +45,8 @@
                         area.verticalScrollPosition = area.maxVerticalScrollPosition;
                     }
                     begin = length;
-                }, selItem.url, begin);
-            }, selItem.url);
+                }, selItem.logUrl, begin);
+            }, selItem.logUrl);
         }
 
         private function close():void {

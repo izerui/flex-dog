@@ -17,6 +17,8 @@ public class FileItem {
     public var serverAddress:String;
     //服务url
     public var url:String;
+    // logurl
+    public var logUrl:String;
     //服务端口
     public var port:Number;
     //服务状态

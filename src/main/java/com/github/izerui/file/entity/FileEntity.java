@@ -44,6 +44,8 @@ public class FileEntity implements Serializable{
     @Transient
     private String url;
     @Transient
+    private String logUrl;
+    @Transient
     private Integer port;
     @Transient
     private String appId;

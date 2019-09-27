@@ -1,10 +1,13 @@
 package com.github.izerui.file.service;
+import com.yj2025.storehouse.enums.BusinessType;
+import com.ecworking.manufacture.commons.emun.SendingEm;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.ecworking.commons.em.InventoryAttributeEnum;
 import com.ecworking.commons.vo.PageVo;
 import com.ecworking.esms.global.mchuan.SmsSendResponse;
 import com.ecworking.esms.mchuan.MchuanSmsService;
+import com.ecworking.manufacture.commons.message.LackMaterialMsgVo;
 import com.ecworking.mrp.vo.PurgeResultVo;
 import com.ecworking.rbac.dto.EntSearch;
 import com.ecworking.rbac.dto.EnterpriseEntity;
@@ -17,6 +20,7 @@ import com.github.izerui.file.client.BusinessClient;
 import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.MrpClient;
 import com.google.common.collect.Lists;
+import com.yj2025.storehouse.vo.LackMaterielVo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -40,16 +44,12 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.ecworking.commons.jackson.Decimal2StringUtils.toPlainString;
 
 @RemotingDestination
 @Service("demandService")
-@ConfigurationProperties
 public class DemandService {
 
 
@@ -333,30 +333,6 @@ public class DemandService {
         rabbitTemplate.convertAndSend("ierp", "ierp.demand.update", msg);
     }
 
-    public void addBomDemand(String phone,
-                             String captcha,
-                             String entCode,
-                             String userCode,
-                             String bomId,
-                             BigDecimal quantity) {
-        boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
-        Assert.state(isValid, "验证码无效");
-        mrpClient.addBomDemand(entCode, userCode, bomId, quantity);
-    }
-
-    public void subBomDemand(String phone,
-                             String captcha,
-                             String entCode,
-                             String userCode,
-                             String bomId,
-                             BigDecimal lastQuantity,
-                             BigDecimal quantity) {
-        boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
-        Assert.state(isValid, "验证码无效");
-        mrpClient.subBomDemand(entCode, userCode, bomId, lastQuantity, quantity);
-    }
-
-
     public List<Map<String, Object>> findErrorDemandInventories(String entCode) throws IOException {
         //采购
         String sql = IOUtils.toString(new ClassPathResource("err_purge_qty.sql").getInputStream(), Charset.forName("utf-8"));
@@ -380,8 +356,13 @@ public class DemandService {
 
 
     public void lackMaterial(String entCode, String userCode, String inventoryId) {
-        LackMaterialMessageVo vo = new LackMaterialMessageVo(entCode, userCode, inventoryId, LackMaterialEnum.系统);
-        rabbitTemplate.convertAndSend("ierp", "ierp.lack.material.warehouse", vo);
+        LackMaterielVo vo = new LackMaterielVo();
+        vo.setEntCode(entCode);
+        vo.setUserCode(userCode);
+        vo.setInventoryId(inventoryId);
+        vo.setAttributeCode("");
+        vo.setBusinessType(BusinessType.SYSTEM);
+        rabbitTemplate.convertAndSend("ierp", "ierp.storehouse.lack.materiel.task", vo);
     }
 
 

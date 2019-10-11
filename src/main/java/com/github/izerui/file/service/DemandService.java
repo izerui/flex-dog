@@ -197,6 +197,8 @@ public class DemandService {
         String s = "{\n" +
                 "\t\"inventoryId\":\"%s\",\n" +
                 "\t\"page\":\"%s\",\n" +
+                "\t\"stockType\":\"1\",\n" +
+                "\t\"type\":\"1\",\n" +
                 "\t\"pageSize\":\"%s\"\n" +
                 "}";
         s = String.format(s, inventoryId, page, pageSize);
@@ -205,7 +207,7 @@ public class DemandService {
         headers.set("entCode", entCode);
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE));
         HttpEntity<String> bodyEntity = new HttpEntity<String>(s, headers);
-        Map map = restTemplate.postForObject("http://warehouse-pc/v3/pc/warehouse/stock/query/stock/change/detail", bodyEntity, Map.class);
+        Map map = restTemplate.postForObject("http://storehouse-pc/v1/history/list", bodyEntity, Map.class);
 
         String data = objectMapper.writeValueAsString(map.get("data"));
 

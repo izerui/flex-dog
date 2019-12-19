@@ -19,6 +19,14 @@
     <facet type="Spring" name="Spring">
       <configuration />
     </facet>
+    <facet type="jpa" name="JPA">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <setting name="provider-name" value="Hibernate" />
+        <datasource-mapping />
+        <naming-strategy-map />
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output url="file://$MODULE_DIR$/target/classes" />
@@ -38,7 +46,10 @@
     <orderEntry type="library" name="Maven: com.ecworking:warehouse-global:3.4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:purchase-remote:3.7.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:purchase-global:3.7.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:jpa-configuration:2.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-remote:5.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-global:5.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:mrp-remote:4.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:jpa-configuration:2.1.5-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:druid:1.1.12" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:business-commons:2.1.0-SNAPSHOT" level="project" />
@@ -59,6 +70,7 @@
     <orderEntry type="library" name="Maven: org.apache.xmlbeans:xmlbeans:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.virtuald:curvesapi:1.04" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.8" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-guava:2.9.8" level="project" />
     <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.4" level="project" />
     <orderEntry type="library" name="Maven: com.belerweb:pinyin4j:2.5.1" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:docs-autoconfigure:2.0.0-SNAPSHOT" level="project" />
@@ -80,8 +92,8 @@
     <orderEntry type="library" name="Maven: com.ecworking:manufacture-commons:4.1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:warehouse-remote:3.4.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:warehouse-global:3.4.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:purchase-remote:5.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:purchase-global:5.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-remote:5.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:purchase-global:5.1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.yj2025:finance-global:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.yj2025:storehouse-global:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:development-document:4.2.0-SNAPSHOT" level="project" />
@@ -126,7 +138,7 @@
     <orderEntry type="library" name="Maven: com.ecworking:esms-sender:1.2.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.taobao:taobao-sdk:20160106" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:esms-global:1.2.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.ecworking:mrp-remote:4.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.ecworking:mrp-remote:4.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:rbac-remote:3.4.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:rbac-global:3.4.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.ecworking:audit-core:2.0.0-SNAPSHOT" level="project" />

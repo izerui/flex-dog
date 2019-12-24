@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-textarea
-                height="600"
+                :height="divHeight"
                 box
                 disabled
                 label="访问日志:"
@@ -17,8 +17,13 @@
         data() {
             return {
                 content: '',
-                timer: null
+                timer: null,
+                divHeight:600,
             }
+        },
+        beforeMount() {
+            var h = document.documentElement.clientHeight || document.body.clientHeight;
+            this.divHeight = h - 100;
         },
         created(){
           this.beginLoad();

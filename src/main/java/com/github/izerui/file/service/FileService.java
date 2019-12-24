@@ -136,8 +136,8 @@ public class FileService {
             for (Application application : registeredApplications) {
                 if (file.getFileName().toUpperCase().contains(application.getName().toUpperCase())) {
                     for (InstanceInfo instance : application.getInstancesAsIsFromEureka()) {
-                        //rootPath.contains("dog") 表示测试环境，调试用，正式环境不要包含dog相关名字的目录
-                        if (rootPath.contains("dog") || file.getServerAddress().contains(instance.getHostName())) {
+                        //rootPath.contains("serv") 表示测试环境，调试用，正式环境不要包含dog相关名字的目录
+                        if (rootPath.contains("serv") || file.getServerAddress().contains(instance.getHostName())) {
                             file.setUrl(instance.getHomePageUrl());
                             file.setLogUrl(instance.getHealthCheckUrl().replace("health","logfile"));
                             // todo dev

@@ -285,7 +285,7 @@ public class DemandService {
         valueMap.set("entCode", entCode);
         valueMap.set("businessKey", businessKey);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(valueMap);
-        Map bom = restTemplate.postForObject("http://development-api/v3/bom/businessKey", httpEntity, Map.class);
+        Map bom = restTemplate.postForObject("http://development-api/v4/bom/businessKey", httpEntity, Map.class);
         return Lists.newArrayList(bom);
     }
 

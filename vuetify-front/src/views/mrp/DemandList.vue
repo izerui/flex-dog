@@ -68,7 +68,7 @@
                 pagination: {
                     descending: false,
                     page: 1,
-                    rowsPerPage: 10,
+                    rowsPerPage: 15,
                     sortBy: null,
                     totalItems: 0,
                     totalPages: 0

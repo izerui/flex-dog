@@ -25,4 +25,12 @@ public class DemandController {
         PageVo<InventoryDemandVo> pageVo = demandService.inventoryDemands(entCode, page, pageSize, keyword);
         return success(pageVo);
     }
+
+    @GetMapping("/api/v2/lack-material")
+    public Response lackMaterial(@RequestParam("entCode") String entCode,
+                                 @RequestParam("userCode") String userCode,
+                                 @RequestParam("inventoryId") String inventoryId) {
+        demandService.lackMaterial(entCode, userCode, inventoryId);
+        return success();
+    }
 }

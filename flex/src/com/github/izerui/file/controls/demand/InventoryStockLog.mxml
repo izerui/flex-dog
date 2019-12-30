@@ -16,18 +16,24 @@
                                headerText="序号"
                                labelFunction="indexNumLabelFun"
                                width="40"/>
-            <mx:DataGridColumn dataField="businessSourceDocNo" textAlign="center"
+            <mx:DataGridColumn dataField="businessDocNo" textAlign="center"
                                headerText="业务单号"/>
-            <mx:DataGridColumn dataField="useDocNo" textAlign="center"
-                               headerText="单号"/>
-            <mx:DataGridColumn dataField="businessSourceType" textAlign="center"
-                               headerText="动作"/>
+            <mx:DataGridColumn dataField="companyName" textAlign="center"
+                               headerText="来源单位"/>
+            <mx:DataGridColumn dataField="businessTypeName" textAlign="center"
+                               headerText="业务类型"/>
+            <mx:DataGridColumn dataField="docNo" textAlign="center"
+                               headerText="出入库单号"/>
+            <mx:DataGridColumn dataField="createName" textAlign="center"
+                               headerText="出入库人员"/>
+            <mx:DataGridColumn dataField="createTime" textAlign="center"
+                               headerText="出入库时间"/>
+            <mx:DataGridColumn dataField="unitName" textAlign="center"
+                               headerText="单位"/>
             <mx:DataGridColumn textAlign="center"
-                               headerText="改变量" labelFunction="qtyLabelFun"/>
-            <mx:DataGridColumn dataField="stockQuantity" textAlign="center"
-                               headerText="改变后总库存"/>
-            <mx:DataGridColumn dataField="useTime" textAlign="center"
-                               headerText="操作时间"/>
+                               headerText="出入库数量" labelFunction="qtyLabelFun"/>
+            <mx:DataGridColumn dataField="afterStockQty" textAlign="center"
+                               headerText="改变后库存"/>
         </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar>
@@ -79,13 +85,9 @@
             df.formatString = "YYYY-MM-DD JJ:NN:SS";
             return df.format(item.docDate);
         }
+
         private function qtyLabelFun(item:Object, column:DataGridColumn):String {
-            if(item.operateType == "add" && item.quantity > 0){
-                return "+"+item.quantity;
-            }else if(item.operateType == "subtract" || item.quantity < 0){
-                return "-"+item.quantity;
-            }
-            return "";
+            return item.symbol + item.quantity;
         }
 
         private function pageClick(event:ItemClickEvent):void {
@@ -130,7 +132,7 @@
         }
 
         private function indexNumLabelFun(item:Object, column:DataGridColumn):String {
-            var indexNum:int = (page.content.getItemIndex(item) + 1);
+            var indexNum:int = (ArrayCollection(page.content).getItemIndex(item) + 1);
             return indexNum.toString();
         }
         ]]>

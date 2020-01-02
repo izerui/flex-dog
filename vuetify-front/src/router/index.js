@@ -8,7 +8,8 @@ const routes = [
         path: '/',
         name: 'home',
         meta: { title: '主页' },
-        component: () => import('../views/Home')
+        redirect: '/console',
+        // component: () => import('../views/Home')
     },
     {
         path: '/console',

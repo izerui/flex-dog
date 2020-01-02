@@ -1,0 +1,29 @@
+@import url(//fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Sharp|Material+Icons+Round|Material+Icons+Two+Tone);
+
+* {
+  font-family: Roboto, Arial, sans-serif;
+  font-weight: 400;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100%;
+  margin: 0px;
+  color: #5f6368;
+}
+
+html {
+  height: 100%;
+}
+
+.icon-image-preview {
+  display: inline-block;
+  font-size: 48px;
+  width: 48px;
+  overflow: hidden;
+}

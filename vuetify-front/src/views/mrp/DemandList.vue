@@ -27,33 +27,65 @@
                 :loading="loading"
                 :pagination.sync="pagination"
                 :total-items="pagination.totalItems"
+                :expand="expand"
+                item-key="inventoryCode"
                 fix-header
                 hide-actions
         >
             <template v-slot:items="props">
-                <td class="text-xs-left">{{ props.item.inventoryCode }}</td>
-                <td class="text-xs-left">{{ props.item.inventoryName }}</td>
-                <td class="text-xs-left">{{ props.item.unitName }}</td>
-                <td class="text-xs-left">{{ props.item.totalDemandQty }}</td>
-                <td class="text-xs-left">{{ props.item.totalPurgeQty }}</td>
-                <td class="text-xs-left">{{ props.item.stockQty }}</td>
-                <td class="text-xs-left">{{ props.item.usableQty }}</td>
+                <tr @click="props.expanded = !props.expanded">
+                    <td class="text-xs-left">{{ props.item.inventoryCode }}</td>
+                    <td class="text-xs-left">{{ props.item.inventoryName }}</td>
+                    <td class="text-xs-left">{{ props.item.unitName }}</td>
+                    <td class="text-xs-left">{{ props.item.totalDemandQty }}</td>
+                    <td class="text-xs-left">{{ props.item.totalPurgeQty }}</td>
+                    <td class="text-xs-left">{{ props.item.stockQty }}</td>
+                    <td class="text-xs-left">{{ props.item.usableQty }}</td>
+                </tr>
+            </template>
+            <template v-slot:expand="props">
+                <v-card flat>
+                    <v-btn small color="primary" @click="pushLack(props.item)">
+                        <v-icon dark>pan_tool</v-icon>
+                        推送缺料
+                    </v-btn>
+                    <v-btn small color="primary">
+                        <v-icon dark>list</v-icon>
+                        需求分配
+                    </v-btn>
+                    <v-btn small color="primary">
+                        <v-icon dark>visibility</v-icon>
+                        需求日志
+                    </v-btn>
+                    <v-btn small color="primary">
+                        <v-icon dark>toc</v-icon>
+                        出入库记录
+                    </v-btn>
+                </v-card>
             </template>
         </v-data-table>
         <div class="text-xs-center pt-2">
             <v-pagination v-model="pagination.page" :total-visible="7" :length="pagination.totalPages"></v-pagination>
         </div>
+
+        <v-dialog v-model="showUserSelector" persistent max-width="800px">
+            <UserSelectorDialog ref="userSelector" @close="showUserSelector = false" @confirm="userSelected"></UserSelectorDialog>
+        </v-dialog>
     </v-card>
 </template>
 
 <script>
+    import UserSelectorDialog from "../../components/UserSelectorDialog";
+
     export default {
+        components: {UserSelectorDialog},
         data() {
             return {
                 selEntName: '',
                 ents: [],
                 entNames: [],
                 search: '',
+                expand: false,
                 headers: [
                     {text: '货品编码', align: 'left', value: 'inventoryCode'},
                     {text: '货品名称', value: 'inventoryName'},
@@ -68,11 +100,12 @@
                 pagination: {
                     descending: false,
                     page: 1,
-                    rowsPerPage: 15,
+                    rowsPerPage: 10,
                     sortBy: null,
                     totalItems: 0,
                     totalPages: 0
-                }
+                },
+                showUserSelector: false,
             }
         },
         created() {
@@ -87,6 +120,13 @@
             }
         },
         methods: {
+            async userSelected(data) {
+
+            },
+            async pushLack(item) {
+                this.showUserSelector = true;
+                this.$refs.userSelector.initData(this.getEntCode());
+            },
             async loadEnts() {
                 const result = await this.$fly.get('/api/v1/ents');
                 this.ents = result.data;

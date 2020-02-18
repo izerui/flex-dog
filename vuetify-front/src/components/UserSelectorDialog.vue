@@ -17,40 +17,53 @@
                 </v-tooltip>
             </v-toolbar-items>
         </v-toolbar>
-        <v-card-text>
 
-            <v-container grid-list-xl>
-                <v-layout wrap>
-                    <v-list>
-                        <v-list-tile
-                                v-for="item in roles"
-                                :key="item.code"
-                                @click="loadUsers(item)"
-                        >
-                            <v-list-tile-content>
-                                <v-list-tile-title v-html="item.name"></v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </v-list>
+        <v-card
+                class="d-flex flex-row mb-2"
+                color="grey lighten-2"
+                flat
+                tile
+        >
+            <v-card
+                    class="pa-2"
+                    outlined
+                    tile
+            >
+                <v-list>
+                    <v-list-tile
+                            v-for="item in roles"
+                            :key="item.code"
+                            @click="loadUsers(item)"
+                    >
+                        <v-list-tile-content>
+                            <v-list-tile-title v-html="item.name"></v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+            </v-card>
+            <v-card
+                    class="pa-2"
+                    outlined
+                    tile
+            >
+                <v-data-table
+                        :headers="headers"
+                        :items="users"
+                        :hide-actions="true"
+                        :pagination.sync="pagination"
+                        fix-header>
 
-                    <v-data-table
-                            :headers="headers"
-                            :items="users"
-                            :hide-actions="true"
-                            :pagination.sync="pagination"
-                            fix-header>
+                    <template v-slot:items="props">
+                        <tr>
+                            <td>{{ props.item.name }}</td>
+                            <td>{{ props.item.createDate }}</td>
+                        </tr>
+                    </template>
 
-                        <template v-slot:items="props">
-                            <tr>
-                                <td>{{ props.item.name }}</td>
-                                <td>{{ props.item.createDate }}</td>
-                            </tr>
-                        </template>
+                </v-data-table>
+            </v-card>
+        </v-card>
 
-                    </v-data-table>
-                </v-layout>
-            </v-container>
-        </v-card-text>
     </v-card>
 </template>
 

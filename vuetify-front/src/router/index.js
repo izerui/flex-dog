@@ -24,12 +24,6 @@ const routes = [
         component: () => import('../views/file/FileList'),
     },
     {
-        path: '/hello',
-        name: 'hello',
-        meta: { title: 'hello' },
-        component: () => import('../views/HelloWorld'),
-    },
-    {
         path: '/ecs',
         name: 'ecs',
         meta: { title: '服务器列表' },

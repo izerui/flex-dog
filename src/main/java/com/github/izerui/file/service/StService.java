@@ -3,15 +3,16 @@ package com.github.izerui.file.service;
 import com.ecworking.audit.Record;
 import com.github.izerui.file.entity.AuditRecordEntity;
 import com.github.izerui.file.repository.AuditRecordRepository;
-import com.github.izerui.file.repository.StIgnoreTypeRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,13 +23,13 @@ public class StService {
     @Autowired
     private AuditRecordRepository auditRecordRepository;
 
-    @Autowired
-    private StIgnoreTypeRepository stIgnoreTypeRepository;
+    @Value("${audit.record.signatures}")
+    private String recordSignatures;
 
     @Async
-    public void logCount(Record record) {
+    public void saveRecord(Record record) {
         //如果在排除列表就不记录
-        if (stIgnoreTypeRepository.count(record.getApplication(), record.getType(), record.getName()) > 0L) {
+        if (!recordSignatures.contains(record.getSignature())) {
             return;
         }
 

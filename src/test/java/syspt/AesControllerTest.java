@@ -38,7 +38,7 @@ public class AesControllerTest {
                 "\"endTime\":20200307000000,\n" +
                 "\"userId\":\"18503058877,13686488881\"\n" +
                 "}", headers);
-        String resultJson = restTemplate.postForObject("http://localhost:8888/syspt/aesAndRsa", bodyEntity, String.class);
+        String resultJson = restTemplate.postForObject("https://yj2025.com/syspt/aesAndRsa", bodyEntity, String.class);
         System.out.println(resultJson);
 
         JsonMapper mapper = new JsonMapper();

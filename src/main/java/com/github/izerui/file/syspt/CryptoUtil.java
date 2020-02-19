@@ -58,31 +58,31 @@ public class CryptoUtil {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        Map<String, Object> keyMap = RSACoder.initKey();
-        //公钥
-        String publicKey = RSACoder.getPublicKey(keyMap);
-        //私钥
-        String privateKey = RSACoder.getPrivateKey(keyMap);
-        //请求数据
-        Map<String, Object> requestMap = new HashMap<>();
-
-        requestMap.put("userId", "1,2,3,4");
-        requestMap.put("beginTime", new Date());
-        requestMap.put("endTime", new Date());
-        System.out.println("元数据：" + requestMap);
-        JsonMapper mapper = new JsonMapper();
-
-        CryptoData cryptoData = CryptoUtil.encrypt(mapper.toJson(requestMap), publicKey);
-
-        System.out.println("加密后数据:" + cryptoData);
-
-        System.out.println("---解密--");
-
-        String result = CryptoUtil.decrypt(cryptoData, privateKey);
-
-        System.out.println("解密后数据:" + result);
-
-
-    }
+//    public static void main(String[] args) throws Exception {
+//        Map<String, Object> keyMap = RSACoder.initKey();
+//        //公钥
+//        String publicKey = RSACoder.getPublicKey(keyMap);
+//        //私钥
+//        String privateKey = RSACoder.getPrivateKey(keyMap);
+//        //请求数据
+//        Map<String, Object> requestMap = new HashMap<>();
+//
+//        requestMap.put("userId", "1,2,3,4");
+//        requestMap.put("beginTime", new Date());
+//        requestMap.put("endTime", new Date());
+//        System.out.println("元数据：" + requestMap);
+//        JsonMapper mapper = new JsonMapper();
+//
+//        CryptoData cryptoData = CryptoUtil.encrypt(mapper.toJson(requestMap), publicKey);
+//
+//        System.out.println("加密后数据:" + cryptoData);
+//
+//        System.out.println("---解密--");
+//
+//        String result = CryptoUtil.decrypt(cryptoData, privateKey);
+//
+//        System.out.println("解密后数据:" + result);
+//
+//
+//    }
 }

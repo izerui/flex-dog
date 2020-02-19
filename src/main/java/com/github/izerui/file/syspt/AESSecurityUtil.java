@@ -71,22 +71,22 @@ public class AESSecurityUtil {
         return key;
     }
 
-    public static void main(String [] args) throws Exception
-    {
-        String keyString = generateKeyString();
-//        String keyString = "1234567890123456";
-        System.out.println("密钥：" + keyString);
-
-        String source = "恭喜发财!";// 要加密的字符串
-        System.out.println("准备用密钥加密的字符串为：" + source);
-
-        String cryptograph = encrypt(keyString, source);// 生成的密文
-        System.out.print("用密钥加密后的结果为:" + cryptograph);
-        System.out.println();
-
-        String target = decrypt(keyString, cryptograph);// 解密密文
-        System.out.println("用密钥解密后的字符串为：" + target);
-        System.out.println();
-    }
+//    public static void main(String [] args) throws Exception
+//    {
+//        String keyString = generateKeyString();
+////        String keyString = "1234567890123456";
+//        System.out.println("密钥：" + keyString);
+//
+//        String source = "恭喜发财!";// 要加密的字符串
+//        System.out.println("准备用密钥加密的字符串为：" + source);
+//
+//        String cryptograph = encrypt(keyString, source);// 生成的密文
+//        System.out.print("用密钥加密后的结果为:" + cryptograph);
+//        System.out.println();
+//
+//        String target = decrypt(keyString, cryptograph);// 解密密文
+//        System.out.println("用密钥解密后的字符串为：" + target);
+//        System.out.println();
+//    }
 
 }

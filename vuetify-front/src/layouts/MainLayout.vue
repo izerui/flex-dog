@@ -4,16 +4,16 @@
         <!-- 左侧菜单栏 -->
         <left-layout :drawer.sync="leftDrawer"></left-layout>
 
-        <v-toolbar
-                app
-                flat
-                dense
-                color="primary"
-                dark
-        >
-            <v-toolbar-side-icon @click.stop="leftDrawer = !leftDrawer"/>
-            <v-toolbar-title>{{$route.meta.title}}</v-toolbar-title>
-            <v-spacer></v-spacer>
+<!--        <v-toolbar-->
+<!--                app-->
+<!--                flat-->
+<!--                dense-->
+<!--                color="primary"-->
+<!--                dark-->
+<!--        >-->
+<!--            <v-toolbar-side-icon @click.stop="leftDrawer = !leftDrawer"/>-->
+<!--            <v-toolbar-title>{{$route.meta.title}}</v-toolbar-title>-->
+<!--            <v-spacer></v-spacer>-->
 
 <!--            <v-tooltip bottom>-->
 <!--                <v-btn icon @click.stop="rightDrawer = !rightDrawer" slot="activator">-->
@@ -65,7 +65,7 @@
 <!--                    </v-list-tile>-->
 <!--                </v-list>-->
 <!--            </v-menu>-->
-        </v-toolbar>
+<!--        </v-toolbar>-->
 
         <v-content>
             <router-view/>

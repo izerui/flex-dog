@@ -3,6 +3,9 @@ package com.github.izerui.file.service;
 import com.ecworking.audit.Record;
 import com.github.izerui.file.entity.AuditRecordEntity;
 import com.github.izerui.file.repository.AuditRecordRepository;
+import com.github.izerui.file.syspt.DataContent;
+import com.github.izerui.file.syspt.RequestData;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,9 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional
@@ -69,6 +70,26 @@ public class StService {
             put("userCount", userCount);
             put("entCount", entCount);
         }};
+    }
+
+    public List<DataContent> findRecords(RequestData requestData) {
+        List<String> userIds = Arrays.asList(StringUtils.split(requestData.getUserId(), ","));
+        List<AuditRecordEntity> recordEntities = auditRecordRepository.findUserIdsAndTimeBetween(userIds, requestData.getBegin(), requestData.getEnd());
+        List<DataContent> results = new ArrayList<>();
+        for (AuditRecordEntity record : recordEntities) {
+            DataContent content = new DataContent();
+            content.setUserId(record.getAccountName());
+            content.setSource(record.getIp());
+            content.setTarget(record.getUrl());
+            content.setReqDuring(record.getTime());
+            content.setCompanyId(record.getEntCode());
+            content.setCompanyName(record.getEntName());
+            Date begin = record.getBegin();
+            DateTime dateTime = new DateTime(begin);
+            content.setOperateTime(Long.valueOf(dateTime.toString("yyyyMMddHHmmss")));
+            results.add(content);
+        }
+        return results;
     }
 
 }

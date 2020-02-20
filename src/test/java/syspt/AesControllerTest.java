@@ -36,7 +36,7 @@ public class AesControllerTest {
         HttpEntity<String> bodyEntity = new HttpEntity<>("{\n" +
                 "\"beginTime\":20190306000000,\n" +
                 "\"endTime\":20200307000000,\n" +
-                "\"userId\":\"18503058877,13686488881\"\n" +
+                "\"userId\":\"13686486070\"\n" +
                 "}", headers);
         String resultJson = restTemplate.postForObject("https://yj2025.com/syspt/aesAndRsa", bodyEntity, String.class);
         System.out.println(resultJson);

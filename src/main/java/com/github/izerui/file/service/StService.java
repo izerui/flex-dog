@@ -80,7 +80,7 @@ public class StService {
             DataContent content = new DataContent();
             content.setUserId(record.getAccountName());
             content.setSource(record.getIp());
-            content.setTarget(record.getUrl());
+            content.setTarget("yj2025.com");
             content.setReqDuring(record.getTime());
             content.setCompanyId(record.getEntCode());
             content.setCompanyName(record.getEntName());

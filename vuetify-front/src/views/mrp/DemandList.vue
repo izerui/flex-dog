@@ -69,7 +69,8 @@
         </div>
 
         <v-dialog v-model="showUserSelector" persistent max-width="800px">
-            <UserSelectorDialog ref="userSelector" @close="showUserSelector = false" @confirm="userSelected"></UserSelectorDialog>
+            <UserSelectorDialog ref="userSelector" @close="showUserSelector = false"
+                                @confirm="userSelected"></UserSelectorDialog>
         </v-dialog>
     </v-card>
 </template>
@@ -106,6 +107,8 @@
                     totalPages: 0
                 },
                 showUserSelector: false,
+                userSelected: function (data) {
+                },
             }
         },
         created() {
@@ -120,12 +123,21 @@
             }
         },
         methods: {
-            async userSelected(data) {
-
-            },
             async pushLack(item) {
                 this.showUserSelector = true;
-                this.$refs.userSelector.initData(this.getEntCode());
+                this.$refs.userSelector.initData(this.getEntCode(), function(data) {
+                    debugger;
+                    console.log("fff" + data);
+                    const params = {
+                        inventoryId: item.inventoryId,
+                        userCode: data.userCode,
+                        entCode: data.entCode,
+                    };
+                    this.$fly.get('/api/v2/lack-material', params)
+                        .then(() => {
+                            this.$message.success('推送缺料成功');
+                        });
+                });
             },
             async loadEnts() {
                 const result = await this.$fly.get('/api/v1/ents');

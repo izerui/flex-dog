@@ -47,6 +47,7 @@
                     tile
             >
                 <v-data-table
+                        :value="selectItems"
                         :headers="headers"
                         :items="users"
                         :hide-actions="true"
@@ -91,6 +92,8 @@
                     sortBy: null,
                     totalItems: 0
                 },
+                selectItems: [],
+                responseFun: null
             }
         },
         created() {
@@ -98,21 +101,27 @@
         },
         methods: {
             confirm() {
-                this.$emit("confirm", this.phone, this.code);
+                if (this.responseFun) {
+                    // console.log(this.responseFun)
+                    // this.$emit("confirm", this.selectItem);
+                    this.responseFun.call(this, this.users[0]);
+                }
             },
             cancel() {
                 this.$emit("close");
             },
-            initData(entCode) {
+            initData(entCode, responseFun) {
                 this.roles = [];
                 this.users = [];
                 this.$fly.get("/api/v1/roles", {entCode}).then(result => {
                     this.roles = result.data;
                 });
+                this.responseFun = responseFun;
+                console.log(responseFun);
             },
-            loadUsers(role){
+            loadUsers(role) {
                 this.users = [];
-                this.$fly.get("/api/v1/users",{
+                this.$fly.get("/api/v1/users", {
                     entCode: role.entCode,
                     roleCode: role.code,
                 }).then(result => {

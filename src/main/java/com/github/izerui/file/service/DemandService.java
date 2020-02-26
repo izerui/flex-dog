@@ -1,4 +1,7 @@
 package com.github.izerui.file.service;
+
+import com.yj2025.storehouse.enums.BusinessType;
+
 import java.util.*;
 
 import com.ecworking.commons.em.SourceType;
@@ -23,6 +26,7 @@ import com.github.izerui.file.client.BusinessClient;
 import com.github.izerui.file.client.EnterpriseClient;
 import com.github.izerui.file.client.MrpClient;
 import com.google.common.collect.Lists;
+import com.yj2025.storehouse.vo.LackMaterielVo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -120,9 +124,27 @@ public class DemandService {
     public PageVo<InventoryDemandVo> inventoryDemands(String entCode,
                                                       Integer page,
                                                       Integer pageSize,
-                                                      String keyword) {
+                                                      String keyword) throws IOException {
+        if(pageSize <= 0){
+            pageSize = 50;
+        }
 
-        return mrpClient.inventoryDemands(entCode,page,pageSize,keyword);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("entCode", entCode);
+        headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
+
+        MultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<String, Object>();
+        valueMap.set("page", page);
+        valueMap.set("pageSize", pageSize);
+        valueMap.set("businessKey", null);
+        valueMap.set("keyword", keyword);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity(valueMap, headers);
+        Map postForObject = restTemplate.postForObject("http://process-pc/v3/inventory/demands", httpEntity, Map.class);
+
+        String data = objectMapper.writeValueAsString(postForObject.get("data"));
+
+        return objectMapper.readValue(data, PageVo.class);
+
     }
 
 
@@ -191,7 +213,12 @@ public class DemandService {
                                         Integer pageSize) throws IOException {
         String s = "{\n" +
                 "\t\"inventoryId\":\"%s\",\n" +
-                "\t\"page\":\"%s\",\n" +
+                "\t\"pageIndex\":\"%s\",\n" +
+                "\t\"stockType\":\"1\",\n" +
+                "\t\"type\":\"1\",\n" +
+                "\t\"sourceType\":\"\",\n" +
+                "\t\"beginDate\":\"\",\n" +
+                "\t\"endDate\":\"\",\n" +
                 "\t\"pageSize\":\"%s\"\n" +
                 "}";
         s = String.format(s, inventoryId, page, pageSize);
@@ -200,7 +227,7 @@ public class DemandService {
         headers.set("entCode", entCode);
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_JSON_UTF8_VALUE));
         HttpEntity<String> bodyEntity = new HttpEntity<String>(s, headers);
-        Map map = restTemplate.postForObject("http://warehouse-pc/v3/pc/warehouse/stock/query/stock/change/detail", bodyEntity, Map.class);
+        Map map = restTemplate.postForObject("http://storehouse-pc/v1/history/list", bodyEntity, Map.class);
 
         String data = objectMapper.writeValueAsString(map.get("data"));
 
@@ -329,11 +356,11 @@ public class DemandService {
     }
 
     public void changeBomDemand(String phone,
-                             String captcha,
-                             String entCode,
-                             String userCode,
-                             String bomId,
-                             BigDecimal quantity) {
+                                String captcha,
+                                String entCode,
+                                String userCode,
+                                String bomId,
+                                BigDecimal quantity) {
         boolean isValid = mchuanSmsService.isValidCaptcha(phone, "update-demand", captcha);
         Assert.state(isValid, "验证码无效");
         Bom bom = bomClient.findByBomId(entCode, bomId);
@@ -348,7 +375,7 @@ public class DemandService {
         msg.setQuantity(quantity);
         msg.setRemark("变更数量");
         msg.setCreateTime(new Date());
-        rabbitTemplate.convertAndSend("ierp","ierp.mrp.demand.source.change",msg);
+        rabbitTemplate.convertAndSend("ierp", "ierp.mrp.demand.source.change", msg);
     }
 
     public List<Map<String, Object>> findErrorDemandInventories(String entCode) throws IOException {
@@ -374,8 +401,17 @@ public class DemandService {
 
 
     public void lackMaterial(String entCode, String userCode, String inventoryId) {
-        LackMaterialMessageVo vo = new LackMaterialMessageVo(entCode, userCode, inventoryId, LackMaterialEnum.系统);
-        rabbitTemplate.convertAndSend("ierp", "ierp.lack.material.warehouse", vo);
+        LackMaterielVo lackMaterielVo = new LackMaterielVo();
+        lackMaterielVo.setEntCode(entCode);
+        lackMaterielVo.setUserCode(userCode);
+        lackMaterielVo.setInventoryId(inventoryId);
+        lackMaterielVo.setAttributeCode("");
+        lackMaterielVo.setCustomerCode("");
+        lackMaterielVo.setCustomerName("");
+        lackMaterielVo.setSourceId("");
+        lackMaterielVo.setSourceDocNo("");
+        lackMaterielVo.setBusinessType(BusinessType.SYSTEM);
+        rabbitTemplate.convertAndSend("ierp", "ierp.storehouse.lack.materiel.task", lackMaterielVo);
     }
 
 

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 import static com.github.izerui.file.web.Response.success;
 
 @RestController
@@ -20,7 +22,7 @@ public class DemandController {
     public Response demands(@RequestParam("entCode") String entCode,
                             @RequestParam("page") Integer page,
                             @RequestParam("pageSize") Integer pageSize,
-                            @RequestParam("keyword") String keyword) {
+                            @RequestParam("keyword") String keyword) throws IOException {
 
         PageVo<InventoryDemandVo> pageVo = demandService.inventoryDemands(entCode, page, pageSize, keyword);
         return success(pageVo);

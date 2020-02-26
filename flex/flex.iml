@@ -1,28 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
-  <component name="FlexBuildConfigurationManager" active="flex">
+  <component name="FlexBuildConfigurationManager" active="index">
     <configurations>
-      <configuration name="flex" main-class="com.github.izerui.file.controls.Index" output-file="index.swf" output-folder="$MODULE_DIR$/../src/main/resources/public" use-html-wrapper="true" wrapper-template-path="$MODULE_DIR$/html-template">
-        <dependencies target-player="29.0">
+      <configuration name="index" main-class="com.github.izerui.file.controls.Index" output-file="index.swf" output-folder="$MODULE_DIR$/../src/main/resources/public" use-html-wrapper="true" wrapper-template-path="$MODULE_DIR$/html-template">
+        <dependencies target-player="11.1">
           <entries>
-            <entry library-id="66a84f79-857f-4dbe-9c79-82cfc8ca999b">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry library-id="bde6a105-cb02-4397-8941-7f94c9501d87">
+            <entry library-id="057c5050-8a8d-4bb1-9563-f04093cf4af1">
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="Apache Flex Sdk 4.16.1" />
+          <sdk name="4.6.0" />
         </dependencies>
         <compiler-options>
           <map>
-            <entry key="compiler.defaults-css-files" value="" />
-            <entry key="compiler.locale" value="en_US&#10;zh_CN" />
             <entry key="compiler.theme" value="${FLEX_SDK}/frameworks/themes/Halo/halo.swc" />
-            <entry key="metadata.creator" value="刘玉华" />
-            <entry key="metadata.description" value="我的经管发布工具" />
-            <entry key="metadata.publisher" value="刘玉华" />
-            <entry key="metadata.title" value="我的经管发布工具" />
           </map>
         </compiler-options>
         <packaging-air-desktop />
@@ -37,31 +28,19 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Apache Flex Sdk 4.16.1" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="4.6.0" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="GifPlayer1" level="project" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
-        <properties id="66a84f79-857f-4dbe-9c79-82cfc8ca999b" />
+        <properties id="057c5050-8a8d-4bb1-9563-f04093cf4af1" />
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/cairngorm.swc!/" />
+          <root url="file://$MODULE_DIR$/libs" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library type="flex">
-        <properties id="bde6a105-cb02-4397-8941-7f94c9501d87" />
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/GifPlayer.swc!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-  </component>
-  <component name="sonarModuleSettings">
-    <option name="localAnalysisScripName" value="&lt;PROJECT&gt;" />
-    <option name="serverName" value="&lt;PROJECT&gt;" />
   </component>
 </module>

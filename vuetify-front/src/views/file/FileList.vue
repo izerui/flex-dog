@@ -106,7 +106,8 @@
         </v-dialog>
 
         <v-dialog v-model="validation" persistent max-width="450px">
-            <VerificationDialog @close="validation = false" @confirm="validateConfirm"></VerificationDialog>
+            <VerificationDialog ref="publish" @close="validation = false"
+                                @confirm="validateConfirm"></VerificationDialog>
         </v-dialog>
 
         <v-dialog v-model="tooltip.show" persistent max-width="800px" scrollable>
@@ -141,178 +142,180 @@
 </template>
 
 <script>
-    import NewFileDialog from "./NewFileDialog";
-    import VerificationDialog from "../../components/VerificationDialog";
-    import TooltipDialog from "../../components/TooltipDialog";
-    import LogDialog from "./LogDialog";
+  import NewFileDialog from "./NewFileDialog";
+  import VerificationDialog from "../../components/VerificationDialog";
+  import TooltipDialog from "../../components/TooltipDialog";
+  import LogDialog from "./LogDialog";
 
-    export default {
-        components: {LogDialog, TooltipDialog, VerificationDialog, NewFileDialog},
-        data() {
-            return {
-                search: '',
-                headers: [
-                    {text: '服务器', align: 'left', value: 'server'},
-                    {text: 'IP地址', value: 'serverAddress'},
-                    {text: '文件名称', value: 'fileName', width: '300'},
-                    {text: '文件大小', value: 'size'},
-                    {text: '拥有者', value: 'owner'},
-                    {text: '端口', value: 'port'},
-                    {text: '服务地址', value: 'url'},
-                    {text: '上传时间', value: 'uploadTimeStr'},
-                    {text: '最后发布时间', value: 'deployTimeStr'},
-                    {text: '状态', value: 'status'},
-                ],
-                dataList: [],
-                loading: false,
-                pagination: {
-                    descending: false,
-                    page: 1,
-                    rowsPerPage: -1,
-                    sortBy: null,
-                    totalItems: 0
-                },
-                expand: false,
-                tabsItems: [],
-                tabIndex: null,
-                dialog: false,
-                uploading: false,
-                validation: false,
-                validationType: null,
-                selItem: {},
-                tooltip: {
-                    show: false,
-                    title: '',
-                    text: ''
-                },
-                showLog: false,
-                logUrl: null
-            }
+  export default {
+    components: {LogDialog, TooltipDialog, VerificationDialog, NewFileDialog},
+    data() {
+      return {
+        search: '',
+        headers: [
+          {text: '服务器', align: 'left', value: 'server'},
+          {text: 'IP地址', value: 'serverAddress'},
+          {text: '文件名称', value: 'fileName', width: '300'},
+          {text: '文件大小', value: 'size'},
+          {text: '拥有者', value: 'owner'},
+          {text: '端口', value: 'port'},
+          {text: '服务地址', value: 'url'},
+          {text: '上传时间', value: 'uploadTimeStr'},
+          {text: '最后发布时间', value: 'deployTimeStr'},
+          {text: '状态', value: 'status'},
+        ],
+        dataList: [],
+        loading: false,
+        pagination: {
+          descending: false,
+          page: 1,
+          rowsPerPage: -1,
+          sortBy: null,
+          totalItems: 0
         },
-        created() {
-            this.loadData("全部");
+        expand: false,
+        tabsItems: [],
+        tabIndex: null,
+        dialog: false,
+        uploading: false,
+        validation: false,
+        validationType: null,
+        selItem: {},
+        tooltip: {
+          show: false,
+          title: '',
+          text: ''
         },
-        methods: {
-            log(item) {
-                this.showLog = true
-                this.logUrl = item.logUrl
-            },
-            validateConfirm(phone, code) {
-                if (this.validationType === 'publish') {
-                    this.$fly.get("/api/v1/file/publish", {
-                        id: this.selItem.id,
-                        phone: phone,
-                        code: code,
-                    }).then(result => {
-                        if (result.success) {
-                            this.validation = false
-                            this.tooltip = {
-                                show: true,
-                                title: '发布成功',
-                                text: result.data
-                            }
-                        }
-                    })
-                } else if (this.validationType === 'disable') {
-                    this.$fly.get("/api/v1/file/disable", {
-                        appId: this.selItem.appId,
-                        instanceId: this.selItem.instanceId,
-                        phone: phone,
-                        code: code,
-                    }).then(result => {
-                        if (result.success) {
-                            this.$message.success("下线成功")
-                            this.validation = false
-                        }
-                    })
-                } else if (this.validationType === 'enable') {
-                    this.$fly.get("/api/v1/file/enable", {
-                        appId: this.selItem.appId,
-                        instanceId: this.selItem.instanceId,
-                        phone: phone,
-                        code: code,
-                    }).then(result => {
-                        if (result.success) {
-                            this.$message.success("上线成功")
-                            this.validation = false
-                        }
-                    })
-                }
-            },
-            publishService(item) {
-                this.validation = true;
-                this.validationType = 'publish'
-                this.selItem = item
-            },
-            disableService(item) {
-                this.validation = true;
-                this.validationType = 'disable';
-                this.selItem = item;
-            },
-            enableService(item) {
-                this.validation = true;
-                this.validationType = 'enable';
-                this.selItem = item;
-            },
-            async handleFilesUpload() {
-                this.uploading = true;
-                let uploadedFiles = this.$refs.file.files[0];
-                if (uploadedFiles) {
-                    var formData = new FormData;
-                    formData.append("Filedata", uploadedFiles);
-                    await this.$fly.post("/api/v1/upload", formData);
-                    this.uploading = false;
-                    this.$refs.file.value = null
-                    this.loadData(this.tabsItems[this.tabIndex])
-                }
-            },
-            selectFile() {
-                this.$refs.file.click();
-            },
-            cancelFile() {
-                this.dialog = false
-            },
-            async saveFile(file) {
-                let formData = new FormData;
-                file.servers.forEach((s, index) => {
-                    formData.append('servers[]', s)
-                })
-                formData.append("fileName", file.fileName)
-                formData.append("owner", file.owner)
-                formData.append("type", file.type)
-                formData.append("sender", file.sender)
-                formData.append("code", file.code)
-                const result = await this.$fly.post("/api/v1/new-service", formData)
-                if (result.success) {
-                    this.$message.success('新建服务成功');
-                    this.dialog = false;
-                    this.loadData(this.tabsItems[this.tabIndex])
-                }
-            },
-            newFile() {
-                this.dialog = true;
-            },
-            async loadData(server) {
-                this.loading = true;
-                const result = await this.$fly.get('/api/v1/files', {server: server});
-                this.dataList = result.data;
-                if (server === '全部') {
-                    this.fillTabItems();
-                }
-                this.loading = false;
-            },
-            fillTabItems() {
-                this.tabsItems = []
-                this.dataList.forEach(s => {
-                    if (this.tabsItems.indexOf(s.server) < 0) {
-                        this.tabsItems.push(s.server);
-                    }
-                })
-                this.tabsItems.sort();
-                this.tabsItems.unshift("全部")
+        showLog: false,
+        logUrl: null
+      }
+    },
+    created() {
+      this.loadData("全部");
+    },
+    methods: {
+      log(item) {
+        this.showLog = true
+        this.logUrl = item.logUrl
+      },
+      validateConfirm(phone, code) {
+        if (this.validationType === 'publish') {
+          this.$refs.publish.confirmLoading(true)
+          this.$fly.get("/api/v1/file/publish", {
+            id: this.selItem.id,
+            phone: phone,
+            code: code,
+          }).then(result => {
+            this.$refs.publish.confirmLoading(false)
+            if (result.success) {
+              this.validation = false
+              this.tooltip = {
+                show: true,
+                title: '发布成功',
+                text: result.data
+              }
             }
+          })
+        } else if (this.validationType === 'disable') {
+          this.$fly.get("/api/v1/file/disable", {
+            appId: this.selItem.appId,
+            instanceId: this.selItem.instanceId,
+            phone: phone,
+            code: code,
+          }).then(result => {
+            if (result.success) {
+              this.$message.success("下线成功")
+              this.validation = false
+            }
+          })
+        } else if (this.validationType === 'enable') {
+          this.$fly.get("/api/v1/file/enable", {
+            appId: this.selItem.appId,
+            instanceId: this.selItem.instanceId,
+            phone: phone,
+            code: code,
+          }).then(result => {
+            if (result.success) {
+              this.$message.success("上线成功")
+              this.validation = false
+            }
+          })
         }
+      },
+      publishService(item) {
+        this.validation = true;
+        this.validationType = 'publish'
+        this.selItem = item
+      },
+      disableService(item) {
+        this.validation = true;
+        this.validationType = 'disable';
+        this.selItem = item;
+      },
+      enableService(item) {
+        this.validation = true;
+        this.validationType = 'enable';
+        this.selItem = item;
+      },
+      async handleFilesUpload() {
+        this.uploading = true;
+        let uploadedFiles = this.$refs.file.files[0];
+        if (uploadedFiles) {
+          var formData = new FormData;
+          formData.append("Filedata", uploadedFiles);
+          await this.$fly.post("/api/v1/upload", formData);
+          this.uploading = false;
+          this.$refs.file.value = null
+          this.loadData(this.tabsItems[this.tabIndex])
+        }
+      },
+      selectFile() {
+        this.$refs.file.click();
+      },
+      cancelFile() {
+        this.dialog = false
+      },
+      async saveFile(file) {
+        let formData = new FormData;
+        file.servers.forEach((s, index) => {
+          formData.append('servers[]', s)
+        })
+        formData.append("fileName", file.fileName)
+        formData.append("owner", file.owner)
+        formData.append("type", file.type)
+        formData.append("sender", file.sender)
+        formData.append("code", file.code)
+        const result = await this.$fly.post("/api/v1/new-service", formData)
+        if (result.success) {
+          this.$message.success('新建服务成功');
+          this.dialog = false;
+          this.loadData(this.tabsItems[this.tabIndex])
+        }
+      },
+      newFile() {
+        this.dialog = true;
+      },
+      async loadData(server) {
+        this.loading = true;
+        const result = await this.$fly.get('/api/v1/files', {server: server});
+        this.dataList = result.data;
+        if (server === '全部') {
+          this.fillTabItems();
+        }
+        this.loading = false;
+      },
+      fillTabItems() {
+        this.tabsItems = []
+        this.dataList.forEach(s => {
+          if (this.tabsItems.indexOf(s.server) < 0) {
+            this.tabsItems.push(s.server);
+          }
+        })
+        this.tabsItems.sort();
+        this.tabsItems.unshift("全部")
+      }
     }
+  }
 </script>
 
 <style>

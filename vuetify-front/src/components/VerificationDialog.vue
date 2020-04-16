@@ -6,24 +6,24 @@
             </v-btn>
             <v-toolbar-title>安全校验</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-toolbar-items>
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-btn @click="sendSms" icon v-on="on">
-                            <v-icon>sms</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>发送验证码</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-btn @click="confirm" icon v-on="on">
-                            <v-icon>check_circle_outline</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>确认</span>
-                </v-tooltip>
-            </v-toolbar-items>
+<!--            <v-toolbar-items>-->
+<!--                <v-tooltip bottom>-->
+<!--                    <template v-slot:activator="{ on }">-->
+<!--                        <v-btn @click="sendSms" icon v-on="on">-->
+<!--                            <v-icon>sms</v-icon>-->
+<!--                        </v-btn>-->
+<!--                    </template>-->
+<!--                    <span>发送验证码</span>-->
+<!--                </v-tooltip>-->
+<!--                <v-tooltip bottom>-->
+<!--                    <template v-slot:activator="{ on }">-->
+<!--                        <v-btn @click="confirm" icon v-on="on">-->
+<!--                            <v-icon>check_circle_outline</v-icon>-->
+<!--                        </v-btn>-->
+<!--                    </template>-->
+<!--                    <span>确认</span>-->
+<!--                </v-tooltip>-->
+<!--            </v-toolbar-items>-->
         </v-toolbar>
         <v-card-text>
             <v-container grid-list-md>
@@ -44,6 +44,19 @@
                 </v-layout>
             </v-container>
         </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn color="primary" @click="sendSms" flat>
+                <v-icon dark>sms</v-icon>
+                发送验证码
+            </v-btn>
+
+            <v-btn color="primary" @click="confirm" flat :loading="loading">
+                <v-icon>check_circle_outline</v-icon>
+                确定
+            </v-btn>
+        </v-card-actions>
     </v-card>
 </template>
 
@@ -57,12 +70,16 @@
                 phone: null,
                 code: null,
                 publishers: [],
+                loading: false
             }
         },
         created() {
             this.initData();
         },
         methods: {
+            confirmLoading(value) {
+              this.loading = value;
+            },
             sendSms() {
                 this.$fly.get("/api/v1/send-captcha", {phone: this.phone}).then(s => {
                     if (s.success) {
@@ -74,9 +91,11 @@
                 this.$emit("confirm",this.phone, this.code);
             },
             cancel() {
+                this.loading = false
                 this.$emit("close");
             },
             initData() {
+                this.loading = false
                 this.$fly.get("/api/v1/publishers").then(result => {
                     this.publishers = result.data;
                 });

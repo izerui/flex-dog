@@ -106,7 +106,7 @@
         </v-dialog>
 
         <v-dialog v-model="validation" persistent max-width="450px">
-            <VerificationDialog @close="validation = false" @confirm="validateConfirm"></VerificationDialog>
+            <VerificationDialog ref="publish" @close="validation = false" @confirm="validateConfirm"></VerificationDialog>
         </v-dialog>
 
         <v-dialog v-model="tooltip.show" persistent max-width="800px" scrollable>
@@ -199,11 +199,13 @@
             },
             validateConfirm(phone, code) {
                 if (this.validationType === 'publish') {
+                    this.$refs.publish.confirmLoading(true)
                     this.$fly.get("/api/v1/file/publish", {
                         id: this.selItem.id,
                         phone: phone,
                         code: code,
                     }).then(result => {
+                        this.$refs.publish.confirmLoading(false)
                         if (result.success) {
                             this.validation = false
                             this.tooltip = {

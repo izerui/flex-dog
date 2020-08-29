@@ -282,6 +282,12 @@
                 <profiles.active>prod</profiles.active>
             </properties>
         </profile>
+        <profile>
+            <id>yunji</id>
+            <properties>
+                <profiles.active>yunji</profiles.active>
+            </properties>
+        </profile>
     </profiles>
 
 
@@ -294,6 +300,7 @@
                     <exclude>test/*</exclude>
                     <exclude>prod/*</exclude>
                     <exclude>local/*</exclude>
+                    <exclude>yunji/*</exclude>
                 </excludes>
             </resource>
             <resource>
